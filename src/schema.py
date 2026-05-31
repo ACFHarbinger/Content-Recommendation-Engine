@@ -3,8 +3,11 @@ Pydantic v2 data models for the Recommendation Engine.
 
 Phase 0: foundation schema.
 Phase 1: EmbeddedItem, ScoredCandidate added for ingestion pipeline.
+Phase 2: FilterClause, ParsedQuery.
+Phase 3: ScoredCandidate with per-leg scores.
 Phase 4: RankedResult with recommendation_value.
-Phase 5: ExplainedResult with reasons.
+Phase 5: ExplainedResult with reasons and anti-hallucination guard.
+Phase 7: volumes, abstract fields on MediaItem; modality-aware dense_text.
 """
 from __future__ import annotations
 
@@ -57,6 +60,9 @@ class MediaItem(BaseModel):
     local_file_location: Optional[str] = Field(None, alias="local_file")
     web_link: Optional[str] = None
     review_notes: Optional[str] = Field(None, alias="review")
+    # Phase 7 additions
+    abstract: Optional[str] = None          # for papers; used as dense source
+    volumes: Optional[int] = Field(None, ge=1)  # for manga
 
     model_config = {"populate_by_name": True, "extra": "allow"}
 
@@ -72,8 +78,9 @@ class MediaItem(BaseModel):
 
     @property
     def dense_text(self) -> str:
-        """Primary text for dense (semantic) embedding."""
-        return self.review_notes or self._fallback_text()
+        """Primary text for dense (semantic) embedding.
+        Priority: review_notes → abstract → synthesised fallback."""
+        return self.review_notes or self.abstract or self._fallback_text()
 
     @property
     def sparse_text(self) -> str:
@@ -86,6 +93,18 @@ class MediaItem(BaseModel):
         if self.associated_entities:
             parts.append("Featuring: " + ", ".join(self.associated_entities))
         return " ".join(parts)
+
+    @property
+    def is_video(self) -> bool:
+        return (self.type or "").lower() in ("anime", "show", "movie")
+
+    @property
+    def consume_verb(self) -> str:
+        """Modality-appropriate consumption verb for explainer prose."""
+        t = (self.type or "").lower()
+        if t in ("book", "manga", "paper"):
+            return "read"
+        return "watch"
 
     def _fallback_text(self) -> str:
         parts = [self.title]

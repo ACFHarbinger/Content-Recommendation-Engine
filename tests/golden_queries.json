@@ -1,0 +1,92 @@
+[
+  {
+    "query": "psychological thriller anime I haven't watched",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000002",
+      "00000000-0000-0000-0000-000000000009"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Perfect Blue and Paranoia Agent should be top hits"
+  },
+  {
+    "query": "space anime with jazz",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000005"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Cowboy Bebop should dominate this query"
+  },
+  {
+    "query": "time travel mystery",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000003"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Steins;Gate should rank highest"
+  },
+  {
+    "query": "existential mecha with religious themes",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000001"
+    ],
+    "expected_absent_ids": [],
+    "notes": "NGE is the canonical answer"
+  },
+  {
+    "query": "anime on my plan-to-watch list",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000008"
+    ],
+    "expected_absent_ids": [
+      "00000000-0000-0000-0000-000000000001",
+      "00000000-0000-0000-0000-000000000002"
+    ],
+    "notes": "Only FMA:Brotherhood is plan_to_watch; watched items must be excluded"
+  },
+  {
+    "query": "sci-fi books about consciousness and first contact",
+    "expected_top_ids": [
+      "10000000-0000-0000-0000-000000000004"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Blindsight matches perfectly"
+  },
+  {
+    "query": "classic literary sci-fi books",
+    "expected_top_ids": [
+      "10000000-0000-0000-0000-000000000001",
+      "10000000-0000-0000-0000-000000000002"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Dune and Left Hand of Darkness are pre-1980 literary sci-fi"
+  },
+  {
+    "query": "dark philosophical anime with beautiful visuals",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000004",
+      "00000000-0000-0000-0000-000000000007"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Violet Evergarden (animation quality) and Serial Experiments Lain (philosophy)"
+  },
+  {
+    "query": "historical war anime with moral complexity",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000006"
+    ],
+    "expected_absent_ids": [],
+    "notes": "Vinland Saga should dominate"
+  },
+  {
+    "query": "highly rated anime I've already watched rated above 9",
+    "expected_top_ids": [
+      "00000000-0000-0000-0000-000000000001",
+      "00000000-0000-0000-0000-000000000002"
+    ],
+    "expected_absent_ids": [
+      "00000000-0000-0000-0000-000000000008",
+      "00000000-0000-0000-0000-000000000010"
+    ],
+    "notes": "Only watched items with rating >= 9 (NGE 9.5, Perfect Blue 9.2)"
+  }
+]
