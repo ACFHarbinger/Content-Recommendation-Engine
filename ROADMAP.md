@@ -365,6 +365,57 @@ recommend info
 
 ---
 
+## Phase 9 — Quality, Tooling & Watch-History Feedback ✅
+
+**Goal**: Close all remaining gaps: test coverage for every module, prompt caching,
+watch-history implicit feedback, improved evaluation tooling, `sync`/`delete` commands,
+and README.
+
+### Tasks
+
+- [x] `tests/conftest.py` — stateful `FakeQdrantClient`, `MockEmbedder`, `FakeQdrantModule`,
+  async-capable `FakeAnthropicModule`; shared fixtures `qdrant_mock`, `anthropic_mock`,
+  `mock_embedder`, `sample_items`, `scored_candidates`, `cfg`
+- [x] `tests/test_store.py` — 13 tests: `create_collection` idempotency, payload index creation,
+  `upsert` call verification, batch size, `collection_info`, `delete`
+- [x] `tests/test_retriever.py` — 10 tests: `_payload_to_item` mapping, hybrid query path,
+  filter-only scroll, dense-only fallback, empty-collection, top-K limiting
+- [x] `tests/test_explainer.py` — 8 tests: no-API-key fallback, template structure,
+  `matched_tags` anti-hallucination, mocked async path, rank preservation
+- [x] `tests/test_pipeline.py` — 8 tests: full `run()` path with mocked dependencies,
+  `explain=False` path, top-K limit, component scores present
+- [x] `tests/test_output.py` — 11 tests: `to_json` schema, `print_table` no crash,
+  score bar bounds, type badge correctness, indent parameter
+- [x] Prompt caching in `src/query_parser.py` — `cache_control: ephemeral` on static system prompt
+- [x] Prompt caching in `src/explainer.py` — `_CACHED_SYSTEM` block shared across all parallel calls
+- [x] `src/schema.py` — `HistoryProfile` model with `from_payloads()` and `overlap_fraction()`
+- [x] `src/config.py` — `history_min_rating`, `history_boost_weight` settings
+- [x] `src/scorer.py` — `_history_boost()` factor; `score()` now accepts `history_profile`
+- [x] `src/pipeline.py` — `_build_history_profile()` scrolls Qdrant for highly-rated watched items;
+  `use_history` constructor flag; `_store` exposed for profile builder
+- [x] `src/cli.py` — `recommend sync --input FILE` (incremental upsert); `recommend delete UUID`;
+  `recommend query --no-history` flag
+- [x] `tests/golden_queries.json` — added `semantic_query` and `parsed_filters` to all 10 entries
+  so evaluation is deterministic without Claude
+- [x] `scripts/evaluate.py` — rewritten to use pre-parsed filters; added `--csv` export
+- [x] `scripts/sweep.py` — grid search over `lambda_recency ∈ [0.02, 0.05, 0.10]` ×
+  `fusion_method ∈ [rrf, dbsf]`; Rich table + optional CSV
+- [x] `pyproject.toml` — removed `asyncio_mode` to eliminate spurious warning
+- [x] `README.md` — full quickstart, command reference, data format, config table,
+  test coverage table, architecture decision notes
+
+### Acceptance criteria ✅
+
+- 105 tests pass with zero warnings (all dependencies mocked)
+- Prompt caching reduces repeated API costs for query parsing and explanation
+- Watch-history boost demonstrably increases scores for items overlapping user preferences
+- `recommend sync` enables incremental library updates without full re-ingestion
+- `evaluate.py` runs deterministically without Claude API
+- `sweep.py` prints a comparison table and marks the best hyperparameter combination
+- `README.md` satisfies the Phase 0 quickstart requirement
+
+---
+
 ## Phase 8 — Reranking & Evaluation (Advanced) ✅
 
 **Goal**: Add a cross-encoder reranker for precision and a formal offline evaluation framework.
@@ -445,38 +496,47 @@ Explanation generation is the highest-latency stage. Running 10 Claude API calls
 
 ---
 
-## File Structure (current state — Phase 8 complete)
+## File Structure (current state — Phase 9 complete)
 
 ```
 Recommendation-Engine/
 ├── src/
-│   ├── schema.py        # Pydantic models: MediaItem, ParsedQuery, RankedResult, ExplainedResult
-│   ├── config.py        # Settings from .env (pydantic-settings, no deprecation warnings)
-│   ├── embedder.py      # BGE-M3 wrapper (dense + sparse, batch)
-│   ├── store.py         # Qdrant collection management + payload index creation
-│   ├── ingest.py        # Ingestion CLI: validate → embed → upsert
-│   ├── export.py        # Export collection back to JSON
-│   ├── cache.py         # LRU query cache (thread-safe, normalised keys)
-│   ├── query_parser.py  # Claude-based self-querying retriever + Qdrant filter builder
-│   ├── retriever.py     # Hybrid retrieval: Prefetch + RRF/DBSF fusion; dense fallback
-│   ├── scorer.py        # Decay functions → Recommendation Value
-│   ├── explainer.py     # Async LLM explanation generator with anti-hallucination guard
-│   ├── pipeline.py      # End-to-end orchestration (QueryParser→Retriever→Reranker→Scorer→Explainer)
-│   ├── output.py        # Rich table + JSON renderers
-│   ├── reranker.py      # Cross-encoder reranker (bge-reranker-v2-m3)
-│   └── cli.py           # Click group: ingest, export, info, query
+│   ├── schema.py        # Pydantic models: MediaItem, HistoryProfile, ParsedQuery,
+│   │                    #   RankedResult, ExplainedResult (Phases 0–9)
+│   ├── config.py        # pydantic-settings; all tunable params (Phases 0–9)
+│   ├── embedder.py      # BGE-M3 wrapper: dense + sparse, batch (Phase 1)
+│   ├── store.py         # Qdrant collection + payload indexes (Phase 1)
+│   ├── ingest.py        # CLI: validate → embed → upsert with Rich progress (Phase 1)
+│   ├── export.py        # CLI: scroll collection → JSON (Phase 1)
+│   ├── cache.py         # Thread-safe LRU query cache (Phase 2)
+│   ├── query_parser.py  # Claude parser + Qdrant filter builder + prompt caching (Phase 2/9)
+│   ├── retriever.py     # Prefetch + RRF/DBSF fusion; dense + filter-only fallbacks (Phase 3)
+│   ├── scorer.py        # rating_boost × recency_decay × length_decay × history_boost (Phase 4/9)
+│   ├── explainer.py     # Async LLM explainer + prompt caching + fallback (Phase 5/9)
+│   ├── pipeline.py      # Orchestration + _build_history_profile() (Phase 6/9)
+│   ├── output.py        # Rich table + JSON renderers (Phase 6)
+│   ├── reranker.py      # Cross-encoder bge-reranker-v2-m3 (Phase 8)
+│   └── cli.py           # ingest, sync, export, delete, info, query (Phase 1/6/9)
 ├── data/
 │   ├── sample.json          # 10 anime/movie items
-│   └── sample_books.json    # 5 book items (Phase 7 validation)
+│   └── sample_books.json    # 5 book items (Phase 7)
 ├── tests/
-│   ├── test_schema.py        # 12 tests — Phase 0 acceptance
-│   ├── test_scorer.py        # 12 tests — Phase 4 acceptance
-│   ├── test_query_parser.py  # 29 tests — Phase 2 acceptance (mocked dependencies)
-│   └── golden_queries.json   # 10 labelled query/result pairs (Phase 8)
+│   ├── conftest.py           # Shared fixtures: FakeQdrantClient, MockEmbedder, etc.
+│   ├── test_schema.py        # 12 tests (Phase 0)
+│   ├── test_scorer.py        # 24 tests (Phase 4/9)
+│   ├── test_query_parser.py  # 29 tests (Phase 2)
+│   ├── test_store.py         # 13 tests (Phase 9)
+│   ├── test_retriever.py     # 10 tests (Phase 9)
+│   ├── test_explainer.py     # 8 tests  (Phase 9)
+│   ├── test_pipeline.py      # 8 tests  (Phase 9)
+│   ├── test_output.py        # 11 tests (Phase 9)
+│   └── golden_queries.json   # 10 labelled queries with pre-parsed filters (Phase 8/9)
 ├── scripts/
-│   └── evaluate.py           # NDCG@K, Precision@5, penalty count (Phase 8)
+│   ├── evaluate.py     # NDCG@K, P@5, penalty; CSV export; no Claude needed (Phase 8/9)
+│   └── sweep.py        # λ × fusion grid search; marks best config (Phase 8/9)
 ├── reports/
 │   └── Building a Smart Recommendation Engine.md
+├── README.md
 ├── docker-compose.yml
 ├── pyproject.toml
 ├── .env.example
@@ -490,6 +550,8 @@ Recommendation-Engine/
 
 - **Visual embeddings for images/art**: Phase 7 leaves images as a stub. The correct path is CLIP or VLM2Vec-V2 (which supports text + image + video in a unified embedding space) for items where the primary content is visual rather than textual.
 - **Cross-item collaborative signals**: The current engine is content-based only. If the library grows large and rating patterns emerge across many items, a lightweight matrix factorisation layer could augment the content-based scores — but this is only worthwhile with 500+ rated items.
-- **Watch history as implicit feedback**: `watch_status` currently acts only as a filter. A future enhancement could use it as an implicit preference signal (e.g., auto-boost items similar to highly-rated watched content).
-- **Web UI**: A minimal FastAPI + HTMX frontend would make the engine accessible without a terminal. Out of scope for initial phases.
+- **Watch history as implicit feedback**: ✅ Implemented in Phase 9 — `HistoryProfile` aggregates tags/genres from highly-rated watched items; `_history_boost()` in `Scorer` applies a configurable multiplicative boost.
+- **Web UI**: A minimal FastAPI + HTMX frontend would make the engine accessible without a terminal. Out of scope for current phases.
+- **Streaming explanations**: The `Explainer` currently waits for all `asyncio.gather` tasks; streaming the first result as it arrives would reduce perceived latency for large `top_k` values.
+- **Collaborative filtering layer**: Track co-ratings across item types (e.g., users who rated Cowboy Bebop highly also tend to rate Samurai Champloo highly). Requires 500+ items and explicit cross-user signals — not applicable to single-user personal libraries yet.
 - **Hyperparameter sweep**: Tune RRF `k`, `λ_recency`, `length_scale` against the golden query set to maximise NDCG@10 (see `scripts/evaluate.py --rerank`).

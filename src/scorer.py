@@ -1,17 +1,19 @@
 """
 Phase 4 — Recommendation Value scorer.
 
-Applies three multiplicative decay/boost functions to the raw RRF score:
+Applies four multiplicative factors to the raw RRF score:
 
-    RecommendationValue = rrf_score × rating_boost × recency_decay × length_decay
+    RecommendationValue =
+        rrf_score × rating_boost × recency_decay × length_decay × history_boost
 
-rating_boost  = 1 + log(1 + rating/10)           — logarithmic amplifier
-recency_decay = exp(-λ × (current_year - year))   — exponential recency penalty
-length_decay  = exp(-0.5 × ((eps - origin)/scale)²)  — Gaussian, only when
-                                                         length_preference is set
+rating_boost   = 1 + log(1 + rating/10)
+recency_decay  = exp(-λ × (current_year - year))
+length_decay   = Gaussian, only when length_preference_episodes is set
+history_boost  = 1 + weight × overlap_fraction(item, history_profile)
+                 (Phase 9: only when a HistoryProfile is supplied)
 
-All three factors are multiplicative so a zero-relevance item (rrf_score ≈ 0)
-always scores near 0 regardless of rating or recency.
+All factors are multiplicative so a zero-relevance item (rrf_score ≈ 0)
+always scores near 0 regardless of quality, recency, or history.
 """
 from __future__ import annotations
 
@@ -21,7 +23,7 @@ import math
 from typing import Optional
 
 from .config import Settings, get_settings
-from .schema import ComponentScores, ParsedQuery, RankedResult, ScoredCandidate
+from .schema import ComponentScores, HistoryProfile, ParsedQuery, RankedResult, ScoredCandidate
 
 logger = logging.getLogger(__name__)
 
@@ -38,23 +40,24 @@ class Scorer:
         self,
         candidates: list[ScoredCandidate],
         parsed_query: Optional[ParsedQuery] = None,
+        history_profile: Optional[HistoryProfile] = None,
     ) -> list[RankedResult]:
         """
         Rank *candidates* by RecommendationValue.
 
         Args:
-            candidates:    Output from HybridRetriever.
-            parsed_query:  Used to extract ``length_preference_episodes``.
+            candidates:       Output from HybridRetriever.
+            parsed_query:     Used to extract ``length_preference_episodes``.
+            history_profile:  Optional watch-history signal for Phase 9 boost.
         """
         length_pref = (
             parsed_query.length_preference_episodes if parsed_query else None
         )
         results = [
-            self._rank_one(c, length_pref) for c in candidates
+            self._rank_one(c, length_pref, history_profile) for c in candidates
         ]
         results.sort(key=lambda r: r.recommendation_value, reverse=True)
         for i, r in enumerate(results):
-            # Pydantic models are immutable by default; rebuild with rank set
             results[i] = r.model_copy(update={"rank": i + 1})
         return results
 
@@ -66,6 +69,7 @@ class Scorer:
         self,
         candidate: ScoredCandidate,
         length_preference: Optional[int],
+        history_profile: Optional[HistoryProfile],
     ) -> RankedResult:
         item = candidate.item
         rrf = candidate.rrf_score
@@ -73,8 +77,9 @@ class Scorer:
         rb = self._rating_boost(item.rating)
         rd = self._recency_decay(item.year_released)
         ld = self._length_decay(item.num_episodes_or_pages, length_preference)
+        hb = self._history_boost(item, history_profile)
 
-        value = rrf * rb * rd * ld
+        value = rrf * rb * rd * ld * hb
 
         return RankedResult(
             item=item,
@@ -85,7 +90,7 @@ class Scorer:
                 recency_decay=round(rd, 4),
                 length_decay=round(ld, 4),
             ),
-            rank=0,  # filled in after sorting
+            rank=0,
         )
 
     def _rating_boost(self, rating: Optional[float]) -> float:
@@ -114,3 +119,21 @@ class Scorer:
         origin = preference
         scale = max(self._cfg.length_scale, 1)
         return math.exp(-0.5 * ((episodes - origin) / scale) ** 2)
+
+    def _history_boost(
+        self,
+        item,
+        profile: Optional[HistoryProfile],
+    ) -> float:
+        """
+        Mild multiplicative boost for items whose tags/genres overlap with the
+        user's proven preferences (derived from their highly-rated watched items).
+
+        boost = 1 + weight × overlap_fraction(item, profile)
+
+        Returns 1.0 (neutral) when no history profile is supplied.
+        """
+        if profile is None or profile.item_count == 0:
+            return 1.0
+        overlap = profile.overlap_fraction(item)
+        return 1.0 + self._cfg.history_boost_weight * overlap

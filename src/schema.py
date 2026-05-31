@@ -117,6 +117,50 @@ class MediaItem(BaseModel):
 
 
 # ------------------------------------------------------------------
+# Watch-history profile (Phase 9)
+# ------------------------------------------------------------------
+
+class HistoryProfile(BaseModel):
+    """
+    Aggregated preference signal derived from the user's watch history.
+
+    Built by scanning the Qdrant collection for items with
+    watch_status == "watched" (or "reading") and rating >= threshold,
+    then collecting their tags and genres.
+
+    The profile is passed to Scorer to apply a mild boost to candidates
+    that share tags/genres with the user's proven preferences.
+    """
+
+    preferred_tags: frozenset[str] = Field(default_factory=frozenset)
+    preferred_genres: frozenset[str] = Field(default_factory=frozenset)
+    item_count: int = 0  # number of items that contributed
+
+    model_config = {"arbitrary_types_allowed": True}
+
+    @classmethod
+    def from_payloads(cls, payloads: list[dict]) -> "HistoryProfile":
+        tags: set[str] = set()
+        genres: set[str] = set()
+        for p in payloads:
+            tags.update(t.lower() for t in p.get("tags", []))
+            genres.update(g.lower() for g in p.get("genres", []))
+        return cls(
+            preferred_tags=frozenset(tags),
+            preferred_genres=frozenset(genres),
+            item_count=len(payloads),
+        )
+
+    def overlap_fraction(self, item: "MediaItem") -> float:
+        """Fraction of item's tags+genres that appear in this profile (0–1)."""
+        item_signals = {t.lower() for t in item.tags + item.genres}
+        if not item_signals:
+            return 0.0
+        profile = self.preferred_tags | self.preferred_genres
+        return len(item_signals & profile) / len(item_signals)
+
+
+# ------------------------------------------------------------------
 # Ingestion outputs (Phase 1)
 # ------------------------------------------------------------------
 

@@ -82,6 +82,17 @@ def _fallback_reason(result: RankedResult, user_query: str) -> ExplainedResult:
     )
 
 
+# Cached system prompt block — reused for every item in a batch so the
+# prompt is transmitted once and cached for subsequent parallel calls.
+_CACHED_SYSTEM = [
+    {
+        "type": "text",
+        "text": _SYSTEM_PROMPT,
+        "cache_control": {"type": "ephemeral"},
+    }
+]
+
+
 async def _explain_one(
     async_client,
     result: RankedResult,
@@ -93,7 +104,7 @@ async def _explain_one(
         response = await async_client.messages.create(
             model=model,
             max_tokens=512,
-            system=_SYSTEM_PROMPT,
+            system=_CACHED_SYSTEM,
             messages=[
                 {"role": "user", "content": _build_user_message(result, user_query)}
             ],

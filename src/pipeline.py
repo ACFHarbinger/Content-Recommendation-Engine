@@ -20,7 +20,7 @@ from .explainer import Explainer
 from .query_parser import QueryParser, _build_qdrant_filter
 from .reranker import Reranker
 from .retriever import HybridRetriever
-from .schema import ExplainedResult
+from .schema import ExplainedResult, HistoryProfile
 from .scorer import Scorer
 from .store import QdrantStore
 
@@ -44,19 +44,21 @@ class RecommendationPipeline:
         top_k: Optional[int] = None,
         use_reranker: bool = False,
         explain: bool = True,
+        use_history: bool = True,
         settings: Optional[Settings] = None,
     ):
         self._cfg = settings or get_settings()
         self._top_k = top_k or self._cfg.default_top_k
         self._use_reranker = use_reranker
         self._explain = explain
+        self._use_history = use_history
 
         # Shared embedder instance to avoid double model loading
         self._embedder = Embedder(self._cfg.embed_model)
 
-        store = QdrantStore(self._cfg)
+        self._store = QdrantStore(self._cfg)
         self._parser = QueryParser(self._cfg)
-        self._retriever = HybridRetriever(store, self._embedder, self._cfg)
+        self._retriever = HybridRetriever(self._store, self._embedder, self._cfg)
         self._scorer = Scorer(self._cfg)
         self._explainer = Explainer(self._cfg) if explain else None
         self._reranker = Reranker(self._cfg) if use_reranker else None
@@ -95,8 +97,9 @@ class RecommendationPipeline:
             )
             logger.info("Reranked to %d candidates.", len(candidates))
 
-        # Stage 4 — Score
-        ranked = self._scorer.score(candidates[: self._top_k * 2], parsed)
+        # Stage 4 — Score (with optional watch-history boost)
+        history = self._build_history_profile() if self._use_history else None
+        ranked = self._scorer.score(candidates[: self._top_k * 2], parsed, history)
         ranked = ranked[: self._top_k]
         logger.info(
             "Scored %d results; top recommendation_value=%.4f",
@@ -114,3 +117,59 @@ class RecommendationPipeline:
         elapsed = time.perf_counter() - t_start
         logger.info("Pipeline completed in %.2fs", elapsed)
         return results
+
+    # ------------------------------------------------------------------
+    # Watch-history profile
+    # ------------------------------------------------------------------
+
+    def _build_history_profile(self) -> Optional[HistoryProfile]:
+        """
+        Scroll the Qdrant collection for watched/read items rated above
+        ``history_min_rating`` and aggregate their tags + genres into a
+        HistoryProfile for the downstream Scorer.
+
+        Returns None on any error so the pipeline continues without boosting.
+        """
+        try:
+            client = self._store._get_client()
+            min_rating = self._cfg.history_min_rating
+
+            # Build a payload filter for watched/read + highly rated
+            try:
+                from qdrant_client.models import (
+                    FieldCondition, Filter, MatchAny, Range,
+                )
+                filt = Filter(
+                    must=[
+                        FieldCondition(
+                            key="watch_status",
+                            match=MatchAny(any=["watched", "reading"]),
+                        ),
+                        FieldCondition(
+                            key="rating",
+                            range=Range(gte=min_rating),
+                        ),
+                    ]
+                )
+            except Exception:
+                filt = None
+
+            points, _ = client.scroll(
+                collection_name=self._cfg.qdrant_collection,
+                scroll_filter=filt,
+                limit=500,
+                with_payload=True,
+                with_vectors=False,
+            )
+            payloads = [p.payload for p in points if p.payload]
+            profile = HistoryProfile.from_payloads(payloads)
+            logger.debug(
+                "History profile: %d items, %d tags, %d genres",
+                profile.item_count,
+                len(profile.preferred_tags),
+                len(profile.preferred_genres),
+            )
+            return profile
+        except Exception as exc:
+            logger.debug("Could not build history profile: %s", exc)
+            return None

@@ -187,10 +187,19 @@ class QueryParser:
             import anthropic
 
             client = anthropic.Anthropic(api_key=self._cfg.anthropic_api_key)
+            # Cache the static system prompt so repeated calls hit the cache.
+            # cache_control is ignored by older SDK versions, so this is safe.
+            system_block = [
+                {
+                    "type": "text",
+                    "text": _SYSTEM_PROMPT,
+                    "cache_control": {"type": "ephemeral"},
+                }
+            ]
             response = client.messages.create(
                 model=self._cfg.claude_model,
                 max_tokens=512,
-                system=_SYSTEM_PROMPT,
+                system=system_block,
                 messages=[{"role": "user", "content": query}],
             )
             raw_text = response.content[0].text.strip()

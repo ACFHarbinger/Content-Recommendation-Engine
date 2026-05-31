@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     # Claude model for query parser & explainer (Phases 2, 5)
     claude_model: str = Field("claude-sonnet-4-6", validation_alias="CLAUDE_MODEL")
 
+    # Watch-history implicit feedback (Phase 9)
+    history_min_rating: float = Field(7.0, validation_alias="HISTORY_MIN_RATING", ge=0.0, le=10.0)
+    history_boost_weight: float = Field(0.15, validation_alias="HISTORY_BOOST_WEIGHT", ge=0.0, le=1.0)
+
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",

@@ -39,6 +39,84 @@ cli.add_command(ingest)
 cli.add_command(export)
 
 
+# ---- Phase 9 — sync --------------------------------------------------
+
+@cli.command()
+@click.option("--input", "-i", "input_path", required=True, type=click.Path(exists=True),
+              help="JSON file with items to add or update.")
+@click.option("--batch-size", "-b", default=32, show_default=True)
+def sync(input_path: str, batch_size: int) -> None:
+    """
+    Incrementally upsert items from a JSON file.
+
+    Items are matched by UUID — existing items are updated in-place,
+    new items are added.  Items not in the file are left untouched.
+    """
+    import json
+    from pathlib import Path
+    from pydantic import ValidationError
+    from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+    from .config import get_settings
+    from .embedder import Embedder
+    from .schema import MediaItem
+    from .store import QdrantStore
+
+    cfg = get_settings()
+    path = Path(input_path)
+
+    with console.status("Validating input…"):
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        items, skipped = [], []
+        for i, rec in enumerate(raw):
+            try:
+                items.append(MediaItem.model_validate(rec))
+            except ValidationError:
+                skipped.append(i)
+
+    console.print(f"[green]✓[/green] {len(items)} valid, {len(skipped)} skipped.")
+
+    if not items:
+        console.print("[yellow]Nothing to sync.[/yellow]")
+        return
+
+    embedder = Embedder(cfg.embed_model)
+    store = QdrantStore(cfg)
+    store.create_collection()   # idempotent
+
+    embedded = []
+    with Progress(SpinnerColumn(), TextColumn("{task.description}"),
+                  BarColumn(), TextColumn("{task.completed}/{task.total}"),
+                  TimeElapsedColumn()) as prog:
+        task = prog.add_task("Embedding…", total=len(items))
+        def _cb(cur, tot): prog.update(task, completed=cur)
+        embedded = embedder.embed_batch(items, batch_size=batch_size, progress_callback=_cb)
+
+    with console.status(f"Upserting {len(embedded)} items…"):
+        n = store.upsert(embedded)
+
+    info = store.collection_info()
+    console.print(f"[bold green]✓[/bold green] Synced {n} items. Collection: {info['points_count']} total.")
+
+
+# ---- Phase 9 — delete ------------------------------------------------
+
+@cli.command()
+@click.argument("item_id")
+@click.option("--yes", "-y", is_flag=True, default=False, help="Skip confirmation prompt.")
+def delete(item_id: str, yes: bool) -> None:
+    """Remove a single item from the collection by UUID."""
+    from .config import get_settings
+    from .store import QdrantStore
+
+    if not yes:
+        click.confirm(f"Delete item {item_id!r} from the collection?", abort=True)
+
+    cfg = get_settings()
+    store = QdrantStore(cfg)
+    store.delete(item_id)
+    console.print(f"[green]✓[/green] Deleted {item_id!r}.")
+
+
 # ---- Phase 6 — info --------------------------------------------------
 
 @cli.command()
@@ -86,12 +164,17 @@ def info() -> None:
     "--no-explain", is_flag=True, default=False,
     help="Skip LLM explanation generation (faster).",
 )
+@click.option(
+    "--no-history", is_flag=True, default=False,
+    help="Disable watch-history implicit feedback boost.",
+)
 def query(
     query_text: str,
     top_k: int | None,
     fmt: str,
     rerank: bool,
     no_explain: bool,
+    no_history: bool,
 ) -> None:
     """Run the full recommendation pipeline for QUERY_TEXT."""
     from .config import get_settings
@@ -105,6 +188,7 @@ def query(
             top_k=top_k,
             use_reranker=rerank,
             explain=not no_explain,
+            use_history=not no_history,
             settings=cfg,
         )
         results = pipeline.run(query_text)

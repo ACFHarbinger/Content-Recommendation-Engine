@@ -9,6 +9,136 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.3.0] — 2026-05-31
+
+### Added — Phase 9: Quality, Tooling & Watch-History Feedback
+
+#### Test infrastructure
+
+- **`tests/conftest.py`** — Shared pytest fixtures powering the new test suite.
+  Key pieces:
+  - `FakeQdrantClient`: stateful in-memory Qdrant substitute with `create_collection`,
+    `upsert`, `scroll`, `search`, `query_points`, `delete`, and call-log inspection via
+    `client.calls`.
+  - `FakeQdrantModule` / `FakeModelsModule`: full stub tree for `qdrant_client` and
+    `qdrant_client.models` injected into `sys.modules` so all lazy imports resolve.
+  - `FakeAnthropicModule`: minimal sync + async-capable fake with configurable response
+    JSON; supports `await async_client.messages.create(...)`.
+  - `MockEmbedder`: hash-based deterministic vectors (no BGE-M3 load); covers `embed_dense`,
+    `embed_sparse`, and `embed_batch`.
+  - Fixtures: `qdrant_mock`, `anthropic_mock`, `mock_embedder`, `sample_items` (3 validated
+    MediaItems), `scored_candidates`, `cfg` (no-key Settings).
+
+- **`tests/test_store.py`** — 13 tests. Verifies `create_collection` idempotency, payload
+  index creation for all 7 filterable fields, `upsert` call delegation, batch-size splitting,
+  `collection_info` count, `delete` removal.
+
+- **`tests/test_retriever.py`** — 10 tests. Covers `_payload_to_item` edge cases (zero-valued
+  optional fields, entity list, missing fields), hybrid query path, filter-only scroll for
+  empty semantic query, top-K limiting, empty collection.
+
+- **`tests/test_explainer.py`** — 8 tests. No-API-key fallback (all template reasons),
+  `_fallback_reason` structure, consume-verb correctness, `matched_tags` Pydantic guard,
+  mocked async path result count, rank preservation after explain_batch.
+
+- **`tests/test_pipeline.py`** — 8 tests. Wires a complete pipeline from mocked parts;
+  verifies sorted output, rank-1 assignment, top-K cap, `explain=False` produces empty
+  reasons/tags, empty collection → empty list, component scores present.
+
+- **`tests/test_output.py`** — 11 tests. `to_json` valid JSON, required keys, nested
+  `component_scores`, empty input, indent parameter; `print_table` no-crash, missing
+  links, score bar bounds, type badge for known + unknown types.
+
+- **Total: 105 tests, 0 failures, 0 warnings.**
+
+#### Prompt caching
+
+- **`src/query_parser.py`** — `_call_claude` now passes a structured `system` list with
+  `"cache_control": {"type": "ephemeral"}` on the `_SYSTEM_PROMPT` block. The 3 KB system
+  prompt is transmitted once and cached for 5 minutes, cutting latency and token cost on
+  repeated query-parse calls.
+
+- **`src/explainer.py`** — Added module-level `_CACHED_SYSTEM` list (same `cache_control`
+  pattern). Reused for every `_explain_one` call within a batch so the prompt is cached
+  server-side across all parallel async requests.
+
+#### Watch-history implicit feedback
+
+- **`src/schema.py`** — `HistoryProfile` Pydantic model:
+  - `preferred_tags: frozenset[str]`, `preferred_genres: frozenset[str]`, `item_count: int`
+  - `from_payloads(payloads)` — builds profile from a list of Qdrant point payloads
+  - `overlap_fraction(item)` — fraction of item's tags + genres that appear in the profile
+
+- **`src/config.py`** — Two new settings:
+  - `history_min_rating: float` (default 7.0) — minimum rating to include in profile
+  - `history_boost_weight: float` (default 0.15) — boost strength (0 = off, 1 = max)
+
+- **`src/scorer.py`** — `_history_boost(item, profile)`:
+  - `boost = 1 + weight × overlap_fraction(item, profile)`
+  - Neutral (1.0) when no profile or zero-item count
+  - Wired into `_rank_one` as a fourth multiplicative factor
+  - `score()` now accepts `history_profile: Optional[HistoryProfile]`
+  - 5 new tests in `test_scorer.py` (empty profile, full overlap, partial overlap,
+    integration with `score()`)
+
+- **`src/pipeline.py`** — `_build_history_profile()` method:
+  - Scrolls Qdrant for items with `watch_status in ["watched", "reading"]` AND
+    `rating >= history_min_rating` (max 500 items)
+  - Returns `None` on any error so the pipeline continues without the boost
+  - `use_history: bool = True` constructor flag (disable with `--no-history`)
+  - `_store` renamed from local `store` so `_build_history_profile` can access the client
+
+#### CLI additions (`src/cli.py`)
+
+- **`recommend sync --input FILE [--batch-size N]`** — Incremental upsert: validates input,
+  embeds changed/new items, upserts to Qdrant (UUID-idempotent). Existing items are updated;
+  items not in the file are untouched. Identical flow to `ingest` without `--reset`.
+
+- **`recommend delete UUID [--yes]`** — Remove a single item from the collection. Prompts
+  for confirmation unless `--yes` is passed.
+
+- **`recommend query --no-history`** — Disable the watch-history boost for a single query
+  (useful for comparing results with and without personal feedback signal).
+
+#### Evaluation tooling
+
+- **`tests/golden_queries.json`** — All 10 entries now carry pre-parsed `semantic_query`
+  and `parsed_filters` fields (matching the QueryParser output schema), enabling
+  deterministic evaluation without a Claude API key.
+
+- **`scripts/evaluate.py`** (rewrite) — Uses pre-parsed filters directly via
+  `_build_qdrant_filter()`; no Claude dependency. Added `--csv PATH` flag to export
+  per-query metrics (NDCG@K, Precision@5, penalty count, result IDs) for post-processing.
+
+- **`scripts/sweep.py`** (new) — Grid search over `lambda_recency ∈ [0.02, 0.05, 0.10]` ×
+  `fusion_method ∈ [rrf, dbsf]` (6 combinations). For each combination, runs all golden
+  queries through `HybridRetriever + Scorer` and computes mean NDCG@K. Prints a Rich
+  comparison table with the best combination highlighted; optionally exports to CSV.
+
+#### Documentation
+
+- **`README.md`** (new) — Satisfies the Phase 0 requirement. Covers: how it works (pipeline
+  diagram), 5-step quickstart (docker, install, .env, ingest, query), full command reference
+  with flags table, data format with field descriptions, config table for all 14 env vars,
+  development commands, test coverage table, and architecture decision notes.
+
+- **`pyproject.toml`** — Removed `asyncio_mode = "auto"` (was causing a spurious pytest
+  config warning because `pytest-asyncio` is an optional dev dependency).
+
+- **`ROADMAP.md`** — Added Phase 9 with full task list and acceptance criteria; updated file
+  structure section to reflect current state; moved "Watch history" from Open Questions to
+  implemented (✅); added two new open questions (streaming explanations, collaborative
+  filtering).
+
+### Changed
+
+- `src/scorer.py` docstring updated to include the fourth factor (`history_boost`).
+- `src/pipeline.py` — `store` local renamed to `self._store`; `use_history` constructor
+  parameter added; `_build_history_profile` defined as an instance method.
+- `.env.example` — Added `HISTORY_MIN_RATING` and `HISTORY_BOOST_WEIGHT` entries.
+
+---
+
 ## [0.2.0] — 2026-05-31
 
 ### Added — Phase 2: Query Parser

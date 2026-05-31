@@ -1,6 +1,11 @@
 [
   {
     "query": "psychological thriller anime I haven't watched",
+    "semantic_query": "psychological thriller dark atmosphere horror",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"},
+      {"field": "watch_status", "op": "nin", "value": ["watched", "dropped"]}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000002",
       "00000000-0000-0000-0000-000000000009"
@@ -10,6 +15,11 @@
   },
   {
     "query": "space anime with jazz",
+    "semantic_query": "space bounty hunters jazz music neo-noir",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"},
+      {"field": "genres", "op": "in", "value": ["Action", "Sci-Fi"]}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000005"
     ],
@@ -18,6 +28,10 @@
   },
   {
     "query": "time travel mystery",
+    "semantic_query": "time travel mystery conspiracy sci-fi",
+    "parsed_filters": [
+      {"field": "tags", "op": "in", "value": ["time-travel"]}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000003"
     ],
@@ -26,6 +40,11 @@
   },
   {
     "query": "existential mecha with religious themes",
+    "semantic_query": "existential mecha psychological religious symbolism",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"},
+      {"field": "tags", "op": "in", "value": ["mecha"]}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000001"
     ],
@@ -34,6 +53,11 @@
   },
   {
     "query": "anime on my plan-to-watch list",
+    "semantic_query": "",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"},
+      {"field": "watch_status", "op": "eq", "value": "plan_to_watch"}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000008"
     ],
@@ -45,6 +69,10 @@
   },
   {
     "query": "sci-fi books about consciousness and first contact",
+    "semantic_query": "consciousness first contact alien neuroscience hard sci-fi",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "book"}
+    ],
     "expected_top_ids": [
       "10000000-0000-0000-0000-000000000004"
     ],
@@ -53,6 +81,11 @@
   },
   {
     "query": "classic literary sci-fi books",
+    "semantic_query": "classic literary science fiction world-building",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "book"},
+      {"field": "year_released", "op": "lt", "value": 1980}
+    ],
     "expected_top_ids": [
       "10000000-0000-0000-0000-000000000001",
       "10000000-0000-0000-0000-000000000002"
@@ -62,6 +95,10 @@
   },
   {
     "query": "dark philosophical anime with beautiful visuals",
+    "semantic_query": "dark philosophical beautiful animation visuals deep themes",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000004",
       "00000000-0000-0000-0000-000000000007"
@@ -71,6 +108,11 @@
   },
   {
     "query": "historical war anime with moral complexity",
+    "semantic_query": "historical war moral complexity vikings revenge journey",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"},
+      {"field": "genres", "op": "in", "value": ["Historical", "Action", "Drama"]}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000006"
     ],
@@ -79,6 +121,12 @@
   },
   {
     "query": "highly rated anime I've already watched rated above 9",
+    "semantic_query": "highly rated exceptional quality anime",
+    "parsed_filters": [
+      {"field": "type", "op": "eq", "value": "anime"},
+      {"field": "watch_status", "op": "eq", "value": "watched"},
+      {"field": "rating", "op": "gte", "value": 9.0}
+    ],
     "expected_top_ids": [
       "00000000-0000-0000-0000-000000000001",
       "00000000-0000-0000-0000-000000000002"

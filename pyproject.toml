@@ -32,5 +32,5 @@ build-backend = "setuptools.backends.legacy:build"
 where = ["."]
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]
+# asyncio_mode = "auto"  # Uncomment after installing pytest-asyncio
