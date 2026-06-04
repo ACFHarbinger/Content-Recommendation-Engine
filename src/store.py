@@ -1,13 +1,26 @@
 """
-Phase 1 — Qdrant collection management and upsert.
+SQLite-backed vector store — no external database required.
 
-QdrantStore wraps qdrant-client with the exact multi-vector schema required
-by the recommendation engine: one dense cosine field and one sparse dot-product
-field per document, plus indexed scalar payload for fast filtered queries.
+SQLiteStore manages a single ``items`` table in a local .db file
+(default ``data/rec_engine.db``) or an in-memory database (``":memory:"``).
+Dense and sparse vectors are serialised as JSON TEXT blobs; metadata fields
+are stored as native SQLite types with JSON arrays for list columns.
+
+Public API mirrors the retired QdrantStore so the rest of the pipeline
+requires minimal changes:
+  create_collection()  — CREATE TABLE IF NOT EXISTS  (idempotent)
+  upsert()             — INSERT OR REPLACE batches
+  delete()             — DELETE WHERE id = ?
+  collection_info()    — row count + db path
+  fetch_all()          — SELECT * with optional WHERE (includes vectors)
+  fetch_filtered()     — SELECT metadata columns only (for scroll / history)
 """
 from __future__ import annotations
 
+import json
 import logging
+import sqlite3
+from pathlib import Path
 from typing import Optional
 
 from .config import Settings, get_settings
@@ -15,51 +28,68 @@ from .schema import EmbeddedItem
 
 logger = logging.getLogger(__name__)
 
+_CREATE_TABLE = """
+CREATE TABLE IF NOT EXISTS items (
+    id                    TEXT PRIMARY KEY,
+    title                 TEXT NOT NULL,
+    type                  TEXT,
+    watch_status          TEXT,
+    rating                REAL,
+    year_released         INTEGER,
+    num_episodes_or_pages INTEGER,
+    genres                TEXT,               -- JSON array
+    tags                  TEXT,               -- JSON array
+    associated_entities   TEXT,               -- JSON array
+    local_file_location   TEXT,
+    web_link              TEXT,
+    dense_vector          TEXT NOT NULL,      -- JSON array[float]
+    sparse_indices        TEXT NOT NULL,      -- JSON array[int]
+    sparse_values         TEXT NOT NULL       -- JSON array[float]
+)
+"""
 
-class QdrantStore:
+_JSON_COLS = ("genres", "tags", "associated_entities",
+              "dense_vector", "sparse_indices", "sparse_values")
+_META_JSON_COLS = ("genres", "tags", "associated_entities")
+
+
+class SQLiteStore:
     """
-    Manages the Qdrant collection for media-item embeddings.
+    Manages the SQLite items table for the recommendation engine.
 
     Usage
     -----
-    store = QdrantStore()
+    store = SQLiteStore()
     store.create_collection()          # idempotent
     store.upsert(embedded_items)
     info = store.collection_info()
     """
 
-    DENSE_DIM = 1024
-
     def __init__(self, settings: Optional[Settings] = None):
         self._cfg = settings or get_settings()
-        self._client = None
+        self._conn: Optional[sqlite3.Connection] = None
 
     # ------------------------------------------------------------------
     # Connection
     # ------------------------------------------------------------------
 
-    def _get_client(self):
-        if self._client is None:
-            try:
-                from qdrant_client import QdrantClient
-            except ImportError as e:
-                raise RuntimeError(
-                    "qdrant-client not installed. "
-                    "Run: pip install 'qdrant-client>=1.9.0'"
-                ) from e
-
-            if self._cfg.use_local_qdrant:
-                self._client = QdrantClient(path=self._cfg.qdrant_storage_path)
-                logger.info(
-                    "Connected to local Qdrant at %s", self._cfg.qdrant_storage_path
-                )
+    def _get_conn(self) -> sqlite3.Connection:
+        if self._conn is None:
+            db_path = self._cfg.sqlite_path
+            if db_path != ":memory:":
+                Path(db_path).parent.mkdir(parents=True, exist_ok=True)
+                self._conn = sqlite3.connect(db_path, check_same_thread=False)
+                self._conn.execute("PRAGMA journal_mode=WAL")
             else:
-                self._client = QdrantClient(
-                    url=self._cfg.qdrant_url,
-                    api_key=self._cfg.qdrant_api_key,
-                )
-                logger.info("Connected to remote Qdrant at %s", self._cfg.qdrant_url)
-        return self._client
+                self._conn = sqlite3.connect(":memory:", check_same_thread=False)
+            self._conn.row_factory = sqlite3.Row
+            logger.info("Connected to SQLite at %s", db_path)
+        return self._conn
+
+    def close(self) -> None:
+        if self._conn is not None:
+            self._conn.close()
+            self._conn = None
 
     # ------------------------------------------------------------------
     # Collection management
@@ -67,68 +97,29 @@ class QdrantStore:
 
     def create_collection(self) -> bool:
         """
-        Create the listings collection if it does not exist.  Idempotent.
+        Create the items table if it does not exist.  Idempotent.
 
-        Returns True when the collection was created, False when it already existed.
+        Returns True when the table was created, False when it already existed.
         """
-        from qdrant_client.models import (
-            Distance,
-            FieldCondition,
-            PayloadSchemaType,
-            SparseIndexParams,
-            SparseVectorParams,
-            VectorParams,
+        conn = self._get_conn()
+        cur = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='items'"
         )
-
-        client = self._get_client()
-        collection = self._cfg.qdrant_collection
-        existing = {c.name for c in client.get_collections().collections}
-
-        if collection in existing:
-            logger.debug("Collection '%s' already exists.", collection)
-            return False
-
-        client.create_collection(
-            collection_name=collection,
-            vectors_config={
-                "dense": VectorParams(
-                    size=self.DENSE_DIM, distance=Distance.COSINE
-                )
-            },
-            sparse_vectors_config={
-                "sparse": SparseVectorParams(
-                    index=SparseIndexParams(on_disk=False)
-                )
-            },
-        )
-
-        # Create payload indexes for filterable scalar fields
-        for field, schema_type in [
-            ("type", PayloadSchemaType.KEYWORD),
-            ("watch_status", PayloadSchemaType.KEYWORD),
-            ("genres", PayloadSchemaType.KEYWORD),
-            ("tags", PayloadSchemaType.KEYWORD),
-            ("rating", PayloadSchemaType.FLOAT),
-            ("year_released", PayloadSchemaType.INTEGER),
-            ("num_episodes_or_pages", PayloadSchemaType.INTEGER),
-        ]:
-            client.create_payload_index(
-                collection_name=collection,
-                field_name=field,
-                field_schema=schema_type,
-            )
-
-        logger.info("Created collection '%s' with payload indexes.", collection)
-        return True
+        existed = cur.fetchone() is not None
+        conn.execute(_CREATE_TABLE)
+        conn.commit()
+        if not existed:
+            logger.info("Created 'items' table at %s", self._cfg.sqlite_path)
+        return not existed
 
     def collection_info(self) -> dict:
-        """Return point count and vector configuration."""
-        client = self._get_client()
-        info = client.get_collection(self._cfg.qdrant_collection)
+        """Return row count and database path."""
+        conn = self._get_conn()
+        (count,) = conn.execute("SELECT COUNT(*) FROM items").fetchone()
         return {
-            "points_count": info.points_count,
-            "collection": self._cfg.qdrant_collection,
-            "storage": self._cfg.qdrant_storage_path or self._cfg.qdrant_url,
+            "points_count": count,
+            "collection": "items",
+            "storage": self._cfg.sqlite_path,
         }
 
     # ------------------------------------------------------------------
@@ -137,59 +128,112 @@ class QdrantStore:
 
     def upsert(self, items: list[EmbeddedItem], batch_size: int = 64) -> int:
         """
-        Upsert a list of EmbeddedItems to Qdrant.
+        Upsert a list of EmbeddedItems to SQLite.
 
-        Returns the number of points successfully upserted.
+        Returns the number of rows inserted or replaced.
         """
-        from qdrant_client.models import PointStruct, SparseVector
-
-        client = self._get_client()
-        collection = self._cfg.qdrant_collection
+        conn = self._get_conn()
         upserted = 0
 
         for start in range(0, len(items), batch_size):
             batch = items[start : start + batch_size]
-            structs = []
+            rows = []
             for ei in batch:
                 item = ei.item
-                payload = {
-                    "id": item.id,
-                    "title": item.title,
-                    "type": item.type or "",
-                    "watch_status": item.watch_status or "",
-                    "rating": item.rating or 0.0,
-                    "year_released": item.year_released or 0,
-                    "num_episodes_or_pages": item.num_episodes_or_pages or 0,
-                    "genres": item.genres,
-                    "tags": item.tags,
-                    "associated_entities": item.associated_entities,
-                    "local_file_location": item.local_file_location or "",
-                    "web_link": item.web_link or "",
-                }
-                structs.append(
-                    PointStruct(
-                        id=item.id,
-                        vector={
-                            "dense": ei.dense_vector,
-                            "sparse": SparseVector(
-                                indices=ei.sparse_indices,
-                                values=ei.sparse_values,
-                            ),
-                        },
-                        payload=payload,
-                    )
-                )
-            client.upsert(collection_name=collection, points=structs)
-            upserted += len(structs)
-            logger.debug("Upserted %d/%d points", upserted, len(items))
+                rows.append((
+                    item.id,
+                    item.title,
+                    item.type or "",
+                    item.watch_status or "",
+                    item.rating,
+                    item.year_released,
+                    item.num_episodes_or_pages,
+                    json.dumps(item.genres),
+                    json.dumps(item.tags),
+                    json.dumps(item.associated_entities),
+                    item.local_file_location or "",
+                    item.web_link or "",
+                    json.dumps(ei.dense_vector),
+                    json.dumps(ei.sparse_indices),
+                    json.dumps(ei.sparse_values),
+                ))
+
+            conn.executemany(
+                """
+                INSERT OR REPLACE INTO items (
+                    id, title, type, watch_status, rating, year_released,
+                    num_episodes_or_pages, genres, tags, associated_entities,
+                    local_file_location, web_link,
+                    dense_vector, sparse_indices, sparse_values
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                rows,
+            )
+            conn.commit()
+            upserted += len(rows)
+            logger.debug("Upserted %d/%d rows", upserted, len(items))
 
         return upserted
 
     def delete(self, item_id: str) -> None:
-        from qdrant_client.models import PointIdsList
+        conn = self._get_conn()
+        conn.execute("DELETE FROM items WHERE id = ?", (item_id,))
+        conn.commit()
 
-        client = self._get_client()
-        client.delete(
-            collection_name=self._cfg.qdrant_collection,
-            points_selector=PointIdsList(points=[item_id]),
+    # ------------------------------------------------------------------
+    # Read helpers used by retriever and pipeline
+    # ------------------------------------------------------------------
+
+    def fetch_all(
+        self,
+        where_clause: str = "",
+        params: Optional[list] = None,
+    ) -> list[dict]:
+        """
+        Fetch all rows (including vectors) matching the optional WHERE clause.
+
+        JSON columns are decoded back to Python lists before returning.
+        """
+        conn = self._get_conn()
+        sql = "SELECT * FROM items"
+        if where_clause:
+            sql += f" WHERE {where_clause}"
+        cur = conn.execute(sql, params or [])
+        rows = []
+        for row in cur.fetchall():
+            d = dict(row)
+            for col in _JSON_COLS:
+                raw = d.get(col)
+                d[col] = json.loads(raw) if raw else []
+            rows.append(d)
+        return rows
+
+    def fetch_filtered(
+        self,
+        where_clause: str = "",
+        params: Optional[list] = None,
+        limit: int = 500,
+    ) -> list[dict]:
+        """
+        Fetch metadata rows (without vectors) for scroll and history profile.
+
+        JSON columns are decoded back to Python lists before returning.
+        """
+        conn = self._get_conn()
+        sql = (
+            "SELECT id, title, type, watch_status, rating, year_released, "
+            "num_episodes_or_pages, genres, tags, associated_entities, "
+            "local_file_location, web_link FROM items"
         )
+        if where_clause:
+            sql += f" WHERE {where_clause}"
+        sql += f" LIMIT {limit}"
+        cur = conn.execute(sql, params or [])
+        rows = []
+        for row in cur.fetchall():
+            d = dict(row)
+            for col in _META_JSON_COLS:
+                raw = d.get(col)
+                d[col] = json.loads(raw) if raw else []
+            rows.append(d)
+        return rows

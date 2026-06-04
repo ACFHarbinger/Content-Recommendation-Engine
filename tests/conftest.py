@@ -2,194 +2,22 @@
 Shared test fixtures for the Recommendation Engine test suite.
 
 Provides:
-  qdrant_mock     — injects a stateful in-memory FakeQdrantClient into sys.modules
-  anthropic_mock  — injects a minimal async-capable fake anthropic module
-  mock_embedder   — returns a MockEmbedder that never loads BGE-M3
-  sample_items    — 3 pre-validated MediaItem objects for quick tests
+  cfg               — Settings with a temp-file SQLite path (isolated per test)
+  sqlite_store      — A ready-to-use SQLiteStore backed by the cfg db
+  anthropic_mock    — Injects a minimal async-capable fake anthropic module
+  mock_embedder     — MockEmbedder that never loads BGE-M3
+  sample_items      — 3 pre-validated MediaItem objects for quick tests
   scored_candidates — 3 ScoredCandidate objects ready for scoring/explaining
 """
 from __future__ import annotations
 
-import json
 import sys
 import types
-from pathlib import Path
 from typing import Any
 
 import pytest
 
 from src.schema import EmbeddedItem, MediaItem, ScoredCandidate
-
-# ---------------------------------------------------------------------------
-# In-memory Qdrant client + model stubs
-# ---------------------------------------------------------------------------
-
-class _FakeBase:
-    def __init__(self, **kwargs):
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-
-class _FakeCollectionEntry:
-    def __init__(self, name: str):
-        self.name = name
-
-
-class _FakeCollectionsList:
-    def __init__(self, names: list[str]):
-        self.collections = [_FakeCollectionEntry(n) for n in names]
-
-
-class _FakeCollectionInfo:
-    def __init__(self, points_count: int):
-        self.points_count = points_count
-
-
-class _FakePointStruct:
-    def __init__(self, id, vector, payload=None):
-        self.id = id
-        self.vector = vector
-        self.payload = payload or {}
-
-
-class _FakeScoredPoint:
-    def __init__(self, payload: dict, score: float):
-        self.id = payload.get("id", "x")
-        self.payload = payload
-        self.score = score
-
-
-class _FakeQueryResponse:
-    def __init__(self, points: list):
-        self.points = points
-
-
-class _FakeQdrantCollection:
-    def __init__(self):
-        self.points: dict[str, _FakePointStruct] = {}
-
-
-class FakeQdrantClient:
-    """
-    Stateful in-memory Qdrant client substitute.
-
-    Records all calls and stores upserted points so retrieval tests
-    can assert on what was written.  Search/query methods return
-    stored points in insertion order (no actual ANN — correctness
-    of ranking is tested at the unit level, not here).
-    """
-
-    def __init__(self, path=None, url=None, api_key=None):
-        self._colls: dict[str, _FakeQdrantCollection] = {}
-        self.calls: list[tuple[str, Any]] = []   # [(method_name, kwargs), ...]
-
-    # ---- collection management ----
-
-    def get_collections(self):
-        return _FakeCollectionsList(list(self._colls.keys()))
-
-    def create_collection(self, collection_name, vectors_config=None,
-                          sparse_vectors_config=None, **_kw):
-        self.calls.append(("create_collection", collection_name))
-        self._colls.setdefault(collection_name, _FakeQdrantCollection())
-
-    def create_payload_index(self, collection_name, field_name, field_schema=None, **_kw):
-        self.calls.append(("create_payload_index", (collection_name, field_name)))
-
-    def delete_collection(self, collection_name):
-        self._colls.pop(collection_name, None)
-
-    def get_collection(self, collection_name):
-        col = self._colls.get(collection_name)
-        return _FakeCollectionInfo(len(col.points) if col else 0)
-
-    # ---- upsert / delete ----
-
-    def upsert(self, collection_name, points, **_kw):
-        col = self._colls.setdefault(collection_name, _FakeQdrantCollection())
-        for p in points:
-            col.points[str(p.id)] = p
-        self.calls.append(("upsert", (collection_name, len(points))))
-
-    def delete(self, collection_name, points_selector=None, **_kw):
-        col = self._colls.get(collection_name)
-        if col and points_selector is not None:
-            for pid in getattr(points_selector, "points", []):
-                col.points.pop(str(pid), None)
-
-    # ---- search / scroll / query ----
-
-    def scroll(self, collection_name, scroll_filter=None, limit=100,
-               with_payload=True, with_vectors=False, offset=None, **_kw):
-        col = self._colls.get(collection_name)
-        if not col:
-            return [], None
-        pts = list(col.points.values())[:limit]
-        return [_FakeScoredPoint(p.payload, 1.0) for p in pts], None
-
-    def search(self, collection_name, query_vector=None, query_filter=None,
-               limit=10, with_payload=True, **_kw):
-        col = self._colls.get(collection_name)
-        if not col:
-            return []
-        pts = list(col.points.values())[:limit]
-        return [_FakeScoredPoint(p.payload, 0.9 - i * 0.05) for i, p in enumerate(pts)]
-
-    def query_points(self, collection_name, prefetch=None, query=None,
-                     limit=10, with_payload=True, **_kw):
-        col = self._colls.get(collection_name)
-        if not col:
-            return _FakeQueryResponse([])
-        pts = list(col.points.values())[:limit]
-        return _FakeQueryResponse(
-            [_FakeScoredPoint(p.payload, 0.9 - i * 0.05) for i, p in enumerate(pts)]
-        )
-
-
-def _build_qdrant_module(client_instance: FakeQdrantClient):
-    """Build a fake qdrant_client module tree around a given client instance."""
-    qdrant_mod = types.ModuleType("qdrant_client")
-    models_mod = types.ModuleType("qdrant_client.models")
-
-    # Stick all needed stubs onto models_mod
-    for name, cls in [
-        ("Filter", _FakeBase),
-        ("FieldCondition", _FakeBase),
-        ("MatchValue", _FakeBase),
-        ("MatchAny", _FakeBase),
-        ("MatchExcept", _FakeBase),
-        ("Range", _FakeBase),
-        ("PointStruct", _FakePointStruct),
-        ("SparseVector", _FakeBase),
-        ("NamedVector", _FakeBase),
-        ("NamedSparseVector", _FakeBase),
-        ("PointIdsList", _FakeBase),
-        ("VectorParams", _FakeBase),
-        ("SparseVectorParams", _FakeBase),
-        ("SparseIndexParams", _FakeBase),
-        ("Prefetch", _FakeBase),
-        ("FusionQuery", _FakeBase),
-    ]:
-        setattr(models_mod, name, cls)
-
-    # Enum-like stubs
-    class _Distance:
-        COSINE = "cosine"; DOT = "dot"
-
-    class _Fusion:
-        RRF = "rrf"; DBSF = "dbsf"
-
-    class _PayloadSchemaType:
-        KEYWORD = "keyword"; FLOAT = "float"; INTEGER = "integer"
-
-    models_mod.Distance = _Distance
-    models_mod.Fusion = _Fusion
-    models_mod.PayloadSchemaType = _PayloadSchemaType
-
-    qdrant_mod.models = models_mod
-    qdrant_mod.QdrantClient = lambda **kw: client_instance
-
-    return qdrant_mod, models_mod
 
 
 # ---------------------------------------------------------------------------
@@ -242,7 +70,6 @@ class MockEmbedder:
     DENSE_DIM = 1024
 
     def embed_dense(self, text: str) -> list[float]:
-        # Use hash of text so different texts get different vectors
         h = hash(text) % 1000
         vec = [0.0] * self.DENSE_DIM
         vec[h] = 1.0
@@ -281,21 +108,25 @@ class MockEmbedder:
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
-def fake_client() -> FakeQdrantClient:
-    """A fresh in-memory FakeQdrantClient per test."""
-    return FakeQdrantClient()
+def cfg(tmp_path):
+    """Settings with a per-test temp SQLite file so stores don't share state."""
+    from src.config import Settings
+    return Settings(
+        anthropic_api_key=None,
+        sqlite_path=str(tmp_path / "test_rec.db"),
+        lambda_recency=0.05,
+        length_scale=12,
+    )
 
 
 @pytest.fixture
-def qdrant_mock(monkeypatch, fake_client):
-    """
-    Injects a fake qdrant_client into sys.modules for one test.
-    Returns the underlying FakeQdrantClient so tests can inspect state.
-    """
-    qdrant_mod, models_mod = _build_qdrant_module(fake_client)
-    monkeypatch.setitem(sys.modules, "qdrant_client", qdrant_mod)
-    monkeypatch.setitem(sys.modules, "qdrant_client.models", models_mod)
-    return fake_client
+def sqlite_store(cfg):
+    """A fresh SQLiteStore backed by the per-test temp db."""
+    from src.store import SQLiteStore
+    store = SQLiteStore(cfg)
+    store.create_collection()
+    yield store
+    store.close()
 
 
 @pytest.fixture
@@ -360,15 +191,3 @@ def scored_candidates(sample_items) -> list[ScoredCandidate]:
         ScoredCandidate(item=sample_items[1], rrf_score=0.6),
         ScoredCandidate(item=sample_items[2], rrf_score=0.4),
     ]
-
-
-@pytest.fixture
-def cfg():
-    """A minimal Settings object with no external dependencies."""
-    from src.config import Settings
-    return Settings(
-        anthropic_api_key=None,
-        qdrant_local_path="/tmp/test_rec_engine",
-        lambda_recency=0.05,
-        length_scale=12,
-    )

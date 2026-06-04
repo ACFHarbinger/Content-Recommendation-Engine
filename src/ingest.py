@@ -5,7 +5,7 @@ Usage:
     python -m src.ingest --input data/items.json [--batch-size 32] [--reset]
 
 Validates each item against the MediaItem schema, embeds in batches with
-BGE-M3, and upserts to Qdrant with a rich progress bar.
+BGE-M3, and upserts to the SQLite store with a rich progress bar.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeEl
 from .config import get_settings
 from .embedder import Embedder
 from .schema import MediaItem
-from .store import QdrantStore
+from .store import SQLiteStore
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -52,16 +52,15 @@ def load_and_validate(path: Path) -> tuple[list[MediaItem], list[dict]]:
 @click.command()
 @click.option("--input", "-i", "input_path", required=True, type=click.Path(exists=True), help="Path to JSON file with media items.")
 @click.option("--batch-size", "-b", default=32, show_default=True, help="Embedding batch size (reduce if OOM).")
-@click.option("--reset", is_flag=True, default=False, help="Drop and recreate the Qdrant collection before ingesting.")
+@click.option("--reset", is_flag=True, default=False, help="Drop and recreate the items table before ingesting.")
 def ingest(input_path: str, batch_size: int, reset: bool) -> None:
-    """Ingest a JSON media library into Qdrant."""
+    """Ingest a JSON media library into the SQLite store."""
     cfg = get_settings()
     path = Path(input_path)
 
     console.rule("[bold cyan]Recommendation Engine — Ingest[/bold cyan]")
     console.print(f"Input    : [green]{path}[/green]")
-    console.print(f"Collection: [green]{cfg.qdrant_collection}[/green]")
-    console.print(f"Storage  : [green]{cfg.qdrant_storage_path or cfg.qdrant_url}[/green]")
+    console.print(f"Storage  : [green]{cfg.sqlite_path}[/green]")
 
     # Validate input
     with console.status("Validating input…"):
@@ -73,11 +72,13 @@ def ingest(input_path: str, batch_size: int, reset: bool) -> None:
         sys.exit(1)
 
     # Store setup
-    store = QdrantStore(cfg)
+    store = SQLiteStore(cfg)
     if reset:
         try:
-            store._get_client().delete_collection(cfg.qdrant_collection)
-            console.print("[yellow]⚠  Dropped existing collection.[/yellow]")
+            conn = store._get_conn()
+            conn.execute("DROP TABLE IF EXISTS items")
+            conn.commit()
+            console.print("[yellow]⚠  Dropped existing items table.[/yellow]")
         except Exception:
             pass
     store.create_collection()
@@ -85,7 +86,6 @@ def ingest(input_path: str, batch_size: int, reset: bool) -> None:
     # Embed
     embedder = Embedder(model_name=cfg.embed_model, max_length=512)
 
-    embedded = []
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -101,14 +101,14 @@ def ingest(input_path: str, batch_size: int, reset: bool) -> None:
         embedded = embedder.embed_batch(items, batch_size=batch_size, progress_callback=_cb)
 
     # Upsert
-    with console.status(f"Upserting {len(embedded)} points to Qdrant…"):
+    with console.status(f"Upserting {len(embedded)} items to SQLite…"):
         n = store.upsert(embedded, batch_size=64)
 
     info = store.collection_info()
     console.print(
         f"[bold green]✓ Done.[/bold green] "
-        f"Upserted {n} points.  "
-        f"Collection now has {info['points_count']} total points."
+        f"Upserted {n} items.  "
+        f"Store now has {info['points_count']} total items."
     )
 
 

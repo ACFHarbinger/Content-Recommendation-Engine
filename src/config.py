@@ -4,7 +4,6 @@ All fields have sensible defaults so the engine works locally without any config
 """
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Optional
 
 from pydantic import Field
@@ -15,11 +14,8 @@ class Settings(BaseSettings):
     # Anthropic — required for query parsing (Phase 2) and explanations (Phase 5)
     anthropic_api_key: Optional[str] = Field(None, validation_alias="ANTHROPIC_API_KEY")
 
-    # Qdrant — leave url blank to use local file-based mode
-    qdrant_url: Optional[str] = Field(None, validation_alias="QDRANT_URL")
-    qdrant_api_key: Optional[str] = Field(None, validation_alias="QDRANT_API_KEY")
-    qdrant_local_path: str = Field(".qdrant_data", validation_alias="QDRANT_LOCAL_PATH")
-    qdrant_collection: str = Field("listings", validation_alias="QDRANT_COLLECTION")
+    # SQLite storage path (use ":memory:" for tests)
+    sqlite_path: str = Field("data/rec_engine.db", validation_alias="SQLITE_PATH")
 
     # Embedding (Phase 1)
     embed_model: str = Field("BAAI/bge-m3", validation_alias="EMBED_MODEL")
@@ -51,14 +47,6 @@ class Settings(BaseSettings):
         "extra": "ignore",
         "populate_by_name": True,
     }
-
-    @property
-    def use_local_qdrant(self) -> bool:
-        return not bool(self.qdrant_url)
-
-    @property
-    def qdrant_storage_path(self) -> Optional[str]:
-        return str(Path(self.qdrant_local_path).resolve()) if self.use_local_qdrant else None
 
 
 _settings: Optional[Settings] = None

@@ -1,6 +1,6 @@
 """
 Phase 2 — Self-Querying Retriever: converts free-form user prompts into
-(semantic_query, Qdrant filters) using the Claude API.
+(semantic_query, SQL filter) using the Claude API.
 
 Falls back to a pure semantic search (no filters, full query as semantic text)
 on any API error, malformed JSON, or missing API key — so the pipeline never
@@ -91,55 +91,84 @@ User: "space opera anime under 26 episodes with action"
 {"semantic_query":"space opera interstellar adventure action","filters":[{"field":"type","op":"eq","value":"anime"},{"field":"genres","op":"in","value":["Action","Sci-Fi"]}],"length_preference_episodes":26}
 """
 
+# Fields whose values are stored as JSON arrays in SQLite
+_ARRAY_FIELDS = frozenset({"genres", "tags", "associated_entities"})
 
-def _build_qdrant_filter(filters: list[FilterClause]):
-    """Convert ParsedQuery filters into a qdrant_client Filter object."""
+
+def _build_sql_filter(filters: list[FilterClause]) -> tuple[str, list]:
+    """
+    Convert ParsedQuery filters into a SQL WHERE clause.
+
+    Returns (where_clause, params) where where_clause is a SQL condition
+    string without the WHERE keyword, or ("", []) when filters is empty.
+    """
     if not filters:
-        return None
-    try:
-        from qdrant_client.models import (
-            FieldCondition,
-            Filter,
-            MatchAny,
-            MatchExcept,
-            MatchValue,
-            Range,
-        )
+        return "", []
 
-        must: list[Any] = []
-        must_not: list[Any] = []
+    clauses: list[str] = []
+    params: list[Any] = []
 
-        for f in filters:
-            field, op, value = f.field, f.op, f.value
+    for f in filters:
+        field, op, value = f.field, f.op, f.value
 
-            if op == "eq":
-                must.append(FieldCondition(key=field, match=MatchValue(value=value)))
-            elif op == "ne":
-                must_not.append(FieldCondition(key=field, match=MatchValue(value=value)))
-            elif op == "in":
+        if field in _ARRAY_FIELDS:
+            # JSON array column — use json_each() for containment checks
+            if op == "in":
                 vals = value if isinstance(value, list) else [value]
-                must.append(FieldCondition(key=field, match=MatchAny(any=vals)))
+                ph = ",".join("?" * len(vals))
+                clauses.append(
+                    f"EXISTS (SELECT 1 FROM json_each({field}) WHERE value IN ({ph}))"
+                )
+                params.extend(vals)
             elif op == "nin":
                 vals = value if isinstance(value, list) else [value]
-                must_not.append(FieldCondition(key=field, match=MatchAny(any=vals)))
+                ph = ",".join("?" * len(vals))
+                clauses.append(
+                    f"NOT EXISTS (SELECT 1 FROM json_each({field}) WHERE value IN ({ph}))"
+                )
+                params.extend(vals)
+            elif op == "eq":
+                clauses.append(
+                    f"EXISTS (SELECT 1 FROM json_each({field}) WHERE value = ?)"
+                )
+                params.append(value)
+            elif op == "ne":
+                clauses.append(
+                    f"NOT EXISTS (SELECT 1 FROM json_each({field}) WHERE value = ?)"
+                )
+                params.append(value)
+        else:
+            # Scalar column — standard SQL operators
+            if op == "eq":
+                clauses.append(f"{field} = ?")
+                params.append(value)
+            elif op == "ne":
+                clauses.append(f"{field} != ?")
+                params.append(value)
             elif op == "gt":
-                must.append(FieldCondition(key=field, range=Range(gt=value)))
+                clauses.append(f"{field} > ?")
+                params.append(value)
             elif op == "gte":
-                must.append(FieldCondition(key=field, range=Range(gte=value)))
+                clauses.append(f"{field} >= ?")
+                params.append(value)
             elif op == "lt":
-                must.append(FieldCondition(key=field, range=Range(lt=value)))
+                clauses.append(f"{field} < ?")
+                params.append(value)
             elif op == "lte":
-                must.append(FieldCondition(key=field, range=Range(lte=value)))
+                clauses.append(f"{field} <= ?")
+                params.append(value)
+            elif op == "in":
+                vals = value if isinstance(value, list) else [value]
+                ph = ",".join("?" * len(vals))
+                clauses.append(f"{field} IN ({ph})")
+                params.extend(vals)
+            elif op == "nin":
+                vals = value if isinstance(value, list) else [value]
+                ph = ",".join("?" * len(vals))
+                clauses.append(f"{field} NOT IN ({ph})")
+                params.extend(vals)
 
-        kwargs: dict[str, Any] = {}
-        if must:
-            kwargs["must"] = must
-        if must_not:
-            kwargs["must_not"] = must_not
-        return Filter(**kwargs) if kwargs else None
-    except Exception as exc:
-        logger.warning("Failed to build Qdrant filter: %s", exc)
-        return None
+    return " AND ".join(clauses), params
 
 
 class QueryParser:
@@ -168,11 +197,11 @@ class QueryParser:
         self._cache.put(query, parsed)
         return parsed
 
-    def parse_to_qdrant(self, query: str):
-        """Convenience: parse query and return (ParsedQuery, Qdrant Filter | None)."""
+    def parse_to_sql(self, query: str) -> tuple[ParsedQuery, tuple[str, list]]:
+        """Convenience: parse query and return (ParsedQuery, (where_clause, params))."""
         parsed = self.parse(query)
-        qdrant_filter = _build_qdrant_filter(parsed.filters)
-        return parsed, qdrant_filter
+        sql_filter = _build_sql_filter(parsed.filters)
+        return parsed, sql_filter
 
     # ------------------------------------------------------------------
     # Internal
@@ -188,7 +217,6 @@ class QueryParser:
 
             client = anthropic.Anthropic(api_key=self._cfg.anthropic_api_key)
             # Cache the static system prompt so repeated calls hit the cache.
-            # cache_control is ignored by older SDK versions, so this is safe.
             system_block = [
                 {
                     "type": "text",
@@ -211,7 +239,6 @@ class QueryParser:
 
     def _parse_response(self, text: str, original_query: str) -> ParsedQuery:
         """Extract JSON from Claude's response and build a ParsedQuery."""
-        # Strip markdown code fences if present
         text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.MULTILINE)
         text = re.sub(r"\s*```$", "", text, flags=re.MULTILINE)
         text = text.strip()

@@ -22,20 +22,20 @@ The system is a five-stage pipeline. Stages 1–2 run offline (ingestion); stage
   └── Sparse vector → title + tags + genres + entities lexical space
        │
        ▼
-  Qdrant collection
-  (multi-vector fields + scalar payload indexes)
+  SQLite database
+  (items table: scalar columns + JSON array columns + vector blobs)
 
 [Online]
   User prompt
        │
        ▼
   1. Self-Querying Retriever (LLM)
-     └── {semantic_query, metadata_filters}
+     └── {semantic_query, SQL WHERE clause}
        │
        ▼
-  2. Hybrid Retrieval (Qdrant prefetch)
-     ├── Dense k-NN on review/notes vectors  ┐
-     └── Sparse k-NN on title/tag vectors    ┘ → both pre-filtered by structured constraints
+  2. Hybrid Retrieval (Python vector math)
+     ├── Cosine similarity on dense vectors  ┐
+     └── Dot-product on sparse vectors       ┘ → both filtered by SQL WHERE
        │
        ▼
   3. Score Fusion (RRF default, DBSF optional)
@@ -85,15 +85,16 @@ Every item in the dataset conforms to this schema. Fields in **bold** are indexe
 
 | Layer | Choice | Rationale |
 |---|---|---|
-| Language | Python 3.11+ | Ecosystem fit; FlagEmbedding, Qdrant, LangChain all native |
+| Language | Python 3.11+ | Ecosystem fit; FlagEmbedding, SQLite, LangChain all native |
 | Embedding model | `BAAI/bge-m3` (via `FlagEmbedding`) | Single model produces dense + sparse + ColBERT multi-vector simultaneously; 8192-token context |
-| Vector database | Qdrant (local Docker) | ACORN algorithm integrates filtering into HNSW graph — filtered queries stay fast even at 99% filter rate; native RRF + DBSF fusion; Rust-based memory efficiency |
-| Score fusion | RRF (default) → DBSF (when score magnitude matters) | RRF is robust and distribution-agnostic; DBSF preserves score gaps |
+| Vector storage | SQLite (stdlib `sqlite3`) | Zero-dependency, zero-config, single file; vectors stored as JSON blobs; brute-force cosine/dot-product is fast enough for personal library sizes (~10 000 items) |
+| Score fusion | RRF (default) → DBSF (when score magnitude matters) | RRF is robust and distribution-agnostic; DBSF preserves score gaps; both implemented in pure Python |
+| Filtering | SQL WHERE clauses via `json_each()` | Scalar fields use native SQL operators; array fields (genres, tags) use SQLite's `json_each()` for containment checks |
 | Query parser | Claude API (claude-sonnet-4-6) with few-shot prompt | Parses mixed NL + tag queries into `{semantic_query, filters}` JSON |
 | Explanation generator | Claude API (claude-sonnet-4-6) | Metadata-grounded structured JSON output; anti-hallucination via explicit payload injection |
 | Reranker (Phase 8) | `BAAI/bge-reranker-v2-m3` | Cross-encoder precision on shortlisted candidates |
 | CLI | Click | Lightweight, composable |
-| Config | `pyproject.toml` + `.env` | API keys via env; model/Qdrant settings in config |
+| Config | `pyproject.toml` + `.env` | API keys via env; model and storage settings in config |
 | Validation | Pydantic v2 | Schema enforcement at ingestion + output |
 
 ---
@@ -123,16 +124,21 @@ Every item in the dataset conforms to this schema. Fields in **bold** are indexe
 
 **Goal**: Embed all items and store them in Qdrant with correct multi-vector structure and payload indexes.
 
-### Qdrant Collection Design
+### SQLite Schema Design
 
-Create a single collection with **two named vector fields** per document:
+A single `items` table stores both metadata and vectors per document:
 
-| Vector field | Source text | Type | Metric |
-|---|---|---|---|
-| `dense` | `review_notes` (or fallback concat) | Dense (1024-dim float) | Cosine |
-| `sparse` | `title + " " + genres + tags + associated_entities` | Sparse (SPLADE-style) | Dot product |
-
-Scalar payload fields indexed for filtering: `type`, `watch_status`, `rating`, `year_released`, `num_episodes_or_pages`, `genres` (keyword), `tags` (keyword).
+| Column | Type | Notes |
+|---|---|---|
+| `id` | TEXT PRIMARY KEY | UUID v4 |
+| `title` | TEXT | |
+| `type`, `watch_status` | TEXT | Filterable via `= ?` / `IN (…)` |
+| `rating` | REAL | Filterable via range operators |
+| `year_released`, `num_episodes_or_pages` | INTEGER | Filterable via range operators |
+| `genres`, `tags`, `associated_entities` | TEXT (JSON) | Filterable via `json_each()` containment |
+| `local_file_location`, `web_link` | TEXT | Unindexed metadata |
+| `dense_vector` | TEXT (JSON) | 1024-dim float array; cosine similarity in Python |
+| `sparse_indices`, `sparse_values` | TEXT (JSON) | SPLADE-style sparse vector; dot-product in Python |
 
 ### Tasks
 
@@ -141,20 +147,22 @@ Scalar payload fields indexed for filtering: `type`, `watch_status`, `rating`, `
   - `embed_sparse(text: str) -> tuple[list[int], list[float]]`
   - `embed_batch(items: list[MediaItem]) -> list[EmbeddedItem]`
   - Fallback: if `review_notes` is empty, synthesises from other fields; Phase 7 checks `abstract` before fallback
-- [x] `src/store.py` — `QdrantStore` class
-  - `create_collection()` — idempotent; creates multi-vector collection with payload indexes
-  - `upsert(items: list[EmbeddedItem])` — batch upsert with payload
-  - `collection_info()` — returns point count, vector config
+- [x] `src/store.py` — `SQLiteStore` class
+  - `create_collection()` — idempotent `CREATE TABLE IF NOT EXISTS`
+  - `upsert(items: list[EmbeddedItem])` — `INSERT OR REPLACE` batch with JSON vector blobs
+  - `collection_info()` — returns row count and db path
+  - `fetch_all(where_clause, params)` — full rows including vectors for retrieval
+  - `fetch_filtered(where_clause, params, limit)` — metadata rows only for scroll / history
 - [x] `src/ingest.py` — CLI entry point: `recommend ingest --input data/items.json [--batch-size N] [--reset]`
   - Loads + validates JSON with Pydantic
   - Embeds in batches with Rich progress bar
-  - Upserts to Qdrant
-- [x] `src/export.py` — `recommend export --output FILE` — export collection back to JSON
+  - Upserts to SQLite
+- [x] `src/export.py` — `recommend export --output FILE` — export store back to JSON
 
 ### Acceptance criteria ✅
 
-- `recommend ingest --input data/sample.json` completes without errors (requires model + Qdrant)
-- Each point has both `dense` and `sparse` vectors and all payload fields
+- `recommend ingest --input data/sample.json` completes without errors (requires model)
+- Each row has both `dense_vector` and `sparse_indices`/`sparse_values` blobs, plus all metadata columns
 
 ---
 
@@ -194,31 +202,31 @@ Scalar payload fields indexed for filtering: `type`, `watch_status`, `rating`, `
 
 **Goal**: Execute parallel dense + sparse search against Qdrant, fused with RRF, returning top-K candidates with scores.
 
-### Search recipe (Qdrant Query API)
+### Search recipe (Python vector math)
 
 ```python
-prefetch = [
-    Prefetch(query=dense_vector, using="dense", limit=150, filter=parsed_filter),
-    Prefetch(query=SparseVector(...), using="sparse", limit=150, filter=parsed_filter),
-]
-results = client.query_points(
-    collection_name=COLLECTION,
-    prefetch=prefetch,
-    query=FusionQuery(fusion=Fusion.RRF),
-    limit=top_k,
-    with_payload=True,
-)
+rows = store.fetch_all(where_clause, params)   # SQL-filtered rows
+
+dense_scores = [(i, cosine(query_dense, row["dense_vector"])) for i, row in enumerate(rows)]
+sparse_scores = [(i, dot(query_sparse, row["sparse_indices"], row["sparse_values"])) for i, row in enumerate(rows)]
+
+# RRF fusion
+dense_rank = {idx: r+1 for r, (idx, _) in enumerate(sorted(dense_scores, reverse=True))}
+sparse_rank = {idx: r+1 for r, (idx, _) in enumerate(sorted(sparse_scores, reverse=True))}
+fused = sorted([(i, 1/(60+dense_rank[i]) + 1/(60+sparse_rank[i])) for i in range(len(rows))],
+               key=lambda x: x[1], reverse=True)[:top_k]
 ```
 
 ### Tasks
 
 - [x] `src/retriever.py` — `HybridRetriever` class
-  - `retrieve(parsed_query, top_k, qdrant_filter) -> list[ScoredCandidate]`
+  - `retrieve(parsed_query, top_k, sql_filter) -> list[ScoredCandidate]`
   - Embeds `semantic_query` into dense + sparse via `Embedder`
-  - Executes prefetch + RRF/DBSF fusion query (configurable via `FUSION_METHOD`)
-  - Falls back to dense-only if sparse/Prefetch fails
-  - Filter-only scroll when `semantic_query` is empty
-  - `_payload_to_item()` — reconstructs `MediaItem` from Qdrant payload
+  - Executes Python cosine + dot-product scoring against SQLite rows
+  - Fuses with RRF or DBSF (configurable via `FUSION_METHOD`)
+  - Falls back to dense-only if sparse scoring fails
+  - Filter-only `fetch_filtered()` when `semantic_query` is empty
+  - `_payload_to_item()` — reconstructs `MediaItem` from SQLite row dict
 
 ### Acceptance criteria ✅
 
@@ -391,8 +399,8 @@ and README.
 - [x] `src/schema.py` — `HistoryProfile` model with `from_payloads()` and `overlap_fraction()`
 - [x] `src/config.py` — `history_min_rating`, `history_boost_weight` settings
 - [x] `src/scorer.py` — `_history_boost()` factor; `score()` now accepts `history_profile`
-- [x] `src/pipeline.py` — `_build_history_profile()` scrolls Qdrant for highly-rated watched items;
-  `use_history` constructor flag; `_store` exposed for profile builder
+- [x] `src/pipeline.py` — `_build_history_profile()` queries SQLite for highly-rated watched items
+  via `store.fetch_filtered()`; `use_history` constructor flag; `_store` exposed for profile builder
 - [x] `src/cli.py` — `recommend sync --input FILE` (incremental upsert); `recommend delete UUID`;
   `recommend query --no-history` flag
 - [x] `tests/golden_queries.json` — added `semantic_query` and `parsed_filters` to all 10 entries
@@ -406,7 +414,7 @@ and README.
 
 ### Acceptance criteria ✅
 
-- 105 tests pass with zero warnings (all dependencies mocked)
+- 110 tests pass with zero warnings (all dependencies mocked; Qdrant replaced by SQLite)
 - Prompt caching reduces repeated API costs for query parsing and explanation
 - Watch-history boost demonstrably increases scores for items overlapping user preferences
 - `recommend sync` enables incremental library updates without full re-ingestion
@@ -482,11 +490,11 @@ Phase 0 (Foundation) ✅
 **Why BGE-M3 over separate models?**
 A single model call produces dense + sparse + ColBERT multi-vectors simultaneously. Running separate models (e.g., sentence-transformers for dense, SPLADE for sparse) doubles inference cost and introduces embedding space mismatch.
 
-**Why Qdrant over Weaviate/Milvus/Pinecone?**
-The ACORN algorithm integrates metadata filtering directly into the HNSW graph traversal rather than post-processing, which is critical for a personal library where most queries will filter by `watch_status`, `type`, and `rating` — potentially eliminating 80–99% of vectors. Post-filtering approaches degrade severely at these filter rates.
+**Why SQLite over Qdrant?**
+For a personal media library (typically hundreds to a few thousand items), in-Python brute-force cosine similarity and dot-product scoring is fast enough — ~10 ms for 1 000 1024-dim vectors. SQLite is stdlib, zero-config, portable, and requires no Docker or external service. The previous Qdrant integration (ACORN/HNSW graph, prefetch API) offered better asymptotic performance at scale, but that scale is irrelevant for personal use. Switching to SQLite eliminates the only runtime dependency that required an external process.
 
 **Why RRF as default over DBSF?**
-RRF requires no knowledge of score distributions, is invariant to score scale, and is robust against a weak retriever skewing results. DBSF is available as an override when the score magnitudes carry meaningful signal (e.g., very high-confidence BM25 exact title matches should dominate).
+RRF requires no knowledge of score distributions, is invariant to score scale, and is robust against a weak retriever skewing results. DBSF is available as an override when the score magnitudes carry meaningful signal (e.g., very high-confidence exact title matches should dominate).
 
 **Why multiplicative (not additive) final score?**
 An additive formula lets a high rating rescue an irrelevant item. Multiplication ensures that a zero-relevance item (rrf_score ≈ 0) always scores near zero regardless of its rating or recency.
@@ -496,21 +504,21 @@ Explanation generation is the highest-latency stage. Running 10 Claude API calls
 
 ---
 
-## File Structure (current state — Phase 9 complete)
+## File Structure (current state — SQLite migration complete)
 
 ```
 Recommendation-Engine/
 ├── src/
 │   ├── schema.py        # Pydantic models: MediaItem, HistoryProfile, ParsedQuery,
 │   │                    #   RankedResult, ExplainedResult (Phases 0–9)
-│   ├── config.py        # pydantic-settings; all tunable params (Phases 0–9)
+│   ├── config.py        # pydantic-settings; sqlite_path + all tunable params (Phases 0–9)
 │   ├── embedder.py      # BGE-M3 wrapper: dense + sparse, batch (Phase 1)
-│   ├── store.py         # Qdrant collection + payload indexes (Phase 1)
+│   ├── store.py         # SQLiteStore: items table, upsert, fetch_all, fetch_filtered (Phase 1)
 │   ├── ingest.py        # CLI: validate → embed → upsert with Rich progress (Phase 1)
-│   ├── export.py        # CLI: scroll collection → JSON (Phase 1)
+│   ├── export.py        # CLI: fetch_filtered → JSON (Phase 1)
 │   ├── cache.py         # Thread-safe LRU query cache (Phase 2)
-│   ├── query_parser.py  # Claude parser + Qdrant filter builder + prompt caching (Phase 2/9)
-│   ├── retriever.py     # Prefetch + RRF/DBSF fusion; dense + filter-only fallbacks (Phase 3)
+│   ├── query_parser.py  # Claude parser + SQL filter builder + prompt caching (Phase 2/9)
+│   ├── retriever.py     # Python cosine+dot RRF/DBSF fusion; filter-only fallback (Phase 3)
 │   ├── scorer.py        # rating_boost × recency_decay × length_decay × history_boost (Phase 4/9)
 │   ├── explainer.py     # Async LLM explainer + prompt caching + fallback (Phase 5/9)
 │   ├── pipeline.py      # Orchestration + _build_history_profile() (Phase 6/9)
@@ -521,12 +529,12 @@ Recommendation-Engine/
 │   ├── sample.json          # 10 anime/movie items
 │   └── sample_books.json    # 5 book items (Phase 7)
 ├── tests/
-│   ├── conftest.py           # Shared fixtures: FakeQdrantClient, MockEmbedder, etc.
+│   ├── conftest.py           # Shared fixtures: MockEmbedder, sqlite_store, cfg (tmp_path)
 │   ├── test_schema.py        # 12 tests (Phase 0)
 │   ├── test_scorer.py        # 24 tests (Phase 4/9)
-│   ├── test_query_parser.py  # 29 tests (Phase 2)
-│   ├── test_store.py         # 13 tests (Phase 9)
-│   ├── test_retriever.py     # 10 tests (Phase 9)
+│   ├── test_query_parser.py  # 31 tests (Phase 2; SQL filter tests)
+│   ├── test_store.py         # 14 tests (SQLiteStore)
+│   ├── test_retriever.py     # 10 tests (HybridRetriever + SQLite)
 │   ├── test_explainer.py     # 8 tests  (Phase 9)
 │   ├── test_pipeline.py      # 8 tests  (Phase 9)
 │   ├── test_output.py        # 11 tests (Phase 9)
@@ -537,7 +545,7 @@ Recommendation-Engine/
 ├── reports/
 │   └── Building a Smart Recommendation Engine.md
 ├── README.md
-├── docker-compose.yml
+├── docker-compose.yml   # placeholder — no external services required
 ├── pyproject.toml
 ├── .env.example
 ├── CHANGELOG.md

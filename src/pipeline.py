@@ -17,12 +17,12 @@ from typing import Optional
 from .config import Settings, get_settings
 from .embedder import Embedder
 from .explainer import Explainer
-from .query_parser import QueryParser, _build_qdrant_filter
+from .query_parser import QueryParser
 from .reranker import Reranker
 from .retriever import HybridRetriever
 from .schema import ExplainedResult, HistoryProfile
 from .scorer import Scorer
-from .store import QdrantStore
+from .store import SQLiteStore
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +56,7 @@ class RecommendationPipeline:
         # Shared embedder instance to avoid double model loading
         self._embedder = Embedder(self._cfg.embed_model)
 
-        self._store = QdrantStore(self._cfg)
+        self._store = SQLiteStore(self._cfg)
         self._parser = QueryParser(self._cfg)
         self._retriever = HybridRetriever(self._store, self._embedder, self._cfg)
         self._scorer = Scorer(self._cfg)
@@ -73,7 +73,7 @@ class RecommendationPipeline:
         t_start = time.perf_counter()
 
         # Stage 1 — Parse
-        parsed, qdrant_filter = self._parser.parse_to_qdrant(query)
+        parsed, sql_filter = self._parser.parse_to_sql(query)
         logger.info(
             "Parsed query: semantic=%r, %d filter(s), length_pref=%s",
             parsed.semantic_query[:60],
@@ -84,7 +84,7 @@ class RecommendationPipeline:
         # Stage 2 — Retrieve
         fetch_k = self._top_k * 4 if self._use_reranker else self._top_k * 2
         candidates = self._retriever.retrieve(
-            parsed, top_k=min(fetch_k, 200), qdrant_filter=qdrant_filter
+            parsed, top_k=min(fetch_k, 200), sql_filter=sql_filter
         )
         logger.info("Retrieved %d candidates.", len(candidates))
 
@@ -124,45 +124,20 @@ class RecommendationPipeline:
 
     def _build_history_profile(self) -> Optional[HistoryProfile]:
         """
-        Scroll the Qdrant collection for watched/read items rated above
+        Query the SQLite store for watched/read items rated above
         ``history_min_rating`` and aggregate their tags + genres into a
         HistoryProfile for the downstream Scorer.
 
         Returns None on any error so the pipeline continues without boosting.
         """
         try:
-            client = self._store._get_client()
             min_rating = self._cfg.history_min_rating
-
-            # Build a payload filter for watched/read + highly rated
-            try:
-                from qdrant_client.models import (
-                    FieldCondition, Filter, MatchAny, Range,
-                )
-                filt = Filter(
-                    must=[
-                        FieldCondition(
-                            key="watch_status",
-                            match=MatchAny(any=["watched", "reading"]),
-                        ),
-                        FieldCondition(
-                            key="rating",
-                            range=Range(gte=min_rating),
-                        ),
-                    ]
-                )
-            except Exception:
-                filt = None
-
-            points, _ = client.scroll(
-                collection_name=self._cfg.qdrant_collection,
-                scroll_filter=filt,
+            rows = self._store.fetch_filtered(
+                "watch_status IN (?, ?) AND rating >= ?",
+                ["watched", "reading", min_rating],
                 limit=500,
-                with_payload=True,
-                with_vectors=False,
             )
-            payloads = [p.payload for p in points if p.payload]
-            profile = HistoryProfile.from_payloads(payloads)
+            profile = HistoryProfile.from_payloads(rows)
             logger.debug(
                 "History profile: %d items, %d tags, %d genres",
                 profile.item_count,

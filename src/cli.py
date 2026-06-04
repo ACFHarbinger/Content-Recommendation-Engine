@@ -22,7 +22,7 @@ console = Console()
 @click.group()
 @click.option("-v", "--verbose", is_flag=True, default=False, help="Enable DEBUG logging.")
 def cli(verbose: bool) -> None:
-    """Personal media recommendation engine — local-first, BGE-M3 + Qdrant."""
+    """Personal media recommendation engine — local-first, BGE-M3 + SQLite."""
     level = logging.DEBUG if verbose else logging.WARNING
     logging.basicConfig(
         level=level,
@@ -59,7 +59,7 @@ def sync(input_path: str, batch_size: int) -> None:
     from .config import get_settings
     from .embedder import Embedder
     from .schema import MediaItem
-    from .store import QdrantStore
+    from .store import SQLiteStore
 
     cfg = get_settings()
     path = Path(input_path)
@@ -80,10 +80,9 @@ def sync(input_path: str, batch_size: int) -> None:
         return
 
     embedder = Embedder(cfg.embed_model)
-    store = QdrantStore(cfg)
+    store = SQLiteStore(cfg)
     store.create_collection()   # idempotent
 
-    embedded = []
     with Progress(SpinnerColumn(), TextColumn("{task.description}"),
                   BarColumn(), TextColumn("{task.completed}/{task.total}"),
                   TimeElapsedColumn()) as prog:
@@ -95,7 +94,7 @@ def sync(input_path: str, batch_size: int) -> None:
         n = store.upsert(embedded)
 
     info = store.collection_info()
-    console.print(f"[bold green]✓[/bold green] Synced {n} items. Collection: {info['points_count']} total.")
+    console.print(f"[bold green]✓[/bold green] Synced {n} items. Store: {info['points_count']} total.")
 
 
 # ---- Phase 9 — delete ------------------------------------------------
@@ -104,15 +103,15 @@ def sync(input_path: str, batch_size: int) -> None:
 @click.argument("item_id")
 @click.option("--yes", "-y", is_flag=True, default=False, help="Skip confirmation prompt.")
 def delete(item_id: str, yes: bool) -> None:
-    """Remove a single item from the collection by UUID."""
+    """Remove a single item from the store by UUID."""
     from .config import get_settings
-    from .store import QdrantStore
+    from .store import SQLiteStore
 
     if not yes:
-        click.confirm(f"Delete item {item_id!r} from the collection?", abort=True)
+        click.confirm(f"Delete item {item_id!r} from the store?", abort=True)
 
     cfg = get_settings()
-    store = QdrantStore(cfg)
+    store = SQLiteStore(cfg)
     store.delete(item_id)
     console.print(f"[green]✓[/green] Deleted {item_id!r}.")
 
@@ -121,17 +120,16 @@ def delete(item_id: str, yes: bool) -> None:
 
 @cli.command()
 def info() -> None:
-    """Show collection statistics and configuration."""
+    """Show store statistics and configuration."""
     from .config import get_settings
-    from .store import QdrantStore
+    from .store import SQLiteStore
 
     cfg = get_settings()
-    store = QdrantStore(cfg)
+    store = SQLiteStore(cfg)
     try:
         data = store.collection_info()
-        console.print(f"[bold]Collection  :[/bold] {data['collection']}")
-        console.print(f"[bold]Points      :[/bold] {data['points_count']}")
         console.print(f"[bold]Storage     :[/bold] {data['storage']}")
+        console.print(f"[bold]Items       :[/bold] {data['points_count']}")
         console.print(f"[bold]Embed model :[/bold] {cfg.embed_model}")
         console.print(f"[bold]Claude model:[/bold] {cfg.claude_model}")
         console.print(f"[bold]Fusion      :[/bold] {cfg.fusion_method.upper()}")

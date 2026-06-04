@@ -3,15 +3,15 @@ Phase 2 tests — QueryParser with mocked Claude API.
 
 Tests cover the 10 representative query types from the ROADMAP plus edge
 cases (empty query, malformed JSON, missing API key).  No real API calls.
-anthropic and qdrant_client are mocked via sys.modules so the tests run
-without those packages installed.
+The anthropic module is mocked via sys.modules injection so tests run
+without the package installed.
 """
 from __future__ import annotations
 
 import json
 import sys
 import types
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -58,31 +58,6 @@ def mock_anthropic(monkeypatch):
     return fake_mod
 
 
-@pytest.fixture(autouse=True)
-def mock_qdrant(monkeypatch):
-    """Replace 'qdrant_client' with a stub so filter-building tests can run."""
-    if "qdrant_client" in sys.modules:
-        return  # already installed — skip mocking
-
-    qdrant_mod = types.ModuleType("qdrant_client")
-    models_mod = types.ModuleType("qdrant_client.models")
-
-    class _Base:
-        def __init__(self, **kwargs):
-            for k, v in kwargs.items():
-                setattr(self, k, v)
-
-    # Minimal stubs for every model used in query_parser._build_qdrant_filter
-    for name in [
-        "Filter", "FieldCondition", "MatchValue", "MatchAny",
-        "MatchExcept", "Range",
-    ]:
-        setattr(models_mod, name, type(name, (_Base,), {}))
-
-    qdrant_mod.models = models_mod
-    monkeypatch.setitem(sys.modules, "qdrant_client", qdrant_mod)
-    monkeypatch.setitem(sys.modules, "qdrant_client.models", models_mod)
-    return qdrant_mod
 
 
 # ------------------------------------------------------------------
@@ -92,7 +67,7 @@ def mock_qdrant(monkeypatch):
 def _make_parser(api_key: str = "sk-test") -> "QueryParser":
     from src.config import Settings
     from src.query_parser import QueryParser
-    cfg = Settings(anthropic_api_key=api_key, qdrant_local_path="/tmp/test_qdrant")
+    cfg = Settings(anthropic_api_key=api_key, sqlite_path="/tmp/test_rec.db")
     return QueryParser(cfg)
 
 
@@ -115,7 +90,7 @@ def _run_with_response(parser, json_dict: dict, user_query: str) -> ParsedQuery:
             return self._parse_response(json.dumps(json_dict), q)
 
     from src.config import Settings
-    cfg = Settings(anthropic_api_key="sk-test", qdrant_local_path="/tmp/t")
+    cfg = Settings(anthropic_api_key="sk-test", sqlite_path="/tmp/test_rec.db")
     p = _PatchedParser(cfg)
     return p.parse(user_query)
 
@@ -263,7 +238,7 @@ class TestQueryParserFallbacks:
     def test_no_api_key_falls_back_to_semantic(self):
         from src.config import Settings
         from src.query_parser import QueryParser
-        cfg = Settings(anthropic_api_key=None, qdrant_local_path="/tmp/test")
+        cfg = Settings(anthropic_api_key=None, sqlite_path="/tmp/test.db")
         parser = QueryParser(cfg)
         parsed = parser.parse("anything goes")
         assert parsed.semantic_query == "anything goes"
@@ -272,7 +247,7 @@ class TestQueryParserFallbacks:
     def test_malformed_json_falls_back(self):
         from src.config import Settings
         from src.query_parser import QueryParser
-        cfg = Settings(anthropic_api_key="sk-test", qdrant_local_path="/tmp/test")
+        cfg = Settings(anthropic_api_key="sk-test", sqlite_path="/tmp/test.db")
 
         class _BadParser(QueryParser):
             def _call_claude(self, q):
@@ -285,7 +260,7 @@ class TestQueryParserFallbacks:
     def test_api_error_falls_back(self):
         from src.config import Settings
         from src.query_parser import QueryParser
-        cfg = Settings(anthropic_api_key="sk-test", qdrant_local_path="/tmp/test")
+        cfg = Settings(anthropic_api_key="sk-test", sqlite_path="/tmp/test.db")
 
         class _ErrorParser(QueryParser):
             def _call_claude(self, q):
@@ -334,35 +309,59 @@ class TestQueryCache:
 
 
 # ------------------------------------------------------------------
-# Qdrant filter building
+# SQL filter building
 # ------------------------------------------------------------------
 
-class TestBuildQdrantFilter:
-    def test_empty_filters_returns_none(self):
-        from src.query_parser import _build_qdrant_filter
-        assert _build_qdrant_filter([]) is None
+class TestBuildSQLFilter:
+    def test_empty_filters_returns_empty(self):
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter([])
+        assert clause == ""
+        assert params == []
 
     def test_eq_filter(self):
-        from src.query_parser import _build_qdrant_filter
-        f = _build_qdrant_filter([FilterClause(field="type", op="eq", value="anime")])
-        assert f is not None
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter([FilterClause(field="type", op="eq", value="anime")])
+        assert "type" in clause
+        assert "anime" in params
 
     def test_range_filter(self):
-        from src.query_parser import _build_qdrant_filter
-        f = _build_qdrant_filter([FilterClause(field="rating", op="gte", value=8.0)])
-        assert f is not None
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter([FilterClause(field="rating", op="gte", value=8.0)])
+        assert "rating" in clause
+        assert ">=" in clause
+        assert 8.0 in params
 
-    def test_in_filter(self):
-        from src.query_parser import _build_qdrant_filter
-        f = _build_qdrant_filter(
+    def test_in_filter_array_field(self):
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter(
             [FilterClause(field="genres", op="in", value=["Action", "Sci-Fi"])]
         )
-        assert f is not None
+        assert "json_each" in clause
+        assert "Action" in params
+        assert "Sci-Fi" in params
 
-    def test_ne_builds_must_not(self):
-        from src.query_parser import _build_qdrant_filter
-        f = _build_qdrant_filter(
+    def test_ne_filter_scalar(self):
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter(
             [FilterClause(field="watch_status", op="ne", value="watched")]
         )
-        assert f is not None
-        assert hasattr(f, "must_not") and f.must_not
+        assert "watch_status" in clause
+        assert "!=" in clause
+        assert "watched" in params
+
+    def test_nin_filter_scalar(self):
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter(
+            [FilterClause(field="watch_status", op="nin", value=["watched", "dropped"])]
+        )
+        assert "NOT IN" in clause.upper()
+        assert "watched" in params and "dropped" in params
+
+    def test_multiple_filters_joined_with_and(self):
+        from src.query_parser import _build_sql_filter
+        clause, params = _build_sql_filter([
+            FilterClause(field="type", op="eq", value="anime"),
+            FilterClause(field="rating", op="gte", value=8.0),
+        ])
+        assert " AND " in clause

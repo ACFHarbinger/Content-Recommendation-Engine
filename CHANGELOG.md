@@ -9,6 +9,114 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.4.0] — 2026-06-04
+
+### Changed — SQLite migration (replaces Qdrant + JSON-file workflow)
+
+#### Store layer (`src/store.py`)
+
+- **`QdrantStore` replaced by `SQLiteStore`** — zero external services required.
+  All item metadata and vectors live in a single `.db` file (default
+  `data/rec_engine.db`, configurable via `SQLITE_PATH` env var).
+- Schema: one `items` table with native SQLite column types for scalars and
+  JSON TEXT blobs for list fields (`genres`, `tags`, `associated_entities`) and
+  vector fields (`dense_vector`, `sparse_indices`, `sparse_values`).
+- `create_collection()` — idempotent `CREATE TABLE IF NOT EXISTS`; returns
+  `True` on first creation.
+- `upsert()` — `INSERT OR REPLACE` with WAL-mode commit per batch.
+- `delete()` — `DELETE WHERE id = ?`.
+- `collection_info()` — `SELECT COUNT(*)` + db path.
+- `fetch_all(where_clause, params)` — full rows including vectors (used by
+  retriever for hybrid search).
+- `fetch_filtered(where_clause, params, limit)` — metadata-only rows without
+  vectors (used for scroll / watch-history profile).
+- In-memory mode: pass `sqlite_path=":memory:"` for isolated test databases.
+
+#### Retrieval layer (`src/retriever.py`)
+
+- **Qdrant client removed entirely.** All vector arithmetic now runs in Python:
+  - `_cosine(a, b)` — cosine similarity for the dense leg.
+  - `_sparse_dot(idx_q, val_q, idx_d, val_d)` — dot-product for the sparse leg.
+  - `_rrf(ranks)` — Reciprocal Rank Fusion (k=60).
+- `HybridRetriever.retrieve()` parameter renamed `qdrant_filter` → `sql_filter`
+  (accepts `(where_clause, params)` tuple or `None`).
+- `_hybrid_query()` — fetches all matching rows, scores both legs, fuses with
+  RRF (default) or DBSF; returns top-K `ScoredCandidate` list.
+- `_dense_only()` — cosine-only fallback when sparse vectors are absent.
+- `_filter_only()` — delegates to `store.fetch_filtered()` when the semantic
+  query is empty (plan-to-watch-style queries).
+- `_payload_to_item()` name kept for backward compatibility; semantics unchanged
+  since SQLite column names match the old Qdrant payload keys.
+
+#### Query parser (`src/query_parser.py`)
+
+- **`_build_qdrant_filter()` replaced by `_build_sql_filter()`** — returns
+  `(where_clause: str, params: list)` instead of a Qdrant `Filter` object.
+  - Scalar fields (`type`, `watch_status`, `rating`, `year_released`,
+    `num_episodes_or_pages`): standard SQL operators (`=`, `!=`, `>`, `>=`,
+    `<`, `<=`, `IN`, `NOT IN`).
+  - Array fields (`genres`, `tags`, `associated_entities`): `json_each()`
+    containment checks (`EXISTS / NOT EXISTS`).
+- **`parse_to_qdrant()` renamed to `parse_to_sql()`** — returns
+  `(ParsedQuery, (where_clause, params))`.
+- System prompt and few-shot examples unchanged; Claude still produces the same
+  `{semantic_query, filters, length_preference_episodes}` JSON.
+
+#### Config (`src/config.py`)
+
+- **Removed**: `qdrant_url`, `qdrant_api_key`, `qdrant_local_path`,
+  `qdrant_collection` settings; `use_local_qdrant`, `qdrant_storage_path`
+  properties.
+- **Added**: `sqlite_path: str` (env `SQLITE_PATH`, default
+  `"data/rec_engine.db"`).
+
+#### Pipeline (`src/pipeline.py`)
+
+- `_build_history_profile()` rewritten: queries `store.fetch_filtered()` with
+  a plain SQL WHERE clause instead of constructing Qdrant `Filter` objects and
+  calling `client.scroll()`.
+- `self._parser.parse_to_qdrant()` → `self._parser.parse_to_sql()`.
+- `qdrant_filter` variable renamed to `sql_filter` throughout.
+
+#### CLI and ingest/export (`src/cli.py`, `src/ingest.py`, `src/export.py`)
+
+- `QdrantStore` references replaced with `SQLiteStore`.
+- `ingest --reset` now drops and recreates the `items` table instead of
+  deleting a Qdrant collection.
+- `export` fetches rows via `store.fetch_filtered()` instead of Qdrant scroll.
+- `info` command shows `SQLITE_PATH` instead of Qdrant URL / collection.
+- CLI description updated: `"local-first, BGE-M3 + SQLite"`.
+
+#### Infrastructure
+
+- **`docker-compose.yml`** — Qdrant service removed; file retained as a
+  placeholder comment.
+- **`pyproject.toml`** — `qdrant-client` dependency removed; version bumped to
+  `0.2.0`; `sqlite3` is stdlib (no new runtime deps).
+- **`.env.example`** — Qdrant vars replaced with `SQLITE_PATH`.
+
+#### Tests
+
+- **`tests/conftest.py`** — `FakeQdrantClient`, `_build_qdrant_module`, and
+  `qdrant_mock` fixture removed. `cfg` fixture now uses `tmp_path` to give each
+  test its own temp SQLite file. New `sqlite_store` fixture provides a
+  ready-to-use `SQLiteStore`.
+- **`tests/test_store.py`** — Rewritten for `SQLiteStore` API; direct DB
+  inspection replaces `qdrant_mock.calls` and `qdrant_mock._colls` introspection.
+  Added `test_upsert_is_idempotent` and `test_delete_nonexistent_is_silent`.
+- **`tests/test_retriever.py`** — Updated to use real SQLite via `cfg`; `qdrant_mock`
+  parameter removed from all test signatures.
+- **`tests/test_pipeline.py`** — `QdrantStore` → `SQLiteStore`; `qdrant_mock`
+  parameter removed.
+- **`tests/test_query_parser.py`** — `mock_qdrant` autouse fixture removed
+  (no more `qdrant_client` import in query_parser); `TestBuildQdrantFilter`
+  renamed to `TestBuildSQLFilter` with updated assertions for the SQL output
+  format; `qdrant_local_path` constructor args replaced with `sqlite_path`.
+  **5 additional filter tests** added (nin scalar, multiple filters AND).
+- **Total: 110 tests, 0 failures.**
+
+---
+
 ## [0.3.0] — 2026-05-31
 
 ### Added — Phase 9: Quality, Tooling & Watch-History Feedback
