@@ -14,8 +14,8 @@ import time
 import threading
 from typing import Optional
 
-from .config import Settings, get_settings
-from .schema import ScoredCandidate
+from src.core.config import Settings, get_settings
+from src.core.schema import ScoredCandidate
 
 logger = logging.getLogger(__name__)
 
@@ -82,8 +82,6 @@ class Reranker:
             return candidates[:n]
 
         try:
-            import math
-
             pairs = [(query, c.item.dense_text[:512]) for c in candidates]
             scores = reranker.compute_score(pairs, normalize=True)
 

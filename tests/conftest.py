@@ -13,11 +13,10 @@ from __future__ import annotations
 
 import sys
 import types
-from typing import Any
 
 import pytest
 
-from src.schema import EmbeddedItem, MediaItem, ScoredCandidate
+from src.core.schema import EmbeddedItem, MediaItem, ScoredCandidate
 
 
 # ---------------------------------------------------------------------------
@@ -110,7 +109,7 @@ class MockEmbedder:
 @pytest.fixture
 def cfg(tmp_path):
     """Settings with a per-test temp SQLite file so stores don't share state."""
-    from src.config import Settings
+    from src.core.config import Settings
     return Settings(
         anthropic_api_key=None,
         sqlite_path=str(tmp_path / "test_rec.db"),
@@ -122,7 +121,7 @@ def cfg(tmp_path):
 @pytest.fixture
 def sqlite_store(cfg):
     """A fresh SQLiteStore backed by the per-test temp db."""
-    from src.store import SQLiteStore
+    from src.data.store import SQLiteStore
     store = SQLiteStore(cfg)
     store.create_collection()
     yield store

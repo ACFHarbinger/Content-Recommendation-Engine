@@ -22,8 +22,8 @@ import logging
 import math
 from typing import Optional
 
-from .config import Settings, get_settings
-from .schema import ComponentScores, HistoryProfile, ParsedQuery, RankedResult, ScoredCandidate
+from src.core.config import Settings, get_settings
+from src.core.schema import ComponentScores, HistoryProfile, ParsedQuery, RankedResult, ScoredCandidate
 
 logger = logging.getLogger(__name__)
 

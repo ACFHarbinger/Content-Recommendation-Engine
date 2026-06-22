@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-recommend = "src.cli:cli"
+recommend = "src.cli.cli:cli"
 
 [dependency-groups]
 dev = [

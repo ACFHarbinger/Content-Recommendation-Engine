@@ -23,8 +23,8 @@ import sqlite3
 from pathlib import Path
 from typing import Optional
 
-from .config import Settings, get_settings
-from .schema import EmbeddedItem
+from src.core.config import Settings, get_settings
+from src.core.schema import EmbeddedItem
 
 logger = logging.getLogger(__name__)
 

@@ -14,15 +14,15 @@ import logging
 import time
 from typing import Optional
 
-from .config import Settings, get_settings
-from .embedder import Embedder
-from .explainer import Explainer
-from .query_parser import QueryParser
-from .reranker import Reranker
-from .retriever import HybridRetriever
-from .schema import ExplainedResult, HistoryProfile
-from .scorer import Scorer
-from .store import SQLiteStore
+from src.core.config import Settings, get_settings
+from src.data.embedder import Embedder
+from src.search.explainer import Explainer
+from src.search.query_parser import QueryParser
+from src.search.reranker import Reranker
+from src.search.retriever import HybridRetriever
+from src.core.schema import ExplainedResult, HistoryProfile
+from src.search.scorer import Scorer
+from src.data.store import SQLiteStore
 
 logger = logging.getLogger(__name__)
 
@@ -111,7 +111,7 @@ class RecommendationPipeline:
         if self._explainer and ranked:
             results = self._explainer.explain_batch(ranked, query)
         else:
-            from .schema import ExplainedResult as ER
+            from src.core.schema import ExplainedResult as ER
             results = [ER(**r.model_dump(), reasons=[], matched_tags=[]) for r in ranked]
 
         elapsed = time.perf_counter() - t_start

@@ -6,20 +6,17 @@ the mock fixtures from conftest.py.  SQLite uses a real temp-file db.
 """
 from __future__ import annotations
 
-import pytest
-
-from src.schema import ExplainedResult, MediaItem
+from src.core.schema import ExplainedResult
 
 
 def _make_pipeline(cfg, mock_embedder, explain=False, use_reranker=False):
     """Wire up a pipeline with all mocked dependencies."""
-    from src.explainer import Explainer
-    from src.pipeline import RecommendationPipeline
-    from src.query_parser import QueryParser
-    from src.reranker import Reranker
-    from src.retriever import HybridRetriever
-    from src.scorer import Scorer
-    from src.store import SQLiteStore
+    from src.search.explainer import Explainer
+    from src.search.pipeline import RecommendationPipeline
+    from src.search.query_parser import QueryParser
+    from src.search.retriever import HybridRetriever
+    from src.search.scorer import Scorer
+    from src.data.store import SQLiteStore
 
     store = SQLiteStore(cfg)
     store.create_collection()
@@ -41,7 +38,7 @@ def _make_pipeline(cfg, mock_embedder, explain=False, use_reranker=False):
 
 
 def _populate(cfg, mock_embedder, items):
-    from src.store import SQLiteStore
+    from src.data.store import SQLiteStore
     store = SQLiteStore(cfg)
     store.create_collection()
     embedded = mock_embedder.embed_batch(items)

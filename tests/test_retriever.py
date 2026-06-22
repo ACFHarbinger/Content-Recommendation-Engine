@@ -5,16 +5,14 @@ Uses real in-memory SQLite via the cfg fixture.
 """
 from __future__ import annotations
 
-import pytest
-
-from src.schema import MediaItem, ParsedQuery, ScoredCandidate
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate
 
 
 class TestPayloadToItem:
     """Unit-tests for the _payload_to_item helper (no SQLite needed)."""
 
     def test_basic_mapping(self):
-        from src.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item
         payload = {
             "id": "test-uuid",
             "title": "Ghost in the Shell",
@@ -39,7 +37,7 @@ class TestPayloadToItem:
         assert item.web_link == "https://example.com"
 
     def test_missing_optional_fields_use_none(self):
-        from src.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item
         item = _payload_to_item({"id": "x", "title": "Minimal"})
         assert item.type is None
         assert item.rating is None
@@ -47,7 +45,7 @@ class TestPayloadToItem:
         assert item.genres == []
 
     def test_zero_values_become_none(self):
-        from src.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item
         item = _payload_to_item({
             "id": "x", "title": "T",
             "rating": 0, "year_released": 0, "num_episodes_or_pages": 0
@@ -56,7 +54,7 @@ class TestPayloadToItem:
         assert item.year_released is None
 
     def test_entity_list_preserved(self):
-        from src.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item
         item = _payload_to_item({
             "id": "x", "title": "T",
             "associated_entities": ["Satoshi Kon", "MADHOUSE"]
@@ -68,8 +66,8 @@ class TestHybridRetriever:
     """Integration tests using real SQLite via cfg fixture."""
 
     def _make_store_and_retriever(self, cfg, mock_embedder):
-        from src.retriever import HybridRetriever
-        from src.store import SQLiteStore
+        from src.search.retriever import HybridRetriever
+        from src.data.store import SQLiteStore
         store = SQLiteStore(cfg)
         store.create_collection()
         retriever = HybridRetriever(store, mock_embedder, cfg)

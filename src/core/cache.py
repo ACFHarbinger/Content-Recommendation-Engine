@@ -11,7 +11,7 @@ import threading
 from collections import OrderedDict
 from typing import Optional
 
-from .schema import ParsedQuery
+from src.core.schema import ParsedQuery
 
 
 def _normalise(query: str) -> str:

@@ -18,8 +18,8 @@ import logging
 import re
 from typing import Optional
 
-from .config import Settings, get_settings
-from .schema import ExplainedResult, RankedResult
+from src.core.config import Settings, get_settings
+from src.core.schema import ExplainedResult, RankedResult
 
 logger = logging.getLogger(__name__)
 
@@ -68,12 +68,12 @@ def _build_user_message(result: RankedResult, user_query: str) -> str:
 
 def _fallback_reason(result: RankedResult, user_query: str) -> ExplainedResult:
     item = result.item
-    verb = item.consume_verb
+    #verb = item.consume_verb
     reasons = [
         f"Recommended based on your query {user_query!r}.",
         f"This {item.type or 'item'} has a rating of {item.rating}/10."
         if item.rating
-        else f"Matches the thematic profile of your query.",
+        else "Matches the thematic profile of your query.",
     ]
     return ExplainedResult(
         **result.model_dump(),

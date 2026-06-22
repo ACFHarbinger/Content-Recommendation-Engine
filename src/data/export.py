@@ -13,8 +13,8 @@ from pathlib import Path
 import click
 from rich.console import Console
 
-from .config import get_settings
-from .store import SQLiteStore
+from src.core.config import get_settings
+from src.data.store import SQLiteStore
 
 logger = logging.getLogger(__name__)
 console = Console()

@@ -11,13 +11,12 @@ matched_tags, component scores, and media links.
 from __future__ import annotations
 
 import json
-from typing import Any
 
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from .schema import ExplainedResult
+from src.core.schema import ExplainedResult
 
 console = Console()
 
@@ -115,7 +114,7 @@ def print_table(results: list[ExplainedResult]) -> None:
         if item.web_link:
             links.append(f"[dim][link]{item.web_link}[/link] web[/dim]")
         if item.local_file_location:
-            links.append(f"[dim]📁 local[/dim]")
+            links.append("[dim]📁 local[/dim]")
         if links:
             reason_lines += "\n" + "  ".join(links)
 

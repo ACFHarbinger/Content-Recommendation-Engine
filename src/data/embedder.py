@@ -9,9 +9,8 @@ from __future__ import annotations
 import logging
 import threading
 import time
-from typing import Optional
 
-from .schema import EmbeddedItem, MediaItem
+from src.core.schema import EmbeddedItem, MediaItem
 
 logger = logging.getLogger(__name__)
 
@@ -83,7 +82,7 @@ class Embedder:
         )
         sw: dict[str, float] = output["lexical_weights"][0]
         indices = [int(k) for k in sw.keys()]
-        values = [float(v) for v in sw.values()]
+        values = [v for v in sw.values()]
         return indices, values
 
     def embed_batch(
@@ -125,7 +124,7 @@ class Embedder:
                         item=item,
                         dense_vector=dense_out["dense_vecs"][i].tolist(),
                         sparse_indices=[int(k) for k in sw.keys()],
-                        sparse_values=[float(v) for v in sw.values()],
+                        sparse_values=[v for v in sw.values()],
                     )
                 )
 

@@ -32,8 +32,8 @@ def cli(verbose: bool) -> None:
 
 # ---- Phase 1 commands ------------------------------------------------
 
-from .ingest import ingest   # noqa: E402
-from .export import export   # noqa: E402
+from src.data.ingest import ingest   # noqa: E402
+from src.data.export import export   # noqa: E402
 
 cli.add_command(ingest)
 cli.add_command(export)
@@ -56,10 +56,10 @@ def sync(input_path: str, batch_size: int) -> None:
     from pathlib import Path
     from pydantic import ValidationError
     from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
-    from .config import get_settings
-    from .embedder import Embedder
-    from .schema import MediaItem
-    from .store import SQLiteStore
+    from src.core.config import get_settings
+    from src.data.embedder import Embedder
+    from src.core.schema import MediaItem
+    from src.data.store import SQLiteStore
 
     cfg = get_settings()
     path = Path(input_path)
@@ -104,8 +104,8 @@ def sync(input_path: str, batch_size: int) -> None:
 @click.option("--yes", "-y", is_flag=True, default=False, help="Skip confirmation prompt.")
 def delete(item_id: str, yes: bool) -> None:
     """Remove a single item from the store by UUID."""
-    from .config import get_settings
-    from .store import SQLiteStore
+    from src.core.config import get_settings
+    from src.data.store import SQLiteStore
 
     if not yes:
         click.confirm(f"Delete item {item_id!r} from the store?", abort=True)
@@ -121,8 +121,8 @@ def delete(item_id: str, yes: bool) -> None:
 @cli.command()
 def info() -> None:
     """Show store statistics and configuration."""
-    from .config import get_settings
-    from .store import SQLiteStore
+    from src.core.config import get_settings
+    from src.data.store import SQLiteStore
 
     cfg = get_settings()
     store = SQLiteStore(cfg)
@@ -175,13 +175,13 @@ def query(
     no_history: bool,
 ) -> None:
     """Run the full recommendation pipeline for QUERY_TEXT."""
-    from .config import get_settings
-    from .pipeline import RecommendationPipeline
-    from .output import print_table, to_json
+    from src.core.config import get_settings
+    from src.search.pipeline import RecommendationPipeline
+    from src.cli.output import print_table, to_json
 
     cfg = get_settings()
 
-    with console.status(f"[cyan]Running recommendation pipeline…[/cyan]"):
+    with console.status("[cyan]Running recommendation pipeline…[/cyan]"):
         pipeline = RecommendationPipeline(
             top_k=top_k,
             use_reranker=rerank,

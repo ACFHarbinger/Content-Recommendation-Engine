@@ -13,17 +13,16 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 import click
 from pydantic import ValidationError
 from rich.console import Console
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
-from .config import get_settings
-from .embedder import Embedder
-from .schema import MediaItem
-from .store import SQLiteStore
+from src.core.config import get_settings
+from src.data.embedder import Embedder
+from src.core.schema import MediaItem
+from src.data.store import SQLiteStore
 
 logger = logging.getLogger(__name__)
 console = Console()

@@ -13,10 +13,10 @@ import logging
 import math
 from typing import Optional
 
-from .config import Settings, get_settings
-from .embedder import Embedder
-from .schema import MediaItem, ParsedQuery, ScoredCandidate
-from .store import SQLiteStore
+from src.core.config import Settings, get_settings
+from src.data.embedder import Embedder
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate
+from src.data.store import SQLiteStore
 
 logger = logging.getLogger(__name__)
 

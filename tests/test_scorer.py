@@ -6,13 +6,11 @@ combination, and edge cases (missing rating, missing year, no length preference)
 """
 from __future__ import annotations
 
-import math
-
 import pytest
 
-from src.config import Settings
-from src.schema import MediaItem, ParsedQuery, ScoredCandidate
-from src.scorer import Scorer, _CURRENT_YEAR
+from src.core.config import Settings
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate
+from src.search.scorer import Scorer, _CURRENT_YEAR
 
 
 def _cfg(**kwargs) -> Settings:
@@ -159,13 +157,13 @@ class TestHistoryBoost:
         assert scorer._history_boost(c.item, None) == 1.0
 
     def test_empty_profile_is_neutral(self):
-        from src.schema import HistoryProfile
+        from src.core.schema import HistoryProfile
         scorer = Scorer(_cfg())
         profile = HistoryProfile()
         assert scorer._history_boost(_candidate().item, profile) == 1.0
 
     def test_full_overlap_boosts_by_weight(self):
-        from src.schema import HistoryProfile, MediaItem
+        from src.core.schema import HistoryProfile, MediaItem
         scorer = Scorer(_cfg(history_boost_weight=0.2))
         item = MediaItem.model_validate({
             "id": "x", "title": "T",
@@ -181,7 +179,7 @@ class TestHistoryBoost:
         assert boost == pytest.approx(1.2)
 
     def test_partial_overlap_between_neutral_and_max(self):
-        from src.schema import HistoryProfile, MediaItem
+        from src.core.schema import HistoryProfile, MediaItem
         scorer = Scorer(_cfg(history_boost_weight=0.2))
         item = MediaItem.model_validate({
             "id": "x", "title": "T",
@@ -197,7 +195,7 @@ class TestHistoryBoost:
         assert 1.0 < boost < 1.2  # partial overlap
 
     def test_history_boost_applied_in_score(self):
-        from src.schema import HistoryProfile, MediaItem
+        from src.core.schema import HistoryProfile, MediaItem
         scorer = Scorer(_cfg(history_boost_weight=0.5))
         item = MediaItem.model_validate({
             "id": "x", "title": "T",
