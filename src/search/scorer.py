@@ -15,6 +15,7 @@ history_boost  = 1 + weight × overlap_fraction(item, history_profile)
 All factors are multiplicative so a zero-relevance item (rrf_score ≈ 0)
 always scores near 0 regardless of quality, recency, or history.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -23,7 +24,13 @@ import math
 from typing import Optional
 
 from src.core.config import Settings, get_settings
-from src.core.schema import ComponentScores, HistoryProfile, ParsedQuery, RankedResult, ScoredCandidate
+from src.core.schema import (
+    ComponentScores,
+    HistoryProfile,
+    ParsedQuery,
+    RankedResult,
+    ScoredCandidate,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -50,12 +57,8 @@ class Scorer:
             parsed_query:     Used to extract ``length_preference_episodes``.
             history_profile:  Optional watch-history signal for Phase 9 boost.
         """
-        length_pref = (
-            parsed_query.length_preference_episodes if parsed_query else None
-        )
-        results = [
-            self._rank_one(c, length_pref, history_profile) for c in candidates
-        ]
+        length_pref = parsed_query.length_preference_episodes if parsed_query else None
+        results = [self._rank_one(c, length_pref, history_profile) for c in candidates]
         results.sort(key=lambda r: r.recommendation_value, reverse=True)
         for i, r in enumerate(results):
             results[i] = r.model_copy(update={"rank": i + 1})

@@ -7,6 +7,7 @@ Usage:
 Validates each item against the MediaItem schema, embeds in batches with
 BGE-M3, and upserts to the SQLite store with a rich progress bar.
 """
+
 from __future__ import annotations
 
 import json
@@ -17,7 +18,13 @@ from pathlib import Path
 import click
 from pydantic import ValidationError
 from rich.console import Console
-from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+from rich.progress import (
+    BarColumn,
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    TimeElapsedColumn,
+)
 
 from src.core.config import get_settings
 from src.data.embedder import Embedder
@@ -40,7 +47,7 @@ def load_and_validate(path: Path) -> tuple[list[MediaItem], list[dict]]:
             valid.append(MediaItem.model_validate(item))
         except ValidationError as e:
             console.print(
-                f"[yellow]⚠  Skipping item {i} (id={item.get('id','?')}): "
+                f"[yellow]⚠  Skipping item {i} (id={item.get('id', '?')}): "
                 f"{e.error_count()} validation error(s)[/yellow]"
             )
             skipped.append(item)
@@ -49,9 +56,27 @@ def load_and_validate(path: Path) -> tuple[list[MediaItem], list[dict]]:
 
 
 @click.command()
-@click.option("--input", "-i", "input_path", required=True, type=click.Path(exists=True), help="Path to JSON file with media items.")
-@click.option("--batch-size", "-b", default=32, show_default=True, help="Embedding batch size (reduce if OOM).")
-@click.option("--reset", is_flag=True, default=False, help="Drop and recreate the items table before ingesting.")
+@click.option(
+    "--input",
+    "-i",
+    "input_path",
+    required=True,
+    type=click.Path(exists=True),
+    help="Path to JSON file with media items.",
+)
+@click.option(
+    "--batch-size",
+    "-b",
+    default=32,
+    show_default=True,
+    help="Embedding batch size (reduce if OOM).",
+)
+@click.option(
+    "--reset",
+    is_flag=True,
+    default=False,
+    help="Drop and recreate the items table before ingesting.",
+)
 def ingest(input_path: str, batch_size: int, reset: bool) -> None:
     """Ingest a JSON media library into the SQLite store."""
     cfg = get_settings()
@@ -65,7 +90,9 @@ def ingest(input_path: str, batch_size: int, reset: bool) -> None:
     with console.status("Validating input…"):
         items, skipped = load_and_validate(path)
 
-    console.print(f"[green]✓[/green] Loaded {len(items)} valid items, skipped {len(skipped)}.")
+    console.print(
+        f"[green]✓[/green] Loaded {len(items)} valid items, skipped {len(skipped)}."
+    )
     if not items:
         console.print("[red]No valid items to ingest.  Exiting.[/red]")
         sys.exit(1)
@@ -97,7 +124,9 @@ def ingest(input_path: str, batch_size: int, reset: bool) -> None:
         def _cb(current: int, total: int) -> None:
             progress.update(task, completed=current)
 
-        embedded = embedder.embed_batch(items, batch_size=batch_size, progress_callback=_cb)
+        embedded = embedder.embed_batch(
+            items, batch_size=batch_size, progress_callback=_cb
+        )
 
     # Upsert
     with console.status(f"Upserting {len(embedded)} items to SQLite…"):

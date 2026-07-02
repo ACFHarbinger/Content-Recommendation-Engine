@@ -4,6 +4,7 @@ Phase 4 tests — Scorer (Recommendation Value computation).
 Tests cover all three decay/boost functions independently, their multiplicative
 combination, and edge cases (missing rating, missing year, no length preference).
 """
+
 from __future__ import annotations
 
 import pytest
@@ -158,17 +159,23 @@ class TestHistoryBoost:
 
     def test_empty_profile_is_neutral(self):
         from src.core.schema import HistoryProfile
+
         scorer = Scorer(_cfg())
         profile = HistoryProfile()
         assert scorer._history_boost(_candidate().item, profile) == 1.0
 
     def test_full_overlap_boosts_by_weight(self):
         from src.core.schema import HistoryProfile, MediaItem
+
         scorer = Scorer(_cfg(history_boost_weight=0.2))
-        item = MediaItem.model_validate({
-            "id": "x", "title": "T",
-            "tags": "cyberpunk, AI", "genres": "Sci-Fi",
-        })
+        item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "T",
+                "tags": "cyberpunk, AI",
+                "genres": "Sci-Fi",
+            }
+        )
         profile = HistoryProfile(
             preferred_tags=frozenset({"cyberpunk", "ai"}),
             preferred_genres=frozenset({"sci-fi"}),
@@ -180,12 +187,16 @@ class TestHistoryBoost:
 
     def test_partial_overlap_between_neutral_and_max(self):
         from src.core.schema import HistoryProfile, MediaItem
+
         scorer = Scorer(_cfg(history_boost_weight=0.2))
-        item = MediaItem.model_validate({
-            "id": "x", "title": "T",
-            "tags": "cyberpunk, romance",
-            "genres": "Sci-Fi",
-        })
+        item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "T",
+                "tags": "cyberpunk, romance",
+                "genres": "Sci-Fi",
+            }
+        )
         profile = HistoryProfile(
             preferred_tags=frozenset({"cyberpunk"}),
             preferred_genres=frozenset({"sci-fi"}),
@@ -196,17 +207,26 @@ class TestHistoryBoost:
 
     def test_history_boost_applied_in_score(self):
         from src.core.schema import HistoryProfile, MediaItem
+
         scorer = Scorer(_cfg(history_boost_weight=0.5))
-        item = MediaItem.model_validate({
-            "id": "x", "title": "T",
-            "tags": "cyberpunk", "genres": "Sci-Fi",
-            "rating": 8.0, "year": 2020, "episodes": 12,
-        })
+        item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "T",
+                "tags": "cyberpunk",
+                "genres": "Sci-Fi",
+                "rating": 8.0,
+                "year": 2020,
+                "episodes": 12,
+            }
+        )
         profile = HistoryProfile(
             preferred_tags=frozenset({"cyberpunk"}),
             preferred_genres=frozenset({"sci-fi"}),
             item_count=2,
         )
         no_hist = scorer.score([ScoredCandidate(item=item, rrf_score=0.5)])
-        with_hist = scorer.score([ScoredCandidate(item=item, rrf_score=0.5)], history_profile=profile)
+        with_hist = scorer.score(
+            [ScoredCandidate(item=item, rrf_score=0.5)], history_profile=profile
+        )
         assert with_hist[0].recommendation_value > no_hist[0].recommendation_value

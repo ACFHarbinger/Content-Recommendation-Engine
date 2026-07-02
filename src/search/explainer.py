@@ -10,6 +10,7 @@ item's actual tags + genres — any fabricated tag is stripped with a warning.
 
 Falls back to a template-based reason string on any API or parse failure.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -68,7 +69,7 @@ def _build_user_message(result: RankedResult, user_query: str) -> str:
 
 def _fallback_reason(result: RankedResult, user_query: str) -> ExplainedResult:
     item = result.item
-    #verb = item.consume_verb
+    # verb = item.consume_verb
     reasons = [
         f"Recommended based on your query {user_query!r}.",
         f"This {item.type or 'item'} has a rating of {item.rating}/10."
@@ -161,9 +162,8 @@ class Explainer:
 
         try:
             import anthropic
-            async_client = anthropic.AsyncAnthropic(
-                api_key=self._cfg.anthropic_api_key
-            )
+
+            async_client = anthropic.AsyncAnthropic(api_key=self._cfg.anthropic_api_key)
             tasks = [
                 _explain_one(async_client, r, user_query, self._cfg.claude_model)
                 for r in results

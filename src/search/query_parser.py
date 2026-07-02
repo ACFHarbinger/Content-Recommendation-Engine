@@ -6,6 +6,7 @@ Falls back to a pure semantic search (no filters, full query as semantic text)
 on any API error, malformed JSON, or missing API key — so the pipeline never
 crashes due to a parsing failure.
 """
+
 from __future__ import annotations
 
 import json

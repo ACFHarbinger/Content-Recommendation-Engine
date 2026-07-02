@@ -9,6 +9,7 @@ Phase 4: RankedResult with recommendation_value.
 Phase 5: ExplainedResult with reasons and anti-hallucination guard.
 Phase 7: volumes, abstract fields on MediaItem; modality-aware dense_text.
 """
+
 from __future__ import annotations
 
 from enum import Enum
@@ -20,6 +21,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 # ------------------------------------------------------------------
 # Enumerations
 # ------------------------------------------------------------------
+
 
 class MediaType(str, Enum):
     ANIME = "anime"
@@ -44,6 +46,7 @@ class WatchStatus(str, Enum):
 # Core media item
 # ------------------------------------------------------------------
 
+
 class MediaItem(BaseModel):
     """Single item in the media library.  Matches the listings.json schema."""
 
@@ -61,7 +64,7 @@ class MediaItem(BaseModel):
     web_link: Optional[str] = None
     review_notes: Optional[str] = Field(None, alias="review")
     # Phase 7 additions
-    abstract: Optional[str] = None          # for papers; used as dense source
+    abstract: Optional[str] = None  # for papers; used as dense source
     volumes: Optional[int] = Field(None, ge=1)  # for manga
 
     model_config = {"populate_by_name": True, "extra": "allow"}
@@ -120,6 +123,7 @@ class MediaItem(BaseModel):
 # Watch-history profile (Phase 9)
 # ------------------------------------------------------------------
 
+
 class HistoryProfile(BaseModel):
     """
     Aggregated preference signal derived from the user's watch history.
@@ -164,6 +168,7 @@ class HistoryProfile(BaseModel):
 # Ingestion outputs (Phase 1)
 # ------------------------------------------------------------------
 
+
 class EmbeddedItem(BaseModel):
     item: MediaItem
     dense_vector: list[float]
@@ -175,9 +180,10 @@ class EmbeddedItem(BaseModel):
 # Query / retrieval (Phase 2–3)
 # ------------------------------------------------------------------
 
+
 class FilterClause(BaseModel):
     field: str
-    op: str   # eq, ne, gt, gte, lt, lte, in, nin
+    op: str  # eq, ne, gt, gte, lt, lte, in, nin
     value: Any
 
 
@@ -191,6 +197,7 @@ class ParsedQuery(BaseModel):
 # ------------------------------------------------------------------
 # Scored / ranked results (Phases 3–4)
 # ------------------------------------------------------------------
+
 
 class ScoredCandidate(BaseModel):
     item: MediaItem
@@ -216,6 +223,7 @@ class RankedResult(BaseModel):
 # ------------------------------------------------------------------
 # Explained results (Phase 5)
 # ------------------------------------------------------------------
+
 
 class ExplainedResult(RankedResult):
     reasons: list[str] = Field(default_factory=list)

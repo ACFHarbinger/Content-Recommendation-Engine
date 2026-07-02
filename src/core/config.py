@@ -2,6 +2,7 @@
 Settings loaded from environment variables / .env file.
 All fields have sensible defaults so the engine works locally without any config.
 """
+
 from __future__ import annotations
 
 from typing import Optional
@@ -23,7 +24,9 @@ class Settings(BaseSettings):
     batch_size: int = Field(32, validation_alias="BATCH_SIZE")
 
     # Scoring decay (Phase 4)
-    lambda_recency: float = Field(0.05, validation_alias="LAMBDA_RECENCY", ge=0.0, le=1.0)
+    lambda_recency: float = Field(
+        0.05, validation_alias="LAMBDA_RECENCY", ge=0.0, le=1.0
+    )
     length_origin: int = Field(12, validation_alias="LENGTH_ORIGIN", ge=1)
     length_scale: int = Field(24, validation_alias="LENGTH_SCALE", ge=1)
 
@@ -31,15 +34,21 @@ class Settings(BaseSettings):
     fusion_method: str = Field("rrf", validation_alias="FUSION_METHOD")
 
     # Reranker (Phase 8)
-    rerank_model: str = Field("BAAI/bge-reranker-v2-m3", validation_alias="RERANK_MODEL")
+    rerank_model: str = Field(
+        "BAAI/bge-reranker-v2-m3", validation_alias="RERANK_MODEL"
+    )
     rerank_top_n: int = Field(20, validation_alias="RERANK_TOP_N")
 
     # Claude model for query parser & explainer (Phases 2, 5)
     claude_model: str = Field("claude-sonnet-4-6", validation_alias="CLAUDE_MODEL")
 
     # Watch-history implicit feedback (Phase 9)
-    history_min_rating: float = Field(7.0, validation_alias="HISTORY_MIN_RATING", ge=0.0, le=10.0)
-    history_boost_weight: float = Field(0.15, validation_alias="HISTORY_BOOST_WEIGHT", ge=0.0, le=1.0)
+    history_min_rating: float = Field(
+        7.0, validation_alias="HISTORY_MIN_RATING", ge=0.0, le=10.0
+    )
+    history_boost_weight: float = Field(
+        0.15, validation_alias="HISTORY_BOOST_WEIGHT", ge=0.0, le=1.0
+    )
 
     model_config = {
         "env_file": ".env",

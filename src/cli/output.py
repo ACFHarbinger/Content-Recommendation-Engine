@@ -8,6 +8,7 @@ Supports two formats:
 Both renderers handle the full ExplainedResult including reasons,
 matched_tags, component scores, and media links.
 """
+
 from __future__ import annotations
 
 import json
@@ -24,6 +25,7 @@ console = Console()
 # ------------------------------------------------------------------
 # JSON output
 # ------------------------------------------------------------------
+
 
 def to_json(results: list[ExplainedResult], indent: int = 2) -> str:
     """Serialise results to a JSON string."""
@@ -106,7 +108,9 @@ def print_table(results: list[ExplainedResult]) -> None:
         rating_str = f"{item.rating:.1f}" if item.rating else "—"
         year_str = str(item.year_released) if item.year_released else "—"
 
-        reason_lines = "\n".join(f"• {r_}" for r_ in r.reasons[:3]) if r.reasons else "—"
+        reason_lines = (
+            "\n".join(f"• {r_}" for r_ in r.reasons[:3]) if r.reasons else "—"
+        )
         if r.matched_tags:
             reason_lines += "\n[dim]Tags: " + ", ".join(r.matched_tags[:5]) + "[/dim]"
 

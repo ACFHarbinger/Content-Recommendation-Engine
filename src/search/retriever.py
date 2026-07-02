@@ -7,6 +7,7 @@ All vector arithmetic runs in Python — suitable for personal library sizes
 then merged with RRF, falling back to dense-only when no sparse data is
 present (e.g. freshly ingested with sparse encoding disabled).
 """
+
 from __future__ import annotations
 
 import logging
@@ -25,6 +26,7 @@ logger = logging.getLogger(__name__)
 # Vector math helpers
 # ------------------------------------------------------------------
 
+
 def _cosine(a: list[float], b: list[float]) -> float:
     dot = sum(x * y for x, y in zip(a, b))
     na = math.sqrt(sum(x * x for x in a))
@@ -35,8 +37,10 @@ def _cosine(a: list[float], b: list[float]) -> float:
 
 
 def _sparse_dot(
-    idx_q: list[int], val_q: list[float],
-    idx_d: list[int], val_d: list[float],
+    idx_q: list[int],
+    val_q: list[float],
+    idx_d: list[int],
+    val_d: list[float],
 ) -> float:
     doc = dict(zip(idx_d, val_d))
     return sum(v * doc.get(i, 0.0) for i, v in zip(idx_q, val_q))
@@ -50,22 +54,25 @@ def _rrf(ranks: list[int], k: int = 60) -> float:
 # Row → MediaItem
 # ------------------------------------------------------------------
 
+
 def _payload_to_item(payload: dict) -> MediaItem:
     """Convert a SQLite row dict into a MediaItem."""
-    return MediaItem.model_validate({
-        "id": payload.get("id", ""),
-        "title": payload.get("title", ""),
-        "type": payload.get("type") or None,
-        "status": payload.get("watch_status") or None,
-        "rating": payload.get("rating") or None,
-        "year": payload.get("year_released") or None,
-        "episodes": payload.get("num_episodes_or_pages") or None,
-        "genres": payload.get("genres", []),
-        "tags": payload.get("tags", []),
-        "associated_entities": payload.get("associated_entities", []),
-        "local_file": payload.get("local_file_location") or None,
-        "web_link": payload.get("web_link") or None,
-    })
+    return MediaItem.model_validate(
+        {
+            "id": payload.get("id", ""),
+            "title": payload.get("title", ""),
+            "type": payload.get("type") or None,
+            "status": payload.get("watch_status") or None,
+            "rating": payload.get("rating") or None,
+            "year": payload.get("year_released") or None,
+            "episodes": payload.get("num_episodes_or_pages") or None,
+            "genres": payload.get("genres", []),
+            "tags": payload.get("tags", []),
+            "associated_entities": payload.get("associated_entities", []),
+            "local_file": payload.get("local_file_location") or None,
+            "web_link": payload.get("web_link") or None,
+        }
+    )
 
 
 class HybridRetriever:
@@ -148,11 +155,15 @@ class HybridRetriever:
             return []
 
         dense_scores = [
-            (i, _cosine(dense_vec, row["dense_vector"]))
-            for i, row in enumerate(rows)
+            (i, _cosine(dense_vec, row["dense_vector"])) for i, row in enumerate(rows)
         ]
         sparse_scores = [
-            (i, _sparse_dot(sp_idx, sp_val, row["sparse_indices"], row["sparse_values"]))
+            (
+                i,
+                _sparse_dot(
+                    sp_idx, sp_val, row["sparse_indices"], row["sparse_values"]
+                ),
+            )
             for i, row in enumerate(rows)
         ]
 
@@ -175,8 +186,7 @@ class HybridRetriever:
             ]
         else:
             fused = [
-                (i, _rrf([dense_rank[i], sparse_rank[i]]))
-                for i in range(len(rows))
+                (i, _rrf([dense_rank[i], sparse_rank[i]])) for i in range(len(rows))
             ]
 
         fused.sort(key=lambda x: x[1], reverse=True)
@@ -206,7 +216,10 @@ class HybridRetriever:
             return []
 
         scored = sorted(
-            ((i, _cosine(dense_vec, row["dense_vector"])) for i, row in enumerate(rows)),
+            (
+                (i, _cosine(dense_vec, row["dense_vector"]))
+                for i, row in enumerate(rows)
+            ),
             key=lambda x: x[1],
             reverse=True,
         )[:top_k]
@@ -229,6 +242,5 @@ class HybridRetriever:
         """Return metadata rows matching the filter, scored 1.0 (no ranking)."""
         rows = self._store.fetch_filtered(where_clause, params, limit=top_k)
         return [
-            ScoredCandidate(item=_payload_to_item(row), rrf_score=1.0)
-            for row in rows
+            ScoredCandidate(item=_payload_to_item(row), rrf_score=1.0) for row in rows
         ]

@@ -4,6 +4,7 @@ Phase 1 — Export the SQLite store back to a JSON file.
 Usage:
     python -m src.export --output data/backup.json
 """
+
 from __future__ import annotations
 
 import json
@@ -21,8 +22,17 @@ console = Console()
 
 
 @click.command()
-@click.option("--output", "-o", "output_path", required=True, type=click.Path(), help="Destination JSON file.")
-@click.option("--limit", default=10_000, show_default=True, help="Maximum items to export.")
+@click.option(
+    "--output",
+    "-o",
+    "output_path",
+    required=True,
+    type=click.Path(),
+    help="Destination JSON file.",
+)
+@click.option(
+    "--limit", default=10_000, show_default=True, help="Maximum items to export."
+)
 def export(output_path: str, limit: int) -> None:
     """Export the SQLite store back to a JSON file."""
     cfg = get_settings()

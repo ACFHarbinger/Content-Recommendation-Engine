@@ -3,6 +3,7 @@ Phase 0 acceptance test: validate data/sample.json against MediaItem schema.
 
 Run: pytest tests/test_schema.py
 """
+
 import json
 from pathlib import Path
 

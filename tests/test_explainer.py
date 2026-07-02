@@ -4,6 +4,7 @@ Tests for src/explainer.py — Explainer and fallback logic.
 All async paths are exercised through the synchronous explain_batch()
 entry point.  anthropic is mocked via conftest.py.
 """
+
 from __future__ import annotations
 
 from src.core.schema import ComponentScores, MediaItem, RankedResult
@@ -29,6 +30,7 @@ class TestFallbackReason:
     def test_no_api_key_all_fallback(self, cfg, scored_candidates):
         from src.search.explainer import Explainer
         from src.search.scorer import Scorer
+
         scorer = Scorer(cfg)
         ranked = scorer.score(scored_candidates)
         explainer = Explainer(cfg)  # cfg has no anthropic_api_key
@@ -41,6 +43,7 @@ class TestFallbackReason:
     def test_fallback_has_correct_type(self, cfg, scored_candidates):
         from src.search.explainer import _fallback_reason
         from src.search.scorer import Scorer
+
         ranked = Scorer(cfg).score(scored_candidates)
         result = _fallback_reason(ranked[0], "cyberpunk query")
         assert result.recommendation_value == ranked[0].recommendation_value
@@ -49,10 +52,17 @@ class TestFallbackReason:
 
     def test_fallback_video_uses_watch_verb(self, cfg, sample_items):
         from src.search.explainer import _fallback_reason
-        anime_item = MediaItem.model_validate({
-            "id": "x", "title": "Test Anime", "type": "anime",
-            "rating": 8.0, "year": 2020, "episodes": 12,
-        })
+
+        anime_item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "Test Anime",
+                "type": "anime",
+                "rating": 8.0,
+                "year": 2020,
+                "episodes": 12,
+            }
+        )
         ranked = _make_ranked(anime_item)
         result = _fallback_reason(ranked, "query")
         # Reasons are plain text — just verify the object is valid
@@ -61,7 +71,10 @@ class TestFallbackReason:
     def test_matched_tags_anti_hallucination(self, cfg, sample_items):
         """matched_tags in ExplainedResult must be subset of item's actual tags+genres."""
         from src.core.schema import ExplainedResult
-        item = sample_items[0]  # Ghost in the Shell — tags: cyberpunk, AI, consciousness
+
+        item = sample_items[
+            0
+        ]  # Ghost in the Shell — tags: cyberpunk, AI, consciousness
         ranked = _make_ranked(item)
         result = ExplainedResult(
             **ranked.model_dump(),
@@ -98,12 +111,14 @@ class TestExplainerWithMock:
 
     def test_empty_results_returns_empty(self, cfg):
         from src.search.explainer import Explainer
+
         explainer = Explainer(cfg)
         assert explainer.explain_batch([], "query") == []
 
     def test_result_ranks_preserved(self, cfg, scored_candidates):
         from src.search.explainer import Explainer
         from src.search.scorer import Scorer
+
         ranked = Scorer(cfg).score(scored_candidates)
         explainer = Explainer(cfg)
         results = explainer.explain_batch(ranked, "test")

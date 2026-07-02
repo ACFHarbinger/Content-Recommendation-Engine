@@ -9,6 +9,7 @@ Provides:
   sample_items      — 3 pre-validated MediaItem objects for quick tests
   scored_candidates — 3 ScoredCandidate objects ready for scoring/explaining
 """
+
 from __future__ import annotations
 
 import sys
@@ -23,7 +24,10 @@ from src.core.schema import EmbeddedItem, MediaItem, ScoredCandidate
 # Async-capable fake anthropic module
 # ---------------------------------------------------------------------------
 
-def _build_anthropic_module(response_json: str = '{"reasons":["Great match"],"matched_tags":["mecha"]}'):
+
+def _build_anthropic_module(
+    response_json: str = '{"reasons":["Great match"],"matched_tags":["mecha"]}',
+):
     fake_mod = types.ModuleType("anthropic")
 
     class _Block:
@@ -37,12 +41,14 @@ def _build_anthropic_module(response_json: str = '{"reasons":["Great match"],"ma
     class _SyncMessages:
         def __init__(self, text):
             self._text = text
+
         def create(self, **kw):
             return _Response(self._text)
 
     class _AsyncMessages:
         def __init__(self, text):
             self._text = text
+
         async def create(self, **kw):
             return _Response(self._text)
 
@@ -62,6 +68,7 @@ def _build_anthropic_module(response_json: str = '{"reasons":["Great match"],"ma
 # ---------------------------------------------------------------------------
 # MockEmbedder — no model loading
 # ---------------------------------------------------------------------------
+
 
 class MockEmbedder:
     """Drop-in Embedder replacement that returns deterministic dummy vectors."""
@@ -106,10 +113,12 @@ class MockEmbedder:
 # Pytest fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def cfg(tmp_path):
     """Settings with a per-test temp SQLite file so stores don't share state."""
     from src.core.config import Settings
+
     return Settings(
         anthropic_api_key=None,
         sqlite_path=str(tmp_path / "test_rec.db"),
@@ -122,6 +131,7 @@ def cfg(tmp_path):
 def sqlite_store(cfg):
     """A fresh SQLiteStore backed by the per-test temp db."""
     from src.data.store import SQLiteStore
+
     store = SQLiteStore(cfg)
     store.create_collection()
     yield store
@@ -145,41 +155,47 @@ def mock_embedder() -> MockEmbedder:
 def sample_items() -> list[MediaItem]:
     """Three minimal but valid MediaItems for quick tests."""
     return [
-        MediaItem.model_validate({
-            "id": "aaaaaaaa-0000-0000-0000-000000000001",
-            "title": "Ghost in the Shell",
-            "type": "movie",
-            "status": "watched",
-            "rating": 9.0,
-            "year": 1995,
-            "episodes": 1,
-            "genres": "Sci-Fi, Action",
-            "tags": "cyberpunk, AI, consciousness",
-            "review": "A landmark philosophical sci-fi cyberpunk film.",
-        }),
-        MediaItem.model_validate({
-            "id": "aaaaaaaa-0000-0000-0000-000000000002",
-            "title": "Akira",
-            "type": "movie",
-            "status": "plan_to_watch",
-            "rating": None,
-            "year": 1988,
-            "episodes": 1,
-            "genres": "Sci-Fi, Action",
-            "tags": "cyberpunk, post-apocalyptic, psychic",
-        }),
-        MediaItem.model_validate({
-            "id": "aaaaaaaa-0000-0000-0000-000000000003",
-            "title": "The Foundation",
-            "type": "book",
-            "status": "reading",
-            "rating": 8.5,
-            "year": 1951,
-            "episodes": 255,
-            "genres": "Sci-Fi",
-            "tags": "galactic-empire, psychohistory, classic",
-            "abstract": "Asimov's magnum opus about the fall of a galactic empire.",
-        }),
+        MediaItem.model_validate(
+            {
+                "id": "aaaaaaaa-0000-0000-0000-000000000001",
+                "title": "Ghost in the Shell",
+                "type": "movie",
+                "status": "watched",
+                "rating": 9.0,
+                "year": 1995,
+                "episodes": 1,
+                "genres": "Sci-Fi, Action",
+                "tags": "cyberpunk, AI, consciousness",
+                "review": "A landmark philosophical sci-fi cyberpunk film.",
+            }
+        ),
+        MediaItem.model_validate(
+            {
+                "id": "aaaaaaaa-0000-0000-0000-000000000002",
+                "title": "Akira",
+                "type": "movie",
+                "status": "plan_to_watch",
+                "rating": None,
+                "year": 1988,
+                "episodes": 1,
+                "genres": "Sci-Fi, Action",
+                "tags": "cyberpunk, post-apocalyptic, psychic",
+            }
+        ),
+        MediaItem.model_validate(
+            {
+                "id": "aaaaaaaa-0000-0000-0000-000000000003",
+                "title": "The Foundation",
+                "type": "book",
+                "status": "reading",
+                "rating": 8.5,
+                "year": 1951,
+                "episodes": 255,
+                "genres": "Sci-Fi",
+                "tags": "galactic-empire, psychohistory, classic",
+                "abstract": "Asimov's magnum opus about the fall of a galactic empire.",
+            }
+        ),
     ]
 
 

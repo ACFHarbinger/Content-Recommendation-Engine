@@ -4,6 +4,7 @@ Phase 2 — In-memory LRU cache for parsed queries.
 Avoids redundant Claude API calls for identical or normalised queries.
 The cache key is the lowercased, whitespace-collapsed query string.
 """
+
 from __future__ import annotations
 
 import re

@@ -13,6 +13,7 @@ Each golden query carries pre-parsed ``semantic_query`` and
 ``parsed_filters`` so evaluation is deterministic and does not require
 a Claude API call.
 """
+
 from __future__ import annotations
 
 import csv
@@ -36,12 +37,15 @@ console = Console()
 # Metric helpers
 # ------------------------------------------------------------------
 
-def _relevance(item_id: str, expected_top: list[str], expected_absent: list[str]) -> int:
+
+def _relevance(
+    item_id: str, expected_top: list[str], expected_absent: list[str]
+) -> int:
     if item_id in expected_absent:
-        return -1   # penalised — should not appear
+        return -1  # penalised — should not appear
     if item_id in expected_top:
-        return 2    # highly relevant
-    return 0        # not judged
+        return 2  # highly relevant
+    return 0  # not judged
 
 
 def ndcg_at_k(result_ids: list[str], golden: dict, k: int) -> float:
@@ -75,6 +79,7 @@ def penalty_score(result_ids: list[str], golden: dict, k: int) -> int:
 # Query runner (uses pre-parsed filters — no Claude dependency)
 # ------------------------------------------------------------------
 
+
 def _run_golden_query(
     gq: dict,
     retriever,
@@ -95,7 +100,9 @@ def _run_golden_query(
     )
     qdrant_filter = _build_qdrant_filter(filter_clauses)
 
-    candidates = retriever.retrieve(parsed, top_k=min(top_k * 4, 200), qdrant_filter=qdrant_filter)
+    candidates = retriever.retrieve(
+        parsed, top_k=min(top_k * 4, 200), qdrant_filter=qdrant_filter
+    )
 
     if reranker:
         candidates = reranker.rerank(
@@ -112,9 +119,14 @@ def _run_golden_query(
 # CLI
 # ------------------------------------------------------------------
 
+
 @click.command()
-@click.option("--k", default=10, show_default=True, help="Cut-off for NDCG and Precision.")
-@click.option("--rerank", is_flag=True, default=False, help="Enable cross-encoder reranker.")
+@click.option(
+    "--k", default=10, show_default=True, help="Cut-off for NDCG and Precision."
+)
+@click.option(
+    "--rerank", is_flag=True, default=False, help="Enable cross-encoder reranker."
+)
 @click.option(
     "--golden",
     "golden_path",
@@ -146,6 +158,7 @@ def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) ->
     reranker_obj = None
     if rerank:
         from src.reranker import Reranker
+
         reranker_obj = Reranker(cfg)
 
     ndcg_scores: list[float] = []
@@ -165,13 +178,15 @@ def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) ->
 
         ndcg_scores.append(ndcg)
         prec_scores.append(prec)
-        rows.append({
-            "query": gq["query"],
-            "ndcg": round(ndcg, 4),
-            "precision_at_5": round(prec, 4),
-            "penalties": pen,
-            "result_ids": "|".join(result_ids),
-        })
+        rows.append(
+            {
+                "query": gq["query"],
+                "ndcg": round(ndcg, 4),
+                "precision_at_5": round(prec, 4),
+                "penalties": pen,
+                "result_ids": "|".join(result_ids),
+            }
+        )
 
     # Rich table
     table = Table(show_header=True, header_style="bold cyan", border_style="dim")
@@ -181,7 +196,11 @@ def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) ->
     table.add_column("Pen", width=5, justify="right")
 
     for row in rows:
-        color = "green" if row["ndcg"] >= 0.7 else ("yellow" if row["ndcg"] >= 0.4 else "red")
+        color = (
+            "green"
+            if row["ndcg"] >= 0.7
+            else ("yellow" if row["ndcg"] >= 0.4 else "red")
+        )
         table.add_row(
             row["query"][:40],
             f"[{color}]{row['ndcg']:.4f}[/{color}]",

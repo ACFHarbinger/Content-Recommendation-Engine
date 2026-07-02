@@ -15,6 +15,7 @@ requires minimal changes:
   fetch_all()          — SELECT * with optional WHERE (includes vectors)
   fetch_filtered()     — SELECT metadata columns only (for scroll / history)
 """
+
 from __future__ import annotations
 
 import json
@@ -48,8 +49,14 @@ CREATE TABLE IF NOT EXISTS items (
 )
 """
 
-_JSON_COLS = ("genres", "tags", "associated_entities",
-              "dense_vector", "sparse_indices", "sparse_values")
+_JSON_COLS = (
+    "genres",
+    "tags",
+    "associated_entities",
+    "dense_vector",
+    "sparse_indices",
+    "sparse_values",
+)
 _META_JSON_COLS = ("genres", "tags", "associated_entities")
 
 
@@ -140,23 +147,25 @@ class SQLiteStore:
             rows = []
             for ei in batch:
                 item = ei.item
-                rows.append((
-                    item.id,
-                    item.title,
-                    item.type or "",
-                    item.watch_status or "",
-                    item.rating,
-                    item.year_released,
-                    item.num_episodes_or_pages,
-                    json.dumps(item.genres),
-                    json.dumps(item.tags),
-                    json.dumps(item.associated_entities),
-                    item.local_file_location or "",
-                    item.web_link or "",
-                    json.dumps(ei.dense_vector),
-                    json.dumps(ei.sparse_indices),
-                    json.dumps(ei.sparse_values),
-                ))
+                rows.append(
+                    (
+                        item.id,
+                        item.title,
+                        item.type or "",
+                        item.watch_status or "",
+                        item.rating,
+                        item.year_released,
+                        item.num_episodes_or_pages,
+                        json.dumps(item.genres),
+                        json.dumps(item.tags),
+                        json.dumps(item.associated_entities),
+                        item.local_file_location or "",
+                        item.web_link or "",
+                        json.dumps(ei.dense_vector),
+                        json.dumps(ei.sparse_indices),
+                        json.dumps(ei.sparse_values),
+                    )
+                )
 
             conn.executemany(
                 """

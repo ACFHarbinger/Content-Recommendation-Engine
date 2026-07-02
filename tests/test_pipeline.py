@@ -4,6 +4,7 @@ Tests for src/pipeline.py — RecommendationPipeline end-to-end orchestration.
 All external dependencies (BGE-M3, Anthropic) are replaced with
 the mock fixtures from conftest.py.  SQLite uses a real temp-file db.
 """
+
 from __future__ import annotations
 
 from src.core.schema import ExplainedResult
@@ -39,6 +40,7 @@ def _make_pipeline(cfg, mock_embedder, explain=False, use_reranker=False):
 
 def _populate(cfg, mock_embedder, items):
     from src.data.store import SQLiteStore
+
     store = SQLiteStore(cfg)
     store.create_collection()
     embedded = mock_embedder.embed_batch(items)
@@ -46,9 +48,7 @@ def _populate(cfg, mock_embedder, items):
 
 
 class TestPipelineRun:
-    def test_returns_explained_results(
-        self, cfg, mock_embedder, sample_items
-    ):
+    def test_returns_explained_results(self, cfg, mock_embedder, sample_items):
         _populate(cfg, mock_embedder, sample_items)
         pipeline = _make_pipeline(cfg, mock_embedder)
         results = pipeline.run("cyberpunk sci-fi")
@@ -78,9 +78,7 @@ class TestPipelineRun:
         results = pipeline.run("anything")
         assert len(results) <= 2
 
-    def test_no_explain_produces_empty_reasons(
-        self, cfg, mock_embedder, sample_items
-    ):
+    def test_no_explain_produces_empty_reasons(self, cfg, mock_embedder, sample_items):
         _populate(cfg, mock_embedder, sample_items)
         pipeline = _make_pipeline(cfg, mock_embedder, explain=False)
         results = pipeline.run("any query")
@@ -88,16 +86,12 @@ class TestPipelineRun:
             assert r.reasons == []
             assert r.matched_tags == []
 
-    def test_empty_collection_returns_empty_list(
-        self, cfg, mock_embedder
-    ):
+    def test_empty_collection_returns_empty_list(self, cfg, mock_embedder):
         pipeline = _make_pipeline(cfg, mock_embedder)
         results = pipeline.run("any query")
         assert results == []
 
-    def test_results_contain_valid_items(
-        self, cfg, mock_embedder, sample_items
-    ):
+    def test_results_contain_valid_items(self, cfg, mock_embedder, sample_items):
         _populate(cfg, mock_embedder, sample_items)
         pipeline = _make_pipeline(cfg, mock_embedder)
         results = pipeline.run("sci-fi")
@@ -105,9 +99,7 @@ class TestPipelineRun:
             assert r.item.id
             assert r.item.title
 
-    def test_component_scores_present(
-        self, cfg, mock_embedder, sample_items
-    ):
+    def test_component_scores_present(self, cfg, mock_embedder, sample_items):
         _populate(cfg, mock_embedder, sample_items)
         pipeline = _make_pipeline(cfg, mock_embedder)
         results = pipeline.run("any")

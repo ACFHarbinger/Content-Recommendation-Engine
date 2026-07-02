@@ -4,6 +4,7 @@ Phase 1 — BGE-M3 embedding wrapper.
 Produces dense (1024-dim) and sparse (SPLADE-style) vectors from text.
 The model is loaded once as a module-level singleton (thread-safe after init).
 """
+
 from __future__ import annotations
 
 import logging

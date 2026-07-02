@@ -8,6 +8,7 @@ Each stage is optional and can be disabled via constructor flags, so the
 pipeline degrades gracefully when dependencies (Claude API, reranker model)
 are unavailable.
 """
+
 from __future__ import annotations
 
 import logging
@@ -112,7 +113,10 @@ class RecommendationPipeline:
             results = self._explainer.explain_batch(ranked, query)
         else:
             from src.core.schema import ExplainedResult as ER
-            results = [ER(**r.model_dump(), reasons=[], matched_tags=[]) for r in ranked]
+
+            results = [
+                ER(**r.model_dump(), reasons=[], matched_tags=[]) for r in ranked
+            ]
 
         elapsed = time.perf_counter() - t_start
         logger.info("Pipeline completed in %.2fs", elapsed)

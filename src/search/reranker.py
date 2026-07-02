@@ -7,6 +7,7 @@ precision before applying business-logic decay functions.
 The reranker scores each (query, item_text) pair and re-orders candidates
 by cross-encoder score before passing to the Scorer.
 """
+
 from __future__ import annotations
 
 import logging
@@ -34,8 +35,7 @@ def _get_reranker(model_name: str):
             from FlagEmbedding import FlagReranker
         except ImportError as e:
             raise RuntimeError(
-                "FlagEmbedding not installed. "
-                "Run: pip install 'FlagEmbedding>=1.3.5'"
+                "FlagEmbedding not installed. Run: pip install 'FlagEmbedding>=1.3.5'"
             ) from e
         t0 = time.perf_counter()
         logger.info("Loading reranker %s…", model_name)
@@ -94,8 +94,7 @@ class Reranker:
                 reverse=True,
             )
             return [
-                c.model_copy(update={"rrf_score": float(s)})
-                for c, s in reranked[:n]
+                c.model_copy(update={"rrf_score": float(s)}) for c, s in reranked[:n]
             ]
         except Exception as exc:
             logger.warning("Reranking failed (%s) — using original order.", exc)
