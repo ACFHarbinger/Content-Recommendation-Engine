@@ -1,11 +1,46 @@
-# Recommendation Engine
+<div align="center">
 
-A personal, local-first media recommendation engine.  
-Takes your library of anime, movies, books, and other media — annotated with ratings, genres, and tags — and returns ranked recommendations with explanations, using hybrid semantic + lexical search.
+# Recommendation-Engine
+
+**A local-first, hybrid semantic-lexical search and AI-powered recommendation engine for personal media libraries.**
+
+<a href="https://github.com/ACFHarbinger/Image-Toolkit/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ACFHarbinger/Image-Toolkit/actions/workflows/ci.yml/badge.svg"></a>
+<img alt="PRs Welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg">
+<a href="https://github.com/astral-sh/ruff"><img alt="Ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"></a>
+
+</br>
+
+<a href="https://www.python.org/"><img alt="Python" src="https://img.shields.io/badge/Python-3.11+-3776ab?logo=python&logoColor=white"></a>
+<a href="https://qdrant.tech/"><img alt="Qdrant" src="https://img.shields.io/badge/Qdrant-Vector_Search-FF4154?logo=qdrant&logoColor=white"></a>
+<a href="https://www.anthropic.com/"><img alt="Anthropic Claude" src="https://img.shields.io/badge/Claude-AI_Query_Parser-191919?logo=anthropic&logoColor=white"></a>
+<a href="https://docs.pydantic.dev/"><img alt="Pydantic" src="https://img.shields.io/badge/Pydantic-Data_Validation-E23B7E?logo=pydantic&logoColor=white"></a>
+<a href="https://docs.pytest.org/"><img alt="pytest" src="https://img.shields.io/badge/pytest-testing-0A9EDC?logo=pytest&logoColor=white"></a>
+
+</br>
+
+<a href="https://github.com/astral-sh/uv"><img alt="uv" src="https://img.shields.io/badge/managed%20by-uv-261230.svg"></a>
+<a href="https://www.docker.com/"><img alt="Docker" src="https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white"></a>
+<a href="https://dependabot.com/"><img alt="Dependabot" src="https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot&logoColor=white"></a>
+
+<p>
+  <a href="#-quick-start"><strong>🚀 Quick Start</strong></a> |
+  <a href="#-features"><strong>✨ Features</strong></a> |
+  <a href="#%EF%B8%8F-how-it-works"><strong>⚙️ How It Works</strong></a> |
+  <a href="#-installation--setup"><strong>📦 Installation</strong></a> |
+  <a href="#-cli-commands"><strong>💻 CLI Commands</strong></a> |
+  <a href="#-data-format"><strong>📄 Data Format</strong></a> |
+  <a href="#-configuration"><strong>🔧 Configuration</strong></a> |
+  <a href="#-development"><strong>🛠️ Development</strong></a> |
+  <a href="#-architecture-decisions"><strong>📚 Architecture Decisions</strong></a>
+</p>
+
+</div>
 
 ---
 
-## How it works
+## ⚙️ How It Works
+
+The engine combines local machine learning models with optional cloud LLM APIs to parse natural language queries, retrieve candidates, score them, and explain the recommendations:
 
 ```
 Your query (natural language + optional filters)
@@ -31,98 +66,115 @@ Your query (natural language + optional filters)
   Rich table / JSON output
 ```
 
-All ML runs locally. Only the query parser and explainer call the Anthropic API (both optional — the engine works without an API key using semantic-only search and template fallbacks).
+> [!NOTE]
+> All ML models run completely locally. Only the query parser and explainer invoke the Anthropic API. Both are optional — the engine works out-of-the-box without an API key using semantic-only search and template fallbacks.
 
 ---
 
-## Quickstart
+## ✨ Features
 
-### 1 — Clone and install
+- 🧠 **Hybrid Search** - Combines sparse lexical matches with dense semantic vector searches.
+- 🐳 **Qdrant Vector DB** - High-performance candidate retrieval with direct metadata filtering.
+- ⚡ **Multiplicative Scoring** - Multi-factor ranking utilizing item rating, recency decay, duration penalty, and watch history.
+- 🤖 **AI Query Parser & Explainer** - Intelligent intent parsing and automated query explanations using Claude.
+- 📦 **Local-First & Portable** - Runs completely locally on-disk or via Docker Compose.
+- 💻 **Interactive CLI** - Styled rich terminal tables and JSON output formats.
 
+---
+
+## 🚀 Quick Start
+
+### 1. Clone and Install
 ```bash
-git clone <repo>
+git clone <repo-url>
 cd Recommendation-Engine
 pip install -e ".[dev]"
 ```
 
-### 2 — Start local Qdrant (Docker)
-
+### 2. Start Local Qdrant (Docker)
 ```bash
 docker compose up -d
 ```
+The Qdrant UI dashboard will be available at [http://localhost:6333/dashboard](http://localhost:6333/dashboard).
 
-Qdrant UI is available at http://localhost:6333/dashboard.
+> [!TIP]
+> If you don't have Docker installed, the engine will automatically default to local directory storage (set `QDRANT_LOCAL_PATH=.qdrant_data` or leave it empty).
 
-> **No Docker?** The engine also stores vectors in a local directory by default  
-> (set `QDRANT_LOCAL_PATH=.qdrant_data` or leave it blank).  
-> In that case, skip this step.
-
-### 3 — Configure
-
+### 3. Configure
 ```bash
 cp .env.example .env
-# Edit .env — at minimum, set ANTHROPIC_API_KEY if you want query parsing + explanations
+# Edit .env — set ANTHROPIC_API_KEY for parser/explanations
 ```
 
-### 4 — Ingest your library
-
+### 4. Ingest Sample Library
 ```bash
-# Ingest the included sample data
+# Ingest the included sample libraries
 recommend ingest --input data/sample.json
 recommend ingest --input data/sample_books.json
-
-# Or your own library (see Data Format below)
-recommend ingest --input /path/to/my_library.json
 ```
 
-### 5 — Query
-
+### 5. Run Queries
 ```bash
-# Natural language query
+# Natural language queries
 recommend query "psychological thriller anime I haven't watched"
 
-# With filters extracted automatically
+# Highly filtered queries
 recommend query "highly rated sci-fi books from the 80s"
 
-# JSON output
+# Output in JSON format
 recommend query "space opera" --format json
 
-# Without LLM explanations (faster)
-recommend query "mecha anime" --no-explain
-
-# With cross-encoder reranker (slower, higher precision)
+# High-precision retrieval with cross-encoder reranker
 recommend query "dark philosophical themes" --rerank
 ```
 
 ---
 
-## Commands
+## 📦 Installation & Setup
 
-| Command | Description |
-|---|---|
-| `recommend ingest --input FILE` | Embed + upsert a JSON library into Qdrant |
-| `recommend sync --input FILE` | Incrementally update existing items by UUID |
-| `recommend export --output FILE` | Export the Qdrant collection back to JSON |
-| `recommend query TEXT` | Run the full recommendation pipeline |
-| `recommend delete UUID` | Remove a single item from the collection |
-| `recommend info` | Show collection stats and current config |
+### Prerequisites
+- **Python** (v3.11+)
+- **Docker & Docker Compose** (Optional, for Qdrant container)
 
-### `recommend query` flags
-
-| Flag | Default | Effect |
-|---|---|---|
-| `--top-k N` | 10 | Number of results |
-| `--format table\|json` | table | Output format |
-| `--rerank` | off | Enable cross-encoder reranker |
-| `--no-explain` | off | Skip LLM explanation (faster) |
-| `--no-history` | off | Disable watch-history boost |
-| `-v / --verbose` | off | Show DEBUG logs |
+### Standard Installation
+Install the project in editable mode with development dependencies:
+```bash
+pip install -e ".[dev]"
+```
 
 ---
 
-## Data format
+## 💻 CLI Commands
 
-Items are JSON objects. All fields except `id` and `title` are optional.
+The command-line interface provides the following subcommands:
+
+| Subcommand | Description |
+|:---|:---|
+| `recommend ingest --input FILE` | Embed and upsert a JSON library into Qdrant |
+| `recommend sync --input FILE` | Incrementally update existing items by UUID |
+| `recommend export --output FILE` | Export the Qdrant collection back to JSON |
+| `recommend query TEXT` | Run the full recommendation pipeline |
+| `recommend delete UUID` | Remove a single item from the collection by UUID |
+| `recommend info` | Show collection stats and configuration |
+
+### Query CLI Flags
+
+Customize your recommendation queries using the following flags:
+
+| Flag | Default | Effect |
+|:---|:---|:---|
+| `--top-k N` | `10` | Number of results to return |
+| `--format table\|json` | `table` | Output presentation format |
+| `--rerank` | `off` | Enable cross-encoder reranking |
+| `--no-explain` | `off` | Skip LLM explanation generation (faster) |
+| `--no-history` | `off` | Disable history-based query boosts |
+| `-v / --verbose` | `off` | Show detailed debug logging |
+
+---
+
+## 📄 Data Format
+
+Items ingested into the library are standard JSON objects. The only required fields are `id` and `title`.
 
 ```json
 {
@@ -142,51 +194,56 @@ Items are JSON objects. All fields except `id` and `title` are optional.
 }
 ```
 
-**Type values**: `anime`, `show`, `movie`, `book`, `manga`, `paper`, `game`, `other`  
-**Status values**: `watched`, `reading`, `plan_to_watch`, `on_hold`, `dropped`  
-**Genres/tags**: comma-separated string or JSON array  
-**Paper-specific**: use `abstract` instead of `review` as the primary dense embedding field  
-**Manga-specific**: add `volumes: int`
+### Valid Values & Guidelines
+- **Type values**: `anime`, `show`, `movie`, `book`, `manga`, `paper`, `game`, `other`
+- **Status values**: `watched`, `reading`, `plan_to_watch`, `on_hold`, `dropped`
+- **Genres/tags**: Comma-separated string or JSON array
+- **Paper-specific**: Use the `abstract` field instead of `review` as the primary dense embedding source.
+- **Manga-specific**: Include `volumes: int`.
 
 ---
 
-## Configuration (`.env`)
+## 🔧 Configuration
+
+Configure your engine parameters in the `.env` file:
 
 | Variable | Default | Description |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | — | Required for query parsing + explanations |
-| `QDRANT_URL` | — | Remote Qdrant URL (leave blank for local file mode) |
-| `QDRANT_LOCAL_PATH` | `.qdrant_data` | Local storage path (when QDRANT_URL is unset) |
-| `QDRANT_COLLECTION` | `listings` | Collection name |
-| `EMBED_MODEL` | `BAAI/bge-m3` | Embedding model (~2 GB download on first run) |
-| `DEFAULT_TOP_K` | `10` | Default number of results |
-| `LAMBDA_RECENCY` | `0.05` | Recency decay rate (0 = no decay) |
-| `LENGTH_SCALE` | `24` | Gaussian width for episode-length preference |
-| `FUSION_METHOD` | `rrf` | Score fusion: `rrf` or `dbsf` |
-| `HISTORY_MIN_RATING` | `7.0` | Minimum rating for watch-history boost |
-| `HISTORY_BOOST_WEIGHT` | `0.15` | Strength of watch-history signal (0–1) |
-| `RERANK_MODEL` | `BAAI/bge-reranker-v2-m3` | Cross-encoder model for `--rerank` |
-| `CLAUDE_MODEL` | `claude-sonnet-4-6` | Claude model for parser + explainer |
+|:---|:---|:---|
+| `ANTHROPIC_API_KEY` | — | API key for Claude query parser and explainer |
+| `QDRANT_URL` | — | Remote Qdrant server URL (leave blank for local files) |
+| `QDRANT_LOCAL_PATH` | `.qdrant_data` | Storage path when using local file-system mode |
+| `QDRANT_COLLECTION` | `listings` | Target collection name |
+| `EMBED_MODEL` | `BAAI/bge-m3` | Vector embedding model (~2 GB first-run download) |
+| `DEFAULT_TOP_K` | `10` | Default result candidate pool size |
+| `LAMBDA_RECENCY` | `0.05` | Recency decay rate (0 disables recency decay) |
+| `LENGTH_SCALE` | `24` | Gaussian variance scaling for episode-length preferences |
+| `FUSION_METHOD` | `rrf` | Candidate score fusion: `rrf` (Rank Reciprocal Fusion) or `dbsf` |
+| `HISTORY_MIN_RATING` | `7.0` | Minimum rating to trigger watch-history boosting |
+| `HISTORY_BOOST_WEIGHT` | `0.15` | Strength of watch-history similarity signal (0-1) |
+| `RERANK_MODEL` | `BAAI/bge-reranker-v2-m3`| Cross-encoder model used when `--rerank` is enabled |
+| `CLAUDE_MODEL` | `claude-sonnet-4-6` | Claude model selection for parsing and explanations |
 
 ---
 
-## Development
+## 🛠️ Development
+
+Run the automated test suite and optimization scripts:
 
 ```bash
-# Run tests (no external dependencies needed)
+# Run tests (no external dependencies or APIs needed)
 pytest
 
 # Evaluate retrieval quality against golden queries
 python scripts/evaluate.py --k 10
 
-# Hyperparameter sweep (requires populated Qdrant)
+# Hyperparameter grid search sweep (requires populated Qdrant)
 python scripts/sweep.py --k 10 --csv sweep_results.csv
 ```
 
-### Test coverage
+### Test Suite Structure
 
 | Module | Tests |
-|---|---|
+|:---|:---|
 | schema | 12 |
 | scorer | 24 |
 | query_parser | 29 |
@@ -197,18 +254,15 @@ python scripts/sweep.py --k 10 --csv sweep_results.csv
 | output | 11 |
 | **Total** | **115** |
 
-All tests run without Qdrant, BGE-M3, or the Anthropic API — external dependencies are mocked.
+> [!TIP]
+> All unit tests are mocked and execute offline without Qdrant, BGE-M3, or Anthropic API dependencies.
 
 ---
 
-## Architecture decisions
+## 📚 Architecture Decisions
 
-**Why BGE-M3?** A single model call produces dense + sparse + ColBERT vectors simultaneously. No embedding space mismatch between retrieval legs.
-
-**Why Qdrant?** The ACORN algorithm integrates metadata filtering directly into HNSW graph traversal. Essential for a personal library where 80–99% of items may be filtered (e.g. `watch_status != "watched"`).
-
-**Why RRF over DBSF?** RRF is distribution-agnostic and robust when one retrieval leg is weak. Switch to DBSF (`FUSION_METHOD=dbsf`) when exact title matches should dominate.
-
-**Why multiplicative scoring?** A zero-relevance item (RRF score ≈ 0) stays near zero regardless of its rating or recency. Additive formulas let a high-rated but irrelevant item float to the top.
-
-**Why async explanation?** Running 10 Claude calls sequentially adds ~10–30 s. `asyncio.gather` reduces this to ~1–3 s (single call latency).
+- **Why BGE-M3?** A single call produces dense, sparse, and ColBERT vectors simultaneously, avoiding embedding space mismatches between retrieval steps.
+- **Why Qdrant?** The ACORN algorithm integrates metadata filtering directly into HNSW graph traversal. This is crucial for personal libraries where a large percentage of items (e.g. `watch_status != "watched"`) are filtered out.
+- **Why RRF over DBSF?** Rank Reciprocal Fusion is distribution-agnostic and robust when one retrieval step has weak scoring. DBSF (`FUSION_METHOD=dbsf`) can be used if exact title matching is preferred.
+- **Why Multiplicative Scoring?** A zero-relevance item stays near zero regardless of high ratings or recency. Additive formulas frequently float highly rated but irrelevant items to the top.
+- **Why Async Explanations?** Generating 10 Claude explanations sequentially takes 10-30s. Using `asyncio.gather` parallelizes requests and keeps response latency under 3 seconds.
