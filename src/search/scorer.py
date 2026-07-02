@@ -23,8 +23,8 @@ import logging
 import math
 from typing import Optional
 
-from src.core.config import Settings, get_settings
-from src.core.schema import (
+from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
+from src.core.schema import ( # pyrefly: ignore [missing-import]
     ComponentScores,
     HistoryProfile,
     ParsedQuery,

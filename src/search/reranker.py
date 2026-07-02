@@ -15,8 +15,8 @@ import time
 import threading
 from typing import Optional
 
-from src.core.config import Settings, get_settings
-from src.core.schema import ScoredCandidate
+from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
+from src.core.schema import ScoredCandidate # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +94,7 @@ class Reranker:
                 reverse=True,
             )
             return [
+                # pyrefly: ignore [bad-argument-type]
                 c.model_copy(update={"rrf_score": float(s)}) for c, s in reranked[:n]
             ]
         except Exception as exc:

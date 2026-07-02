@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from src.core.schema import ExplainedResult, MediaItem, ParsedQuery
+from src.core.schema import ExplainedResult, MediaItem, ParsedQuery # pyrefly: ignore [missing-import]
 
 SAMPLE_PATH = Path(__file__).parent.parent / "data" / "sample.json"
 
@@ -98,7 +98,7 @@ class TestExplainedResultValidation:
         item = MediaItem.model_validate(
             {"id": "z", "title": "T", "tags": ["mecha"], "genres": ["Action"]}
         )
-        from src.core.schema import ComponentScores, RankedResult
+        from src.core.schema import ComponentScores, RankedResult # pyrefly: ignore [missing-import]
 
         ranked = RankedResult(
             item=item,

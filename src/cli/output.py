@@ -17,7 +17,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.text import Text
 
-from src.core.schema import ExplainedResult
+from src.core.schema import ExplainedResult # pyrefly: ignore [missing-import]
 
 console = Console()
 

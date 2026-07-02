@@ -6,26 +6,22 @@ All tests use real in-memory SQLite via the cfg fixture (tmp_path per test).
 
 from __future__ import annotations
 
+from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+
 
 class TestCreateCollection:
     def test_creates_new_table(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         created = store.create_collection()
         assert created is True
 
     def test_idempotent_on_existing_table(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         created = store.create_collection()
         assert created is False
 
     def test_collection_info_after_creation(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         info = store.collection_info()
@@ -33,8 +29,6 @@ class TestCreateCollection:
         assert info["storage"] == cfg.sqlite_path
 
     def test_collection_is_queryable_after_creation(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         rows = store.fetch_all()
@@ -43,8 +37,6 @@ class TestCreateCollection:
 
 class TestUpsert:
     def test_upsert_stores_items(self, cfg, sample_items, mock_embedder):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items)
@@ -52,8 +44,6 @@ class TestUpsert:
         assert n == 3
 
     def test_upsert_reflected_in_count(self, cfg, sample_items, mock_embedder):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items)
@@ -64,8 +54,6 @@ class TestUpsert:
     def test_upsert_payload_contains_required_fields(
         self, cfg, sample_items, mock_embedder
     ):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items[:1])
@@ -83,15 +71,11 @@ class TestUpsert:
         assert "tags" in row
 
     def test_upsert_empty_list_returns_zero(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         assert store.upsert([]) == 0
 
     def test_upsert_respects_batch_size(self, cfg, sample_items, mock_embedder):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items)
@@ -101,8 +85,6 @@ class TestUpsert:
         assert store.collection_info()["points_count"] == 3
 
     def test_upsert_is_idempotent(self, cfg, sample_items, mock_embedder):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items[:1])
@@ -113,16 +95,12 @@ class TestUpsert:
 
 class TestCollectionInfo:
     def test_returns_zero_for_empty_collection(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         info = store.collection_info()
         assert info["points_count"] == 0
 
     def test_returns_count_after_upsert(self, cfg, sample_items, mock_embedder):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items)
@@ -133,8 +111,6 @@ class TestCollectionInfo:
 
 class TestDelete:
     def test_delete_removes_item(self, cfg, sample_items, mock_embedder):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         embedded = mock_embedder.embed_batch(sample_items[:1])
@@ -144,8 +120,6 @@ class TestDelete:
         assert store.collection_info()["points_count"] == 0
 
     def test_delete_nonexistent_is_silent(self, cfg):
-        from src.data.store import SQLiteStore
-
         store = SQLiteStore(cfg)
         store.create_collection()
         store.delete("nonexistent-id")  # should not raise

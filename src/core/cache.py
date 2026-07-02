@@ -12,7 +12,7 @@ import threading
 from collections import OrderedDict
 from typing import Optional
 
-from src.core.schema import ParsedQuery
+from src.core.schema import ParsedQuery # pyrefly: ignore [missing-import]
 
 
 def _normalise(query: str) -> str:

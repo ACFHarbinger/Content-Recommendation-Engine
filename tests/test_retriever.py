@@ -6,14 +6,14 @@ Uses real in-memory SQLite via the cfg fixture.
 
 from __future__ import annotations
 
-from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate # pyrefly: ignore [missing-import]
 
 
 class TestPayloadToItem:
     """Unit-tests for the _payload_to_item helper (no SQLite needed)."""
 
     def test_basic_mapping(self):
-        from src.search.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item # pyrefly: ignore [missing-import]
 
         payload = {
             "id": "test-uuid",
@@ -39,7 +39,7 @@ class TestPayloadToItem:
         assert item.web_link == "https://example.com"
 
     def test_missing_optional_fields_use_none(self):
-        from src.search.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item # pyrefly: ignore [missing-import]
 
         item = _payload_to_item({"id": "x", "title": "Minimal"})
         assert item.type is None
@@ -48,7 +48,7 @@ class TestPayloadToItem:
         assert item.genres == []
 
     def test_zero_values_become_none(self):
-        from src.search.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item # pyrefly: ignore [missing-import]
 
         item = _payload_to_item(
             {
@@ -63,7 +63,7 @@ class TestPayloadToItem:
         assert item.year_released is None
 
     def test_entity_list_preserved(self):
-        from src.search.retriever import _payload_to_item
+        from src.search.retriever import _payload_to_item # pyrefly: ignore [missing-import]
 
         item = _payload_to_item(
             {
@@ -79,8 +79,8 @@ class TestHybridRetriever:
     """Integration tests using real SQLite via cfg fixture."""
 
     def _make_store_and_retriever(self, cfg, mock_embedder):
-        from src.search.retriever import HybridRetriever
-        from src.data.store import SQLiteStore
+        from src.search.retriever import HybridRetriever # pyrefly: ignore [missing-import]
+        from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
 
         store = SQLiteStore(cfg)
         store.create_collection()

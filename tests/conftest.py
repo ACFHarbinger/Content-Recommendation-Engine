@@ -17,7 +17,7 @@ import types
 
 import pytest
 
-from src.core.schema import EmbeddedItem, MediaItem, ScoredCandidate
+from src.core.schema import EmbeddedItem, MediaItem, ScoredCandidate # pyrefly: ignore [missing-import]
 
 
 # ---------------------------------------------------------------------------
@@ -60,7 +60,9 @@ def _build_anthropic_module(
         def __init__(self, api_key=None, **kw):
             self.messages = _AsyncMessages(response_json)
 
+    # pyrefly: ignore [missing-attribute]
     fake_mod.Anthropic = _SyncClient
+    # pyrefly: ignore [missing-attribute]
     fake_mod.AsyncAnthropic = _AsyncClient
     return fake_mod
 
@@ -117,7 +119,7 @@ class MockEmbedder:
 @pytest.fixture
 def cfg(tmp_path):
     """Settings with a per-test temp SQLite file so stores don't share state."""
-    from src.core.config import Settings
+    from src.core.config import Settings # pyrefly: ignore [missing-import]
 
     return Settings(
         anthropic_api_key=None,
@@ -130,7 +132,7 @@ def cfg(tmp_path):
 @pytest.fixture
 def sqlite_store(cfg):
     """A fresh SQLiteStore backed by the per-test temp db."""
-    from src.data.store import SQLiteStore
+    from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
 
     store = SQLiteStore(cfg)
     store.create_collection()

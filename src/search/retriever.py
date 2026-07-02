@@ -14,10 +14,10 @@ import logging
 import math
 from typing import Optional
 
-from src.core.config import Settings, get_settings
-from src.data.embedder import Embedder
-from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate
-from src.data.store import SQLiteStore
+from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
+from src.data.embedder import Embedder # pyrefly: ignore [missing-import]
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate # pyrefly: ignore [missing-import]
+from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 

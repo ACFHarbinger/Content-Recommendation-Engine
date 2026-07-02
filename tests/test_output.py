@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 
-from src.core.schema import ComponentScores, ExplainedResult, MediaItem
+from src.core.schema import ComponentScores, ExplainedResult, MediaItem # pyrefly: ignore [missing-import]
 
 
 def _make_explained(
@@ -31,8 +31,8 @@ def _make_explained(
 
 class TestToJson:
     def test_returns_valid_json_string(self, cfg, scored_candidates):
-        from src.cli.output import to_json
-        from src.search.scorer import Scorer
+        from src.cli.output import to_json # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates)
         explained = [
@@ -45,8 +45,8 @@ class TestToJson:
         assert len(data) == len(explained)
 
     def test_json_contains_required_keys(self, cfg, scored_candidates):
-        from src.cli.output import to_json
-        from src.search.scorer import Scorer
+        from src.cli.output import to_json # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates[:1])
         explained = [
@@ -71,8 +71,8 @@ class TestToJson:
             assert key in row, f"Missing key: {key}"
 
     def test_json_component_scores_nested(self, cfg, scored_candidates):
-        from src.cli.output import to_json
-        from src.search.scorer import Scorer
+        from src.cli.output import to_json # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates[:1])
         explained = [
@@ -87,13 +87,13 @@ class TestToJson:
         assert "length_decay" in cs
 
     def test_empty_results_returns_empty_json_array(self):
-        from src.cli.output import to_json
+        from src.cli.output import to_json # pyrefly: ignore [missing-import]
 
         assert to_json([]) == "[]"
 
     def test_indent_parameter(self, cfg, scored_candidates):
-        from src.cli.output import to_json
-        from src.search.scorer import Scorer
+        from src.cli.output import to_json # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates[:1])
         explained = [
@@ -109,8 +109,8 @@ class TestPrintTable:
     """Tests that print_table runs without errors and produces output."""
 
     def test_prints_without_error(self, capsys, cfg, scored_candidates):
-        from src.cli.output import print_table
-        from src.search.scorer import Scorer
+        from src.cli.output import print_table # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates)
         explained = [
@@ -122,12 +122,12 @@ class TestPrintTable:
         print_table(explained)  # should not raise
 
     def test_empty_results_does_not_crash(self, capsys):
-        from src.cli.output import print_table
+        from src.cli.output import print_table # pyrefly: ignore [missing-import]
 
         print_table([])  # should not raise
 
     def test_handles_missing_links(self, cfg, sample_items):
-        from src.cli.output import print_table
+        from src.cli.output import print_table # pyrefly: ignore [missing-import]
 
         item = MediaItem.model_validate(
             {
@@ -143,7 +143,7 @@ class TestPrintTable:
         print_table(explained)  # should not raise on missing web_link/local_file
 
     def test_score_bar_bounds(self):
-        from src.cli.output import _score_bar
+        from src.cli.output import _score_bar # pyrefly: ignore [missing-import]
 
         bar = _score_bar(0.0)
         assert "█" not in bar
@@ -151,13 +151,13 @@ class TestPrintTable:
         assert "░" not in bar
 
     def test_type_badge_unknown_type(self):
-        from src.cli.output import _type_badge
+        from src.cli.output import _type_badge # pyrefly: ignore [missing-import]
 
         badge = _type_badge("unknown_type")
         assert badge.plain == "UNKNOWN_TYPE"
 
     def test_type_badge_known_types(self):
-        from src.cli.output import _type_badge
+        from src.cli.output import _type_badge # pyrefly: ignore [missing-import]
 
         for t in ("anime", "movie", "book", "manga", "show", "paper"):
             badge = _type_badge(t)

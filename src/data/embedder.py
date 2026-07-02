@@ -11,7 +11,7 @@ import logging
 import threading
 import time
 
-from src.core.schema import EmbeddedItem, MediaItem
+from src.core.schema import EmbeddedItem, MediaItem # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +71,7 @@ class Embedder:
             return_sparse=False,
             return_colbert_vecs=False,
         )
+        # pyrefly: ignore [missing-attribute]
         return output["dense_vecs"][0].tolist()
 
     def embed_sparse(self, text: str) -> tuple[list[int], list[float]]:
@@ -81,6 +82,7 @@ class Embedder:
             return_sparse=True,
             return_colbert_vecs=False,
         )
+        # pyrefly: ignore [bad-assignment]
         sw: dict[str, float] = output["lexical_weights"][0]
         indices = [int(k) for k in sw.keys()]
         values = [v for v in sw.values()]
@@ -119,10 +121,12 @@ class Embedder:
             )
 
             for i, item in enumerate(batch):
+                # pyrefly: ignore [bad-assignment]
                 sw: dict[str, float] = sparse_out["lexical_weights"][i]
                 results.append(
                     EmbeddedItem(
                         item=item,
+                        # pyrefly: ignore [missing-attribute]
                         dense_vector=dense_out["dense_vecs"][i].tolist(),
                         sparse_indices=[int(k) for k in sw.keys()],
                         sparse_values=[v for v in sw.values()],

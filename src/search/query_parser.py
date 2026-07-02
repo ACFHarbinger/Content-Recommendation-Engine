@@ -14,9 +14,9 @@ import logging
 import re
 from typing import Any, Optional
 
-from src.core.cache import QueryCache
-from src.core.config import Settings, get_settings
-from src.core.schema import FilterClause, ParsedQuery
+from src.core.cache import QueryCache # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
+from src.core.schema import FilterClause, ParsedQuery # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -225,6 +225,7 @@ class QueryParser:
                     "cache_control": {"type": "ephemeral"},
                 }
             ]
+            # pyrefly: ignore [no-matching-overload]
             response = client.messages.create(
                 model=self._cfg.claude_model,
                 max_tokens=512,
