@@ -80,11 +80,11 @@ def _evaluate_config(
     k: int,
 ) -> float:
     """Run all golden queries with given hyperparams; return mean NDCG@K."""
-    from src.config import Settings # pyrefly: ignore [missing-import]
-    from src.query_parser import _build_qdrant_filter # pyrefly: ignore [missing-import]
-    from src.retriever import HybridRetriever # pyrefly: ignore [missing-import]
-    from src.schema import FilterClause, ParsedQuery # pyrefly: ignore [missing-import]
-    from src.scorer import Scorer # pyrefly: ignore [missing-import]
+    from src.config import Settings  # pyrefly: ignore [missing-import]
+    from src.query_parser import _build_qdrant_filter  # pyrefly: ignore [missing-import]
+    from src.retriever import HybridRetriever  # pyrefly: ignore [missing-import]
+    from src.schema import FilterClause, ParsedQuery  # pyrefly: ignore [missing-import]
+    from src.scorer import Scorer  # pyrefly: ignore [missing-import]
 
     cfg = Settings(
         qdrant_local_path=store._cfg.qdrant_local_path,
@@ -132,9 +132,9 @@ def sweep(k: int, golden_path: str, csv_path: Optional[str]) -> None:
     Grid search over lambda_recency × fusion_method.
     Prints NDCG@K for every combination and marks the best.
     """
-    from src.config import get_settings # pyrefly: ignore [missing-import]
-    from src.embedder import Embedder # pyrefly: ignore [missing-import]
-    from src.store import QdrantStore # pyrefly: ignore [missing-import]
+    from src.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.embedder import Embedder  # pyrefly: ignore [missing-import]
+    from src.store import QdrantStore  # pyrefly: ignore [missing-import]
 
     golden_queries = json.loads(Path(golden_path).read_text())
     cfg = get_settings()

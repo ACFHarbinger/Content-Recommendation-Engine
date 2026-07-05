@@ -19,8 +19,8 @@ import logging
 import re
 from typing import Optional
 
-from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
-from src.core.schema import ExplainedResult, RankedResult # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings  # pyrefly: ignore [missing-import]
+from src.core.schema import ExplainedResult, RankedResult  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 

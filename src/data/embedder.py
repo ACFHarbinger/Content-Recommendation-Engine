@@ -11,7 +11,7 @@ import logging
 import threading
 import time
 
-from src.core.schema import EmbeddedItem, MediaItem # pyrefly: ignore [missing-import]
+from src.core.schema import EmbeddedItem, MediaItem  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 

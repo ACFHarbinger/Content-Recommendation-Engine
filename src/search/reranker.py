@@ -11,12 +11,12 @@ by cross-encoder score before passing to the Scorer.
 from __future__ import annotations
 
 import logging
-import time
 import threading
+import time
 from typing import Optional
 
-from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
-from src.core.schema import ScoredCandidate # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings  # pyrefly: ignore [missing-import]
+from src.core.schema import ScoredCandidate  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +89,7 @@ class Reranker:
                 scores = [scores]
 
             reranked = sorted(
-                zip(candidates, scores),
+                zip(candidates, scores, strict=False),
                 key=lambda x: x[1],
                 reverse=True,
             )

@@ -14,9 +14,9 @@ import logging
 import re
 from typing import Any, Optional
 
-from src.core.cache import QueryCache # pyrefly: ignore [missing-import]
-from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
-from src.core.schema import FilterClause, ParsedQuery # pyrefly: ignore [missing-import]
+from src.core.cache import QueryCache  # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings  # pyrefly: ignore [missing-import]
+from src.core.schema import FilterClause, ParsedQuery  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +96,43 @@ User: "space opera anime under 26 episodes with action"
 _ARRAY_FIELDS = frozenset({"genres", "tags", "associated_entities"})
 
 
+def _build_array_clause(field: str, op: str, value: Any) -> tuple[str, list]:
+    vals = value if isinstance(value, list) else [value]
+    if op == "in":
+        ph = ",".join("?" * len(vals))
+        return f"EXISTS (SELECT 1 FROM json_each({field}) WHERE value IN ({ph}))", vals
+    if op == "nin":
+        ph = ",".join("?" * len(vals))
+        return f"NOT EXISTS (SELECT 1 FROM json_each({field}) WHERE value IN ({ph}))", vals
+    if op == "eq":
+        return f"EXISTS (SELECT 1 FROM json_each({field}) WHERE value = ?)", [value]
+    if op == "ne":
+        return f"NOT EXISTS (SELECT 1 FROM json_each({field}) WHERE value = ?)", [value]
+    return "", []
+
+
+def _build_scalar_clause(field: str, op: str, value: Any) -> tuple[str, list]:
+    if op == "eq":
+        return f"{field} = ?", [value]
+    if op == "ne":
+        return f"{field} != ?", [value]
+    if op == "gt":
+        return f"{field} > ?", [value]
+    if op == "gte":
+        return f"{field} >= ?", [value]
+    if op == "lt":
+        return f"{field} < ?", [value]
+    if op == "lte":
+        return f"{field} <= ?", [value]
+    if op in ("in", "nin"):
+        vals = value if isinstance(value, list) else [value]
+        ph = ",".join("?" * len(vals))
+        if op == "in":
+            return f"{field} IN ({ph})", vals
+        return f"{field} NOT IN ({ph})", vals
+    return "", []
+
+
 def _build_sql_filter(filters: list[FilterClause]) -> tuple[str, list]:
     """
     Convert ParsedQuery filters into a SQL WHERE clause.
@@ -113,61 +150,13 @@ def _build_sql_filter(filters: list[FilterClause]) -> tuple[str, list]:
         field, op, value = f.field, f.op, f.value
 
         if field in _ARRAY_FIELDS:
-            # JSON array column — use json_each() for containment checks
-            if op == "in":
-                vals = value if isinstance(value, list) else [value]
-                ph = ",".join("?" * len(vals))
-                clauses.append(
-                    f"EXISTS (SELECT 1 FROM json_each({field}) WHERE value IN ({ph}))"
-                )
-                params.extend(vals)
-            elif op == "nin":
-                vals = value if isinstance(value, list) else [value]
-                ph = ",".join("?" * len(vals))
-                clauses.append(
-                    f"NOT EXISTS (SELECT 1 FROM json_each({field}) WHERE value IN ({ph}))"
-                )
-                params.extend(vals)
-            elif op == "eq":
-                clauses.append(
-                    f"EXISTS (SELECT 1 FROM json_each({field}) WHERE value = ?)"
-                )
-                params.append(value)
-            elif op == "ne":
-                clauses.append(
-                    f"NOT EXISTS (SELECT 1 FROM json_each({field}) WHERE value = ?)"
-                )
-                params.append(value)
+            clause, vals = _build_array_clause(field, op, value)
         else:
-            # Scalar column — standard SQL operators
-            if op == "eq":
-                clauses.append(f"{field} = ?")
-                params.append(value)
-            elif op == "ne":
-                clauses.append(f"{field} != ?")
-                params.append(value)
-            elif op == "gt":
-                clauses.append(f"{field} > ?")
-                params.append(value)
-            elif op == "gte":
-                clauses.append(f"{field} >= ?")
-                params.append(value)
-            elif op == "lt":
-                clauses.append(f"{field} < ?")
-                params.append(value)
-            elif op == "lte":
-                clauses.append(f"{field} <= ?")
-                params.append(value)
-            elif op == "in":
-                vals = value if isinstance(value, list) else [value]
-                ph = ",".join("?" * len(vals))
-                clauses.append(f"{field} IN ({ph})")
-                params.extend(vals)
-            elif op == "nin":
-                vals = value if isinstance(value, list) else [value]
-                ph = ",".join("?" * len(vals))
-                clauses.append(f"{field} NOT IN ({ph})")
-                params.extend(vals)
+            clause, vals = _build_scalar_clause(field, op, value)
+
+        if clause:
+            clauses.append(clause)
+            params.extend(vals)
 
     return " AND ".join(clauses), params
 

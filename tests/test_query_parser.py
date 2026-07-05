@@ -15,11 +15,9 @@ import types
 from unittest.mock import MagicMock
 
 import pytest
-
-from src.core.cache import QueryCache # pyrefly: ignore [missing-import]
-from src.search.query_parser import QueryParser # pyrefly: ignore [missing-import]
-from src.core.schema import FilterClause, ParsedQuery # pyrefly: ignore [missing-import]
-
+from src.core.cache import QueryCache  # pyrefly: ignore [missing-import]
+from src.core.schema import FilterClause, ParsedQuery  # pyrefly: ignore [missing-import]
+from src.search.query_parser import QueryParser  # pyrefly: ignore [missing-import]
 
 # ------------------------------------------------------------------
 # Fixture: inject a fake 'anthropic' module into sys.modules
@@ -69,7 +67,7 @@ def mock_anthropic(monkeypatch):
 
 
 def _make_parser(api_key: str = "sk-test") -> "QueryParser":
-    from src.core.config import Settings # pyrefly: ignore [missing-import]
+    from src.core.config import Settings  # pyrefly: ignore [missing-import]
 
     cfg = Settings(anthropic_api_key=api_key, sqlite_path="/tmp/test_rec.db")
     return QueryParser(cfg)
@@ -79,7 +77,7 @@ def _run_with_response(parser, json_dict: dict, user_query: str) -> ParsedQuery:
     """Patch the fake client to return json_dict, then parse."""
     import anthropic as _ant
 
-    _ant.Anthropic().messages.create
+    _ = _ant.Anthropic().messages.create
 
     def patched_create(**kwargs):
         class Resp:
@@ -94,7 +92,7 @@ def _run_with_response(parser, json_dict: dict, user_query: str) -> ParsedQuery:
         def _call_claude(self, q):
             return self._parse_response(json.dumps(json_dict), q)
 
-    from src.core.config import Settings # pyrefly: ignore [missing-import]
+    from src.core.config import Settings  # pyrefly: ignore [missing-import]
 
     cfg = Settings(anthropic_api_key="sk-test", sqlite_path="/tmp/test_rec.db")
     p = _PatchedParser(cfg)
@@ -260,7 +258,7 @@ class TestQueryParserParsing:
 
 class TestQueryParserFallbacks:
     def test_no_api_key_falls_back_to_semantic(self):
-        from src.core.config import Settings # pyrefly: ignore [missing-import]
+        from src.core.config import Settings  # pyrefly: ignore [missing-import]
 
         cfg = Settings(anthropic_api_key=None, sqlite_path="/tmp/test.db")
         parser = QueryParser(cfg)
@@ -269,7 +267,7 @@ class TestQueryParserFallbacks:
         assert parsed.filters == []
 
     def test_malformed_json_falls_back(self):
-        from src.core.config import Settings # pyrefly: ignore [missing-import]
+        from src.core.config import Settings  # pyrefly: ignore [missing-import]
 
         cfg = Settings(anthropic_api_key="sk-test", sqlite_path="/tmp/test.db")
 
@@ -282,7 +280,7 @@ class TestQueryParserFallbacks:
         assert parsed.semantic_query == "test query"
 
     def test_api_error_falls_back(self):
-        from src.core.config import Settings # pyrefly: ignore [missing-import]
+        from src.core.config import Settings  # pyrefly: ignore [missing-import]
 
         cfg = Settings(anthropic_api_key="sk-test", sqlite_path="/tmp/test.db")
 
@@ -340,14 +338,14 @@ class TestQueryCache:
 
 class TestBuildSQLFilter:
     def test_empty_filters_returns_empty(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter([])
         assert clause == ""
         assert params == []
 
     def test_eq_filter(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter(
             [FilterClause(field="type", op="eq", value="anime")]
@@ -356,7 +354,7 @@ class TestBuildSQLFilter:
         assert "anime" in params
 
     def test_range_filter(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter(
             [FilterClause(field="rating", op="gte", value=8.0)]
@@ -366,7 +364,7 @@ class TestBuildSQLFilter:
         assert 8.0 in params
 
     def test_in_filter_array_field(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter(
             [FilterClause(field="genres", op="in", value=["Action", "Sci-Fi"])]
@@ -376,7 +374,7 @@ class TestBuildSQLFilter:
         assert "Sci-Fi" in params
 
     def test_ne_filter_scalar(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter(
             [FilterClause(field="watch_status", op="ne", value="watched")]
@@ -386,7 +384,7 @@ class TestBuildSQLFilter:
         assert "watched" in params
 
     def test_nin_filter_scalar(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter(
             [FilterClause(field="watch_status", op="nin", value=["watched", "dropped"])]
@@ -395,7 +393,7 @@ class TestBuildSQLFilter:
         assert "watched" in params and "dropped" in params
 
     def test_multiple_filters_joined_with_and(self):
-        from src.search.query_parser import _build_sql_filter # pyrefly: ignore [missing-import]
+        from src.search.query_parser import _build_sql_filter  # pyrefly: ignore [missing-import]
 
         clause, params = _build_sql_filter(
             [

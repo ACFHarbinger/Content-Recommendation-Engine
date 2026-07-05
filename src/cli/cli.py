@@ -17,6 +17,9 @@ import sys
 import click
 from rich.console import Console
 
+from src.data.export import export  # pyrefly: ignore [missing-import]
+from src.data.ingest import ingest  # pyrefly: ignore [missing-import]
+
 console = Console()
 
 
@@ -34,9 +37,6 @@ def cli(verbose: bool) -> None:
 
 
 # ---- Phase 1 commands ------------------------------------------------
-
-from src.data.ingest import ingest  # pyrefly: ignore [missing-import]
-from src.data.export import export  # pyrefly: ignore [missing-import]
 
 cli.add_command(ingest)
 cli.add_command(export)
@@ -64,6 +64,7 @@ def sync(input_path: str, batch_size: int) -> None:
     """
     import json
     from pathlib import Path
+
     from pydantic import ValidationError
     from rich.progress import (
         BarColumn,
@@ -72,10 +73,11 @@ def sync(input_path: str, batch_size: int) -> None:
         TextColumn,
         TimeElapsedColumn,
     )
-    from src.core.config import get_settings # pyrefly: ignore [missing-import]
-    from src.data.embedder import Embedder # pyrefly: ignore [missing-import]
-    from src.core.schema import MediaItem # pyrefly: ignore [missing-import]
-    from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+
+    from src.core.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.core.schema import MediaItem  # pyrefly: ignore [missing-import]
+    from src.data.embedder import Embedder  # pyrefly: ignore [missing-import]
+    from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
 
     cfg = get_settings()
     path = Path(input_path)
@@ -134,8 +136,8 @@ def sync(input_path: str, batch_size: int) -> None:
 )
 def delete(item_id: str, yes: bool) -> None:
     """Remove a single item from the store by UUID."""
-    from src.core.config import get_settings # pyrefly: ignore [missing-import]
-    from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+    from src.core.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
 
     if not yes:
         click.confirm(f"Delete item {item_id!r} from the store?", abort=True)
@@ -152,8 +154,8 @@ def delete(item_id: str, yes: bool) -> None:
 @cli.command()
 def info() -> None:
     """Show store statistics and configuration."""
-    from src.core.config import get_settings # pyrefly: ignore [missing-import]
-    from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+    from src.core.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
 
     cfg = get_settings()
     store = SQLiteStore(cfg)
@@ -217,9 +219,9 @@ def query(
     no_history: bool,
 ) -> None:
     """Run the full recommendation pipeline for QUERY_TEXT."""
-    from src.core.config import get_settings # pyrefly: ignore [missing-import]
-    from src.search.pipeline import RecommendationPipeline # pyrefly: ignore [missing-import]
-    from src.cli.output import print_table, to_json # pyrefly: ignore [missing-import]
+    from src.cli.output import print_table, to_json  # pyrefly: ignore [missing-import]
+    from src.core.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.search.pipeline import RecommendationPipeline  # pyrefly: ignore [missing-import]
 
     cfg = get_settings()
 

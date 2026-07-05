@@ -14,10 +14,10 @@ import logging
 import math
 from typing import Optional
 
-from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
-from src.data.embedder import Embedder # pyrefly: ignore [missing-import]
-from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate # pyrefly: ignore [missing-import]
-from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings  # pyrefly: ignore [missing-import]
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate  # pyrefly: ignore [missing-import]
+from src.data.embedder import Embedder  # pyrefly: ignore [missing-import]
+from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 def _cosine(a: list[float], b: list[float]) -> float:
-    dot = sum(x * y for x, y in zip(a, b))
+    dot = sum(x * y for x, y in zip(a, b, strict=False))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(y * y for y in b))
     if na == 0.0 or nb == 0.0:
@@ -42,8 +42,8 @@ def _sparse_dot(
     idx_d: list[int],
     val_d: list[float],
 ) -> float:
-    doc = dict(zip(idx_d, val_d))
-    return sum(v * doc.get(i, 0.0) for i, v in zip(idx_q, val_q))
+    doc = dict(zip(idx_d, val_d, strict=False))
+    return sum(v * doc.get(i, 0.0) for i, v in zip(idx_q, val_q, strict=False))
 
 
 def _rrf(ranks: list[int], k: int = 60) -> float:

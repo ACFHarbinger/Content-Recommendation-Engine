@@ -7,7 +7,7 @@ entry point.  anthropic is mocked via conftest.py.
 
 from __future__ import annotations
 
-from src.core.schema import ComponentScores, MediaItem, RankedResult # pyrefly: ignore [missing-import]
+from src.core.schema import ComponentScores, MediaItem, RankedResult  # pyrefly: ignore [missing-import]
 
 
 def _make_ranked(item: MediaItem, rank: int = 1, rv: float = 0.8) -> RankedResult:
@@ -28,8 +28,8 @@ class TestFallbackReason:
     """_fallback_reason should always produce a valid ExplainedResult."""
 
     def test_no_api_key_all_fallback(self, cfg, scored_candidates):
-        from src.search.explainer import Explainer # pyrefly: ignore [missing-import]
-        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
+        from src.search.explainer import Explainer  # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer  # pyrefly: ignore [missing-import]
 
         scorer = Scorer(cfg)
         ranked = scorer.score(scored_candidates)
@@ -41,8 +41,8 @@ class TestFallbackReason:
             assert r.rank > 0
 
     def test_fallback_has_correct_type(self, cfg, scored_candidates):
-        from src.search.explainer import _fallback_reason # pyrefly: ignore [missing-import]
-        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
+        from src.search.explainer import _fallback_reason  # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer  # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates)
         result = _fallback_reason(ranked[0], "cyberpunk query")
@@ -51,7 +51,7 @@ class TestFallbackReason:
         assert len(result.reasons) >= 1
 
     def test_fallback_video_uses_watch_verb(self, cfg, sample_items):
-        from src.search.explainer import _fallback_reason # pyrefly: ignore [missing-import]
+        from src.search.explainer import _fallback_reason  # pyrefly: ignore [missing-import]
 
         anime_item = MediaItem.model_validate(
             {
@@ -70,7 +70,7 @@ class TestFallbackReason:
 
     def test_matched_tags_anti_hallucination(self, cfg, sample_items):
         """matched_tags in ExplainedResult must be subset of item's actual tags+genres."""
-        from src.core.schema import ExplainedResult # pyrefly: ignore [missing-import]
+        from src.core.schema import ExplainedResult  # pyrefly: ignore [missing-import]
 
         item = sample_items[
             0
@@ -91,9 +91,9 @@ class TestExplainerWithMock:
     def test_mocked_api_returns_structured_result(
         self, anthropic_mock, cfg, scored_candidates
     ):
-        from src.core.config import Settings # pyrefly: ignore [missing-import]
-        from src.search.explainer import Explainer # pyrefly: ignore [missing-import]
-        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
+        from src.core.config import Settings  # pyrefly: ignore [missing-import]
+        from src.search.explainer import Explainer  # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer  # pyrefly: ignore [missing-import]
 
         # Config with a fake API key to trigger the Claude path
         cfg_with_key = Settings(
@@ -110,14 +110,14 @@ class TestExplainerWithMock:
             assert isinstance(r.reasons, list)
 
     def test_empty_results_returns_empty(self, cfg):
-        from src.search.explainer import Explainer # pyrefly: ignore [missing-import]
+        from src.search.explainer import Explainer  # pyrefly: ignore [missing-import]
 
         explainer = Explainer(cfg)
         assert explainer.explain_batch([], "query") == []
 
     def test_result_ranks_preserved(self, cfg, scored_candidates):
-        from src.search.explainer import Explainer # pyrefly: ignore [missing-import]
-        from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
+        from src.search.explainer import Explainer  # pyrefly: ignore [missing-import]
+        from src.search.scorer import Scorer  # pyrefly: ignore [missing-import]
 
         ranked = Scorer(cfg).score(scored_candidates)
         explainer = Explainer(cfg)

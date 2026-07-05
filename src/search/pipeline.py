@@ -15,15 +15,15 @@ import logging
 import time
 from typing import Optional
 
-from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
-from src.data.embedder import Embedder # pyrefly: ignore [missing-import]
-from src.search.explainer import Explainer # pyrefly: ignore [missing-import]
-from src.search.query_parser import QueryParser # pyrefly: ignore [missing-import]
-from src.search.reranker import Reranker # pyrefly: ignore [missing-import]
-from src.search.retriever import HybridRetriever # pyrefly: ignore [missing-import]
-from src.core.schema import ExplainedResult, HistoryProfile # pyrefly: ignore [missing-import]
-from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
-from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings  # pyrefly: ignore [missing-import]
+from src.core.schema import ExplainedResult, HistoryProfile  # pyrefly: ignore [missing-import]
+from src.data.embedder import Embedder  # pyrefly: ignore [missing-import]
+from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
+from src.search.explainer import Explainer  # pyrefly: ignore [missing-import]
+from src.search.query_parser import QueryParser  # pyrefly: ignore [missing-import]
+from src.search.reranker import Reranker  # pyrefly: ignore [missing-import]
+from src.search.retriever import HybridRetriever  # pyrefly: ignore [missing-import]
+from src.search.scorer import Scorer  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +112,7 @@ class RecommendationPipeline:
         if self._explainer and ranked:
             results = self._explainer.explain_batch(ranked, query)
         else:
-            from src.core.schema import ExplainedResult as ER # pyrefly: ignore [missing-import]
+            from src.core.schema import ExplainedResult as ER  # pyrefly: ignore [missing-import]
 
             results = [
                 ER(**r.model_dump(), reasons=[], matched_tags=[]) for r in ranked

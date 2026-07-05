@@ -7,17 +7,17 @@ the mock fixtures from conftest.py.  SQLite uses a real temp-file db.
 
 from __future__ import annotations
 
-from src.core.schema import ExplainedResult # pyrefly: ignore [missing-import]
+from src.core.schema import ExplainedResult  # pyrefly: ignore [missing-import]
 
 
 def _make_pipeline(cfg, mock_embedder, explain=False, use_reranker=False):
     """Wire up a pipeline with all mocked dependencies."""
-    from src.search.explainer import Explainer # pyrefly: ignore [missing-import]
-    from src.search.pipeline import RecommendationPipeline # pyrefly: ignore [missing-import]
-    from src.search.query_parser import QueryParser # pyrefly: ignore [missing-import]
-    from src.search.retriever import HybridRetriever # pyrefly: ignore [missing-import]
-    from src.search.scorer import Scorer # pyrefly: ignore [missing-import]
-    from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+    from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
+    from src.search.explainer import Explainer  # pyrefly: ignore [missing-import]
+    from src.search.pipeline import RecommendationPipeline  # pyrefly: ignore [missing-import]
+    from src.search.query_parser import QueryParser  # pyrefly: ignore [missing-import]
+    from src.search.retriever import HybridRetriever  # pyrefly: ignore [missing-import]
+    from src.search.scorer import Scorer  # pyrefly: ignore [missing-import]
 
     store = SQLiteStore(cfg)
     store.create_collection()
@@ -39,7 +39,7 @@ def _make_pipeline(cfg, mock_embedder, explain=False, use_reranker=False):
 
 
 def _populate(cfg, mock_embedder, items):
-    from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+    from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
 
     store = SQLiteStore(cfg)
     store.create_collection()

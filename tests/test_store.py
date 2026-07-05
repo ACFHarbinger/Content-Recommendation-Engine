@@ -6,7 +6,7 @@ All tests use real in-memory SQLite via the cfg fixture (tmp_path per test).
 
 from __future__ import annotations
 
-from src.data.store import SQLiteStore # pyrefly: ignore [missing-import]
+from src.data.store import SQLiteStore  # pyrefly: ignore [missing-import]
 
 
 class TestCreateCollection:

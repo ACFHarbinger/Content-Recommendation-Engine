@@ -24,8 +24,8 @@ import sqlite3
 from pathlib import Path
 from typing import Optional
 
-from src.core.config import Settings, get_settings # pyrefly: ignore [missing-import]
-from src.core.schema import EmbeddedItem # pyrefly: ignore [missing-import]
+from src.core.config import Settings, get_settings  # pyrefly: ignore [missing-import]
+from src.core.schema import EmbeddedItem  # pyrefly: ignore [missing-import]
 
 logger = logging.getLogger(__name__)
 
