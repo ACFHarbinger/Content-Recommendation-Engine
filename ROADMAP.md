@@ -542,7 +542,7 @@ Recommendation-Engine/
 ├── scripts/
 │   ├── evaluate.py     # NDCG@K, P@5, penalty; CSV export; no Claude needed (Phase 8/9)
 │   └── sweep.py        # λ × fusion grid search; marks best config (Phase 8/9)
-├── reports/
+├── research/
 │   └── Building a Smart Recommendation Engine.md
 ├── README.md
 ├── docker-compose.yml   # placeholder — no external services required
