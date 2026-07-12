@@ -1,0 +1,21 @@
+# tools/dev — environment setup and maintenance.
+
+set shell := ["bash", "-c"]
+
+# Sync runtime + dev dependencies
+sync:
+    uv sync
+    uv pip install -e ".[dev]"
+
+# Install pre-commit hooks (if configured)
+hooks:
+    uv run pre-commit install --install-hooks || echo "⚠️  pre-commit not configured"
+
+# Update dependencies
+update:
+    uv sync --upgrade
+
+# Remove caches and build artifacts
+clean:
+    rm -rf .pytest_cache .mypy_cache .ruff_cache build dist *.egg-info .coverage htmlcov
+    find . -path ./.venv -prune -o -name __pycache__ -type d -exec rm -rf {} + 2>/dev/null || true
