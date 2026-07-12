@@ -1,0 +1,21 @@
+coverage:
+  status:
+    project:
+      default:
+        # Fail the build if total coverage drops below target.
+        target: 70%
+        threshold: 2%
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+
+comment:
+  layout: "reach, diff, flags, files"
+  require_changes: true
+
+ignore:
+  - "tests/**"
+  - "scripts/**"
+  - "data/**"
+  - "src/**/__init__.py"

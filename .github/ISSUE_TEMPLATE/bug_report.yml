@@ -1,0 +1,55 @@
+name: 🐛 Bug Report
+description: Report a defect in the Recommendation-Engine
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Affected stage
+      description: Which part of the pipeline?
+      options:
+        - Ingestion / data (load, embed, store)
+        - Query parser (self-querying retriever)
+        - Hybrid retrieval
+        - Fusion / scoring
+        - Reranking
+        - Explainer (XAI)
+        - CLI / output
+        - Core (config, cache, schema)
+        - Build / tooling (uv, just, CI)
+        - Other / unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Expected vs actual behavior. Include the query/prompt if relevant.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Minimal `recommend ...` command / config to reproduce.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, whether ANTHROPIC_API_KEY is set, key deps.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / traceback
+      render: shell
