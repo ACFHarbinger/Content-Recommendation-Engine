@@ -1,5 +1,23 @@
 # Recommendation Engine — Implementation Roadmap
 
+This is the **master roadmap**. It tracks the phased build-out below; per-module engineering
+roadmaps live under [`moon/roadmaps/`](roadmaps/). Completed items are recorded in
+[`docs/CHANGELOG.md`](../docs/CHANGELOG.md). System design is summarised in
+[`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+
+## Module Roadmaps
+
+The engine is a five-stage pipeline (`src/`). Each subsystem has a dedicated roadmap:
+
+| Roadmap | Modules | Scope |
+| :--- | :--- | :--- |
+| [Ingestion & Data](roadmaps/ingestion.md) | `src/data` | Loading, embedding (BGE-M3), export, SQLite store |
+| [Search & Retrieval](roadmaps/search.md) | `src/search` | Query parser, hybrid retrieval, fusion/scoring, reranking, explainer |
+| [CLI & Output](roadmaps/cli.md) | `src/cli` | Click CLI, rich output/JSON |
+| [Core & Infrastructure](roadmaps/core.md) | `src/core` | Config, cache, schema; tooling & quality |
+
+---
+
 ## Goal
 
 Build a personal, local-first recommendation engine that accepts a dataset of media files with rich metadata and a free-form search prompt (natural language, tags/genres, or both), and returns a ranked list of recommendations with a computed **Recommendation Value** and a human-readable **list of reasons** for each result.
@@ -544,12 +562,15 @@ Recommendation-Engine/
 │   └── sweep.py        # λ × fusion grid search; marks best config (Phase 8/9)
 ├── research/
 │   └── Building a Smart Recommendation Engine.md
+├── docs/                # ARCHITECTURE.md, CHANGELOG.md, README (index)
+├── moon/                # ROADMAP.md + roadmaps/ (ingestion, search, cli, core)
+├── git/                 # CONTRIBUTING.md + codecov.yaml
+├── tools/               # per-domain justfile sub-modules
+├── .agent/              # coding-assistant handbook (AGENTS.md + prompts/rules/skills/workflows)
+├── docker/              # docker-compose.yml (placeholder — no external services required)
 ├── README.md
-├── docker-compose.yml   # placeholder — no external services required
 ├── pyproject.toml
-├── .env.example
-├── CHANGELOG.md
-└── ROADMAP.md
+└── .env.example
 ```
 
 ---
