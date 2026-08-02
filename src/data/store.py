@@ -246,3 +246,180 @@ class SQLiteStore:
                 d[col] = json.loads(raw) if raw else []
             rows.append(d)
         return rows
+
+
+_ALL_COLS = (
+    "id", "title", "type", "watch_status", "rating", "year_released",
+    "num_episodes_or_pages", "genres", "tags", "associated_entities",
+    "local_file_location", "web_link", "dense_vector", "sparse_indices",
+    "sparse_values",
+)
+_META_COLS = (
+    "id", "title", "type", "watch_status", "rating", "year_released",
+    "num_episodes_or_pages", "genres", "tags", "associated_entities",
+    "local_file_location", "web_link",
+)
+
+
+class EncryptedSQLiteStore:
+    """
+    Drop-in replacement for :class:`SQLiteStore`, backed by an already-open
+    ``base.database.Database`` handle (Image Toolkit's unified, encrypted
+    SQLCipher store) instead of a plaintext ``sqlite3`` file.
+
+    Storage-layer swap only -- the SQL text and the calling code's
+    retrieval/scoring logic (HybridRetriever, Scorer, RRF fusion) are
+    completely unaware of the difference; only ``upsert``/``fetch_*``'s
+    row-decoding needed adapting, since ``Database.query()`` returns plain
+    tuples (positional) rather than ``sqlite3.Row`` (name-addressable).
+
+    Unlike ``SQLiteStore``, this class does not own its connection -- the
+    caller opens (and eventually closes) the ``Database`` handle, matching
+    DB.2's session-keyed-handle design. This also means this class never
+    needs vault credentials itself: whoever already has an open handle
+    (e.g. Image Toolkit's unified library session, opened once at login)
+    just passes it in.
+    """
+
+    def __init__(self, db, table_name: str = "rec_engine_items"):
+        self._db = db
+        self._table = table_name
+
+    # ------------------------------------------------------------------
+    # Connection (no-ops -- the caller owns the handle's lifecycle)
+    # ------------------------------------------------------------------
+
+    def close(self) -> None:
+        pass
+
+    # ------------------------------------------------------------------
+    # Collection management
+    # ------------------------------------------------------------------
+
+    def create_collection(self) -> bool:
+        rows = self._db.query(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+            (self._table,),
+        )
+        existed = len(rows) > 0
+        self._db.execute(
+            f"""
+            CREATE TABLE IF NOT EXISTS {self._table} (
+                id                    TEXT PRIMARY KEY,
+                title                 TEXT NOT NULL,
+                type                  TEXT,
+                watch_status          TEXT,
+                rating                REAL,
+                year_released         INTEGER,
+                num_episodes_or_pages INTEGER,
+                genres                TEXT,
+                tags                  TEXT,
+                associated_entities   TEXT,
+                local_file_location   TEXT,
+                web_link              TEXT,
+                dense_vector          TEXT NOT NULL,
+                sparse_indices        TEXT NOT NULL,
+                sparse_values         TEXT NOT NULL
+            )
+            """,
+            (),
+        )
+        if not existed:
+            logger.info("Created '%s' table in the unified library store", self._table)
+        return not existed
+
+    def collection_info(self) -> dict:
+        (count,) = self._db.query(f"SELECT COUNT(*) FROM {self._table}", ())[0]
+        return {
+            "points_count": count,
+            "collection": self._table,
+            "storage": "library.db (encrypted, unified store)",
+        }
+
+    # ------------------------------------------------------------------
+    # Upsert
+    # ------------------------------------------------------------------
+
+    def upsert(self, items: list[EmbeddedItem], batch_size: int = 64) -> int:
+        upserted = 0
+        placeholders = ", ".join("?" * len(_ALL_COLS))
+        sql = (
+            f"INSERT OR REPLACE INTO {self._table} ({', '.join(_ALL_COLS)}) "
+            f"VALUES ({placeholders})"
+        )
+
+        for start in range(0, len(items), batch_size):
+            batch = items[start : start + batch_size]
+            rows = []
+            for ei in batch:
+                item = ei.item
+                rows.append(
+                    (
+                        item.id,
+                        item.title,
+                        item.type or "",
+                        item.watch_status or "",
+                        item.rating,
+                        item.year_released,
+                        item.num_episodes_or_pages,
+                        json.dumps(item.genres),
+                        json.dumps(item.tags),
+                        json.dumps(item.associated_entities),
+                        item.local_file_location or "",
+                        item.web_link or "",
+                        json.dumps(ei.dense_vector),
+                        json.dumps(ei.sparse_indices),
+                        json.dumps(ei.sparse_values),
+                    )
+                )
+            if rows:
+                self._db.executemany(sql, rows)
+            upserted += len(rows)
+            logger.debug("Upserted %d/%d rows", upserted, len(items))
+
+        return upserted
+
+    def delete(self, item_id: str) -> None:
+        self._db.execute(f"DELETE FROM {self._table} WHERE id = ?", (item_id,))
+
+    # ------------------------------------------------------------------
+    # Read helpers used by retriever and pipeline
+    # ------------------------------------------------------------------
+
+    def fetch_all(
+        self,
+        where_clause: str = "",
+        params: Optional[list] = None,
+    ) -> list[dict]:
+        sql = f"SELECT {', '.join(_ALL_COLS)} FROM {self._table}"
+        if where_clause:
+            sql += f" WHERE {where_clause}"
+        rows = self._db.query(sql, tuple(params or []))
+        out = []
+        for row in rows:
+            d = dict(zip(_ALL_COLS, row))
+            for col in _JSON_COLS:
+                raw = d.get(col)
+                d[col] = json.loads(raw) if raw else []
+            out.append(d)
+        return out
+
+    def fetch_filtered(
+        self,
+        where_clause: str = "",
+        params: Optional[list] = None,
+        limit: int = 500,
+    ) -> list[dict]:
+        sql = f"SELECT {', '.join(_META_COLS)} FROM {self._table}"
+        if where_clause:
+            sql += f" WHERE {where_clause}"
+        sql += f" LIMIT {limit}"
+        rows = self._db.query(sql, tuple(params or []))
+        out = []
+        for row in rows:
+            d = dict(zip(_META_COLS, row))
+            for col in _META_JSON_COLS:
+                raw = d.get(col)
+                d[col] = json.loads(raw) if raw else []
+            out.append(d)
+        return out
