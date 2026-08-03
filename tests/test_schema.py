@@ -3,13 +3,13 @@ Phase 0 acceptance test: validate data/sample.json against MediaItem schema.
 
 Run: pytest tests/test_schema.py
 """
+
 import json
 from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
-from src.schema import ExplainedResult, MediaItem, ParsedQuery, WatchStatus
+from src.core.schema import ExplainedResult, MediaItem, ParsedQuery  # pyrefly: ignore [missing-import]
 
 SAMPLE_PATH = Path(__file__).parent.parent / "data" / "sample.json"
 
@@ -97,7 +97,7 @@ class TestExplainedResultValidation:
         item = MediaItem.model_validate(
             {"id": "z", "title": "T", "tags": ["mecha"], "genres": ["Action"]}
         )
-        from src.schema import ComponentScores, RankedResult
+        from src.core.schema import ComponentScores, RankedResult  # pyrefly: ignore [missing-import]
 
         ranked = RankedResult(
             item=item,

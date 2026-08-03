@@ -1,0 +1,25 @@
+# tools/quality — formatting, linting, type-checking.
+
+set shell := ["bash", "-c"]
+
+# Format all code (ruff)
+fmt:
+    uv run ruff format .
+
+# Lint (mirrors CI: ruff check + format --check) + mypy
+lint:
+    uv run ruff check .
+    uv run ruff format --check .
+    uv run mypy src
+
+# Auto-fix ruff issues
+fix:
+    uv run ruff check --fix .
+
+# Type-check only
+typecheck:
+    uv run mypy src
+
+# Audit dependencies for vulnerabilities
+audit:
+    uv run pip-audit || echo "⚠️  pip-audit not installed (uv pip install pip-audit)"

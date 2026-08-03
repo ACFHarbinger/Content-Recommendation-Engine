@@ -1,0 +1,5 @@
+# The recommendation engine no longer requires any external services.
+# SQLite (stdlib) is used for vector storage — no Docker needed.
+#
+# This file is kept as a placeholder in case a PostgreSQL/pgvector or
+# other service is added in a future phase.

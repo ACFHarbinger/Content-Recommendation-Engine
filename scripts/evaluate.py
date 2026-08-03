@@ -13,6 +13,7 @@ Each golden query carries pre-parsed ``semantic_query`` and
 ``parsed_filters`` so evaluation is deterministic and does not require
 a Claude API call.
 """
+
 from __future__ import annotations
 
 import csv
@@ -36,12 +37,15 @@ console = Console()
 # Metric helpers
 # ------------------------------------------------------------------
 
-def _relevance(item_id: str, expected_top: list[str], expected_absent: list[str]) -> int:
+
+def _relevance(
+    item_id: str, expected_top: list[str], expected_absent: list[str]
+) -> int:
     if item_id in expected_absent:
-        return -1   # penalised — should not appear
+        return -1  # penalised — should not appear
     if item_id in expected_top:
-        return 2    # highly relevant
-    return 0        # not judged
+        return 2  # highly relevant
+    return 0  # not judged
 
 
 def ndcg_at_k(result_ids: list[str], golden: dict, k: int) -> float:
@@ -75,6 +79,7 @@ def penalty_score(result_ids: list[str], golden: dict, k: int) -> int:
 # Query runner (uses pre-parsed filters — no Claude dependency)
 # ------------------------------------------------------------------
 
+
 def _run_golden_query(
     gq: dict,
     retriever,
@@ -83,8 +88,8 @@ def _run_golden_query(
     top_k: int,
 ) -> list[str]:
     """Run a single golden query and return the result UUIDs."""
-    from src.query_parser import _build_qdrant_filter
-    from src.schema import FilterClause, ParsedQuery
+    from src.query_parser import _build_qdrant_filter  # pyrefly: ignore [missing-import]
+    from src.schema import FilterClause, ParsedQuery  # pyrefly: ignore [missing-import]
 
     raw_filters = gq.get("parsed_filters", [])
     filter_clauses = [FilterClause(**f) for f in raw_filters]
@@ -95,7 +100,9 @@ def _run_golden_query(
     )
     qdrant_filter = _build_qdrant_filter(filter_clauses)
 
-    candidates = retriever.retrieve(parsed, top_k=min(top_k * 4, 200), qdrant_filter=qdrant_filter)
+    candidates = retriever.retrieve(
+        parsed, top_k=min(top_k * 4, 200), qdrant_filter=qdrant_filter
+    )
 
     if reranker:
         candidates = reranker.rerank(
@@ -112,9 +119,14 @@ def _run_golden_query(
 # CLI
 # ------------------------------------------------------------------
 
+
 @click.command()
-@click.option("--k", default=10, show_default=True, help="Cut-off for NDCG and Precision.")
-@click.option("--rerank", is_flag=True, default=False, help="Enable cross-encoder reranker.")
+@click.option(
+    "--k", default=10, show_default=True, help="Cut-off for NDCG and Precision."
+)
+@click.option(
+    "--rerank", is_flag=True, default=False, help="Enable cross-encoder reranker."
+)
 @click.option(
     "--golden",
     "golden_path",
@@ -130,11 +142,11 @@ def _run_golden_query(
 )
 def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) -> None:
     """Evaluate the retrieval pipeline against the golden query set."""
-    from src.config import get_settings
-    from src.embedder import Embedder
-    from src.retriever import HybridRetriever
-    from src.scorer import Scorer
-    from src.store import QdrantStore
+    from src.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.embedder import Embedder  # pyrefly: ignore [missing-import]
+    from src.retriever import HybridRetriever  # pyrefly: ignore [missing-import]
+    from src.scorer import Scorer  # pyrefly: ignore [missing-import]
+    from src.store import QdrantStore  # pyrefly: ignore [missing-import]
 
     golden_queries = json.loads(Path(golden_path).read_text())
     cfg = get_settings()
@@ -145,7 +157,8 @@ def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) ->
     scorer = Scorer(cfg)
     reranker_obj = None
     if rerank:
-        from src.reranker import Reranker
+        from src.reranker import Reranker  # pyrefly: ignore [missing-import]
+
         reranker_obj = Reranker(cfg)
 
     ndcg_scores: list[float] = []
@@ -165,13 +178,15 @@ def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) ->
 
         ndcg_scores.append(ndcg)
         prec_scores.append(prec)
-        rows.append({
-            "query": gq["query"],
-            "ndcg": round(ndcg, 4),
-            "precision_at_5": round(prec, 4),
-            "penalties": pen,
-            "result_ids": "|".join(result_ids),
-        })
+        rows.append(
+            {
+                "query": gq["query"],
+                "ndcg": round(ndcg, 4),
+                "precision_at_5": round(prec, 4),
+                "penalties": pen,
+                "result_ids": "|".join(result_ids),
+            }
+        )
 
     # Rich table
     table = Table(show_header=True, header_style="bold cyan", border_style="dim")
@@ -181,7 +196,11 @@ def evaluate(k: int, rerank: bool, golden_path: str, csv_path: Optional[str]) ->
     table.add_column("Pen", width=5, justify="right")
 
     for row in rows:
-        color = "green" if row["ndcg"] >= 0.7 else ("yellow" if row["ndcg"] >= 0.4 else "red")
+        color = (
+            "green"
+            if row["ndcg"] >= 0.7
+            else ("yellow" if row["ndcg"] >= 0.4 else "red")
+        )
         table.add_row(
             row["query"][:40],
             f"[{color}]{row['ndcg']:.4f}[/{color}]",

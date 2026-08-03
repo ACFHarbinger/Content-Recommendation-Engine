@@ -4,15 +4,13 @@ Phase 4 tests — Scorer (Recommendation Value computation).
 Tests cover all three decay/boost functions independently, their multiplicative
 combination, and edge cases (missing rating, missing year, no length preference).
 """
+
 from __future__ import annotations
 
-import math
-
 import pytest
-
-from src.config import Settings
-from src.schema import MediaItem, ParsedQuery, ScoredCandidate
-from src.scorer import Scorer, _CURRENT_YEAR
+from src.core.config import Settings  # pyrefly: ignore [missing-import]
+from src.core.schema import MediaItem, ParsedQuery, ScoredCandidate  # pyrefly: ignore [missing-import]
+from src.search.scorer import _CURRENT_YEAR, Scorer  # pyrefly: ignore [missing-import]
 
 
 def _cfg(**kwargs) -> Settings:
@@ -159,18 +157,24 @@ class TestHistoryBoost:
         assert scorer._history_boost(c.item, None) == 1.0
 
     def test_empty_profile_is_neutral(self):
-        from src.schema import HistoryProfile
+        from src.core.schema import HistoryProfile  # pyrefly: ignore [missing-import]
+
         scorer = Scorer(_cfg())
         profile = HistoryProfile()
         assert scorer._history_boost(_candidate().item, profile) == 1.0
 
     def test_full_overlap_boosts_by_weight(self):
-        from src.schema import HistoryProfile, MediaItem
+        from src.core.schema import HistoryProfile, MediaItem  # pyrefly: ignore [missing-import]
+
         scorer = Scorer(_cfg(history_boost_weight=0.2))
-        item = MediaItem.model_validate({
-            "id": "x", "title": "T",
-            "tags": "cyberpunk, AI", "genres": "Sci-Fi",
-        })
+        item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "T",
+                "tags": "cyberpunk, AI",
+                "genres": "Sci-Fi",
+            }
+        )
         profile = HistoryProfile(
             preferred_tags=frozenset({"cyberpunk", "ai"}),
             preferred_genres=frozenset({"sci-fi"}),
@@ -181,13 +185,17 @@ class TestHistoryBoost:
         assert boost == pytest.approx(1.2)
 
     def test_partial_overlap_between_neutral_and_max(self):
-        from src.schema import HistoryProfile, MediaItem
+        from src.core.schema import HistoryProfile, MediaItem  # pyrefly: ignore [missing-import]
+
         scorer = Scorer(_cfg(history_boost_weight=0.2))
-        item = MediaItem.model_validate({
-            "id": "x", "title": "T",
-            "tags": "cyberpunk, romance",
-            "genres": "Sci-Fi",
-        })
+        item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "T",
+                "tags": "cyberpunk, romance",
+                "genres": "Sci-Fi",
+            }
+        )
         profile = HistoryProfile(
             preferred_tags=frozenset({"cyberpunk"}),
             preferred_genres=frozenset({"sci-fi"}),
@@ -197,18 +205,27 @@ class TestHistoryBoost:
         assert 1.0 < boost < 1.2  # partial overlap
 
     def test_history_boost_applied_in_score(self):
-        from src.schema import HistoryProfile, MediaItem
+        from src.core.schema import HistoryProfile, MediaItem  # pyrefly: ignore [missing-import]
+
         scorer = Scorer(_cfg(history_boost_weight=0.5))
-        item = MediaItem.model_validate({
-            "id": "x", "title": "T",
-            "tags": "cyberpunk", "genres": "Sci-Fi",
-            "rating": 8.0, "year": 2020, "episodes": 12,
-        })
+        item = MediaItem.model_validate(
+            {
+                "id": "x",
+                "title": "T",
+                "tags": "cyberpunk",
+                "genres": "Sci-Fi",
+                "rating": 8.0,
+                "year": 2020,
+                "episodes": 12,
+            }
+        )
         profile = HistoryProfile(
             preferred_tags=frozenset({"cyberpunk"}),
             preferred_genres=frozenset({"sci-fi"}),
             item_count=2,
         )
         no_hist = scorer.score([ScoredCandidate(item=item, rrf_score=0.5)])
-        with_hist = scorer.score([ScoredCandidate(item=item, rrf_score=0.5)], history_profile=profile)
+        with_hist = scorer.score(
+            [ScoredCandidate(item=item, rrf_score=0.5)], history_profile=profile
+        )
         assert with_hist[0].recommendation_value > no_hist[0].recommendation_value

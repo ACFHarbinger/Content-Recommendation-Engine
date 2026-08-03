@@ -16,6 +16,7 @@ Requires a populated Qdrant collection:
     recommend ingest --input data/sample.json
     recommend ingest --input data/sample_books.json  # optional
 """
+
 from __future__ import annotations
 
 import csv
@@ -43,7 +44,10 @@ FUSION_METHODS = ["rrf", "dbsf"]
 # Metric helpers (shared with evaluate.py)
 # ------------------------------------------------------------------
 
-def _relevance(item_id: str, expected_top: list[str], expected_absent: list[str]) -> int:
+
+def _relevance(
+    item_id: str, expected_top: list[str], expected_absent: list[str]
+) -> int:
     if item_id in expected_absent:
         return -1
     if item_id in expected_top:
@@ -76,11 +80,11 @@ def _evaluate_config(
     k: int,
 ) -> float:
     """Run all golden queries with given hyperparams; return mean NDCG@K."""
-    from src.config import Settings
-    from src.query_parser import _build_qdrant_filter
-    from src.retriever import HybridRetriever
-    from src.schema import FilterClause, ParsedQuery
-    from src.scorer import Scorer
+    from src.config import Settings  # pyrefly: ignore [missing-import]
+    from src.query_parser import _build_qdrant_filter  # pyrefly: ignore [missing-import]
+    from src.retriever import HybridRetriever  # pyrefly: ignore [missing-import]
+    from src.schema import FilterClause, ParsedQuery  # pyrefly: ignore [missing-import]
+    from src.scorer import Scorer  # pyrefly: ignore [missing-import]
 
     cfg = Settings(
         qdrant_local_path=store._cfg.qdrant_local_path,
@@ -99,7 +103,9 @@ def _evaluate_config(
             filters=filter_clauses,
         )
         qdrant_filter = _build_qdrant_filter(filter_clauses)
-        candidates = retriever.retrieve(parsed, top_k=min(k * 4, 200), qdrant_filter=qdrant_filter)
+        candidates = retriever.retrieve(
+            parsed, top_k=min(k * 4, 200), qdrant_filter=qdrant_filter
+        )
         ranked = scorer.score(candidates, parsed)[:k]
         result_ids = [r.item.id for r in ranked]
         ndcg_scores.append(ndcg_at_k(result_ids, gq, k))
@@ -110,6 +116,7 @@ def _evaluate_config(
 # ------------------------------------------------------------------
 # CLI
 # ------------------------------------------------------------------
+
 
 @click.command()
 @click.option("--k", default=10, show_default=True)
@@ -125,9 +132,9 @@ def sweep(k: int, golden_path: str, csv_path: Optional[str]) -> None:
     Grid search over lambda_recency × fusion_method.
     Prints NDCG@K for every combination and marks the best.
     """
-    from src.config import get_settings
-    from src.embedder import Embedder
-    from src.store import QdrantStore
+    from src.config import get_settings  # pyrefly: ignore [missing-import]
+    from src.embedder import Embedder  # pyrefly: ignore [missing-import]
+    from src.store import QdrantStore  # pyrefly: ignore [missing-import]
 
     golden_queries = json.loads(Path(golden_path).read_text())
     cfg = get_settings()
@@ -145,7 +152,13 @@ def sweep(k: int, golden_path: str, csv_path: Optional[str]) -> None:
         label = f"λ={lam:.2f}  fusion={fusion}"
         with console.status(f"  Running {label}…"):
             score = _evaluate_config(lam, fusion, golden_queries, embedder, store, k)
-        results.append({"lambda_recency": lam, "fusion_method": fusion, "mean_ndcg": round(score, 4)})
+        results.append(
+            {
+                "lambda_recency": lam,
+                "fusion_method": fusion,
+                "mean_ndcg": round(score, 4),
+            }
+        )
         console.print(f"  {label:30s}  NDCG@{k} = {score:.4f}")
 
     best = max(results, key=lambda r: r["mean_ndcg"])
@@ -180,7 +193,9 @@ def sweep(k: int, golden_path: str, csv_path: Optional[str]) -> None:
         out = Path(csv_path)
         out.parent.mkdir(parents=True, exist_ok=True)
         with open(out, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=["lambda_recency", "fusion_method", "mean_ndcg"])
+            writer = csv.DictWriter(
+                f, fieldnames=["lambda_recency", "fusion_method", "mean_ndcg"]
+            )
             writer.writeheader()
             writer.writerows(results)
         console.print(f"[dim]Sweep results saved to {out}[/dim]")
