@@ -212,3 +212,16 @@ All tests run without Qdrant, BGE-M3, or the Anthropic API — external dependen
 **Why multiplicative scoring?** A zero-relevance item (RRF score ≈ 0) stays near zero regardless of its rating or recency. Additive formulas let a high-rated but irrelevant item float to the top.
 
 **Why async explanation?** Running 10 Claude calls sequentially adds ~10–30 s. `asyncio.gather` reduces this to ~1–3 s (single call latency).
+
+## License
+
+This project is dual-licensed under an open-core model:
+
+- **Open source (free) — GNU AGPL-3.0.** Free to use, modify, and
+  distribute for hobbyists, students, researchers, non-profits, and any
+  other use that complies with the [AGPL-3.0](LICENSE.md)'s copyleft and
+  network source-disclosure terms.
+- **Commercial (paid).** For proprietary, closed-source, or SaaS use that
+  can't comply with the AGPL's obligations, a paid
+  [commercial license](LICENSE.txt) is available — contact ACFHarbinger
+  <afonso.fernandes100@gmail.com> for pricing and terms.
