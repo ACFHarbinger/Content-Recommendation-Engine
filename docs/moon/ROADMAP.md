@@ -1,9 +1,9 @@
 # Recommendation Engine — Implementation Roadmap
 
 This is the **master roadmap**. It tracks the phased build-out below; per-module engineering
-roadmaps live under [`moon/roadmaps/`](roadmaps/). Completed items are recorded in
-[`docs/CHANGELOG.md`](../docs/CHANGELOG.md). System design is summarised in
-[`docs/ARCHITECTURE.md`](../docs/ARCHITECTURE.md).
+roadmaps live under [`docs/moon/roadmaps/`](roadmaps/). Completed items are recorded in
+[`docs/CHANGELOG.md`](../CHANGELOG.md). System design is summarised in
+[`docs/ARCHITECTURE.md`](../ARCHITECTURE.md).
 
 ## Module Roadmaps
 

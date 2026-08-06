@@ -1,7 +1,7 @@
 # Roadmap — Ingestion & Data
 
 The offline pipeline: load raw metadata, embed it, and persist to the SQLite store. Implementation
-in [`src/data/`](../../src/data/) (`ingest.py`, `embedder.py`, `export.py`, `store.py`).
+in [`src/data/`](../../../src/data/) (`ingest.py`, `embedder.py`, `export.py`, `store.py`).
 
 ## §1 — Ingestion (done ✅, hardening)
 

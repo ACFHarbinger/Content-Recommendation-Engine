@@ -1,6 +1,6 @@
 # Roadmap — CLI & Output
 
-The user-facing layer. Implementation in [`src/cli/`](../../src/cli/) (`cli.py`, `output.py`),
+The user-facing layer. Implementation in [`src/cli/`](../../../src/cli/) (`cli.py`, `output.py`),
 entry point `recommend`.
 
 ## §1 — CLI (Click)
