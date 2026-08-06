@@ -1,0 +1,37 @@
+name: ✨ Feature Request
+description: Propose a new capability for the Recommendation-Engine
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Target area
+      options:
+        - Ingestion & data (src/data)
+        - Search & retrieval (src/search)
+        - CLI & output (src/cli)
+        - Core & infrastructure (src/core)
+        - Docs / tooling
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / motivation
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Note which module roadmap this extends (moon/roadmaps/).
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
