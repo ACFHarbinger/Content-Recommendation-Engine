@@ -1,0 +1,62 @@
+site_name: Recommendation-Engine Documentation
+site_description: >-
+  Documentation portal for Recommendation-Engine — a local-first hybrid
+  vector recommendation engine for media libraries.
+site_author: ACFHarbinger
+repo_url: https://github.com/ACFHarbinger/Recommendation-Engine
+repo_name: ACFHarbinger/Recommendation-Engine
+edit_uri: edit/main/docs/
+
+docs_dir: .
+site_dir: ../site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [../src]
+          options:
+            docstring_style: google
+            show_source: true
+
+nav:
+  - Home: README.md
+  - Architecture: ARCHITECTURE.md
+  - Roadmap:
+      - Master Roadmap: moon/ROADMAP.md
+      - Search: moon/roadmaps/search.md
+      - Core: moon/roadmaps/core.md
+      - CLI: moon/roadmaps/cli.md
+      - Ingestion: moon/roadmaps/ingestion.md
+  - Changelog: CHANGELOG.md
+  - Research:
+      - Building a Smart Recommendation Engine: research/Building a Smart Recommendation Engine.md
+  - Image-Toolkit (parent project): https://github.com/ACFHarbinger/Image-Toolkit
