@@ -89,7 +89,7 @@ onMounted(load);
       <div class="hero-overlay" />
       <div class="hero-content">
         <span class="badge">Documentation</span>
-        <h1>Recommendation-Engine</h1>
+        <h1>Content-Recommendation-Engine</h1>
         <p class="hero-desc">
           A search and recommendation subsystem for the Image-Toolkit ecosystem — semantic
           search, ranking, and ingestion pipelines for surfacing related media.

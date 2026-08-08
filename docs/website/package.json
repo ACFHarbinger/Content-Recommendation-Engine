@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Recommendation-Engine documentation \u2014 local-first hybrid vector recommendation engine.",
+  "description": "Content-Recommendation-Engine documentation \u2014 local-first hybrid vector recommendation engine.",
   "scripts": {
     "prebuild": "node scripts/generate-nav.mjs",
     "predev": "node scripts/generate-nav.mjs",

@@ -16,7 +16,7 @@ const toc = ref<TocEntry[]>([]);
 const notebookSource = ref<string | null>(null);
 const editSource = ref("");
 
-const REPO_EDIT_BASE = "https://github.com/ACFHarbinger/Recommendation-Engine/blob/main/docs/";
+const REPO_EDIT_BASE = "https://github.com/ACFHarbinger/Content-Recommendation-Engine/blob/main/docs/";
 
 const currentPath = computed(() => {
   const p = "/" + (Array.isArray(route.params.pathMatch) ? route.params.pathMatch.join("/") : "");
@@ -67,7 +67,7 @@ async function load() {
     notebookSource.value = entry.source;
     title.value = entry.title;
     toc.value = [];
-    document.title = `${title.value} — Recommendation-Engine Docs`;
+    document.title = `${title.value} — Content-Recommendation-Engine Docs`;
     state.value = "ok";
     return;
   }
@@ -85,7 +85,7 @@ async function load() {
   await nextTick();
   renderMermaid();
   addCopyButtons();
-  document.title = `${title.value} — Recommendation-Engine Docs`;
+  document.title = `${title.value} — Content-Recommendation-Engine Docs`;
 }
 
 async function renderMermaid() {

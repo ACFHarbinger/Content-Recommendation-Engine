@@ -21,14 +21,14 @@ watch(() => route.fullPath, () => (sidebarOpen.value = false));
         </button>
         <router-link to="/" class="brand">
           <span class="brand-mark">RE</span>
-          <span class="brand-name">Recommendation-Engine</span>
+          <span class="brand-name">Content-Recommendation-Engine</span>
         </router-link>
       </div>
       <div class="topbar-right">
         <SearchBox />
         <a
           class="icon-link"
-          href="https://github.com/ACFHarbinger/Recommendation-Engine"
+          href="https://github.com/ACFHarbinger/Content-Recommendation-Engine"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub repository"

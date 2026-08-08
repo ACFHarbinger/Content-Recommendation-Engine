@@ -10,8 +10,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Moved `moon/` and `research/` into `docs/` (`docs/moon/`, `docs/research/`); added `docs/mkdocs.yml` (this repo never had one) with a Roadmap/Changelog/Research nav plus a link back to the parent Image-Toolkit project.
-- Added `docs/website/` — a Vue 3 + Vite documentation site (same design as Image-Toolkit's and its other submodules') rendering every `docs/**/*.md` directly, nav/search generated from this repo's own `docs/mkdocs.yml`. Includes a "Related Projects" sidebar section embedding Image-Toolkit's, Anime-Stitch-Pipeline's, and Cel-Shaded-Generator's own docs sites via iframe. Deployed alongside the MkDocs portal in a new CI pipeline (`.github/workflows/docs.yml` + new `.forgejo`/`.gitea`/`.gitlab` mirrors) at `/app/`.
-- Added the repo-infrastructure scaffolding this submodule was missing relative to Anime-Stitch-Pipeline/Cel-Shaded-Generator: `.gitlab/`, `.gitea/`, `.forgejo/` (issue/MR templates, CI mirrors), `.devcontainer/`, `.dockerignore`, `.gitattributes`, `.pre-commit-config.yaml`, `.python-version`, `CLAUDE.md`, `GEMINI.md`.
+- Added `docs/website/` — a Vue 3 + Vite documentation site (same design as Image-Toolkit's and its other submodules') rendering every `docs/**/*.md` directly, nav/search generated from this repo's own `docs/mkdocs.yml`. Includes a "Related Projects" sidebar section embedding Image-Toolkit's, ASP's, and CSG's own docs sites via iframe. Deployed alongside the MkDocs portal in a new CI pipeline (`.github/workflows/docs.yml` + new `.forgejo`/`.gitea`/`.gitlab` mirrors) at `/app/`.
+- Added the repo-infrastructure scaffolding this submodule was missing relative to ASP/CSG: `.gitlab/`, `.gitea/`, `.forgejo/` (issue/MR templates, CI mirrors), `.devcontainer/`, `.dockerignore`, `.gitattributes`, `.pre-commit-config.yaml`, `.python-version`, `CLAUDE.md`, `GEMINI.md`.
 
 ---
 

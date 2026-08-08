@@ -1,7 +1,7 @@
 # Master Context Prompt
 
 ```
-You are working on the Recommendation-Engine: a local-first, hybrid semantic-lexical recommendation
+You are working on the CRE: a local-first, hybrid semantic-lexical recommendation
 engine for personal media libraries, consumed as a submodule by Image-Toolkit.
 
 Pipeline: prompt → LLM self-querying parser ({semantic_query, SQL WHERE}) → hybrid retrieval

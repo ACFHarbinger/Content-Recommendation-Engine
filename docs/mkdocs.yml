@@ -1,10 +1,10 @@
-site_name: Recommendation-Engine Documentation
+site_name: Content-Recommendation-Engine Documentation
 site_description: >-
-  Documentation portal for Recommendation-Engine — a local-first hybrid
+  Documentation portal for Content-Recommendation-Engine — a local-first hybrid
   vector recommendation engine for media libraries.
 site_author: ACFHarbinger
-repo_url: https://github.com/ACFHarbinger/Recommendation-Engine
-repo_name: ACFHarbinger/Recommendation-Engine
+repo_url: https://github.com/ACFHarbinger/Content-Recommendation-Engine
+repo_name: ACFHarbinger/Content-Recommendation-Engine
 edit_uri: edit/main/docs/
 
 docs_dir: .

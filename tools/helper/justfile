@@ -8,7 +8,7 @@ reset := '\033[0m'
 
 [private]
 _print_header:
-    @printf '{{bold}}{{cyan}}Recommendation-Engine{{reset}}\n'
+    @printf '{{bold}}{{cyan}}CRE{{reset}}\n'
     @printf 'Local-first hybrid semantic-lexical recommendation engine for media libraries\n\n'
 
 # List every recipe across all sub-modules

@@ -1,5 +1,5 @@
 {
-    "name": "Recommendation-Engine Dev Environment",
+    "name": "Content-Recommendation-Engine Dev Environment",
     "build": {
         "dockerfile": "Dockerfile",
         "context": ".."

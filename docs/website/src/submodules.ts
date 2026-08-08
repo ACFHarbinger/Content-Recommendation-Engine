@@ -20,14 +20,14 @@ export const submoduleSites: SubmoduleSite[] = [
   },
   {
     slug: "anime-stitch-pipeline",
-    title: "Anime-Stitch-Pipeline",
+    title: "ASP",
     description: "Anime panorama stitching engine (ASP).",
     url: "https://acfharbinger.github.io/Anime-Stitch-Pipeline/app/",
     repo: "https://github.com/ACFHarbinger/Anime-Stitch-Pipeline",
   },
   {
     slug: "cel-shaded-generator",
-    title: "Cel-Shaded-Generator",
+    title: "CSG",
     description: "Manga Colorization & Animation.",
     url: "https://acfharbinger.github.io/Cel-Shaded-Generator/app/",
     repo: "https://github.com/ACFHarbinger/Cel-Shaded-Generator",

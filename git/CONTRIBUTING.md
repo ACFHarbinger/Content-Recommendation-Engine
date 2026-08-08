@@ -1,4 +1,4 @@
-# Contributing to Recommendation-Engine
+# Contributing to Content-Recommendation-Engine
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![uv](https://img.shields.io/badge/managed%20by-uv-261230.svg)](https://github.com/astral-sh/uv)

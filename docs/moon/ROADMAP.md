@@ -525,7 +525,7 @@ Explanation generation is the highest-latency stage. Running 10 Claude API calls
 ## File Structure (current state — SQLite migration complete)
 
 ```
-Recommendation-Engine/
+CRE/
 ├── src/
 │   ├── schema.py        # Pydantic models: MediaItem, HistoryProfile, ParsedQuery,
 │   │                    #   RankedResult, ExplainedResult (Phases 0–9)
