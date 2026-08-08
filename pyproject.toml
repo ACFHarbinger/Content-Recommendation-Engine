@@ -1,5 +1,5 @@
 [project]
-name = "Recommendation-Engine"
+name = "content-recommendation-engine"
 version = "0.2.0"
 description = "Local-first hybrid vector recommendation engine for media libraries"
 requires-python = ">=3.11"
