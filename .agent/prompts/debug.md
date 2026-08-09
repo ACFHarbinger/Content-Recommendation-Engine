@@ -1,7 +1,7 @@
 # Debugging Prompt
 
 ```
-Debug the following Recommendation-Engine failure: {SYMPTOM}.
+Debug the following CRE failure: {SYMPTOM}.
 
 Triage order (matches the pipeline):
 1. Config — is the setting resolved as expected? (print the pydantic settings; a wrong path or

@@ -1,7 +1,7 @@
 # Roadmap — Core & Infrastructure
 
 Configuration, caching, schema, and cross-cutting quality/tooling. Implementation in
-[`src/core/`](../../src/core/) (`config.py`, `cache.py`, `schema.py`).
+[`src/core/`](../../../src/core/) (`config.py`, `cache.py`, `schema.py`).
 
 ## §1 — Config & schema
 

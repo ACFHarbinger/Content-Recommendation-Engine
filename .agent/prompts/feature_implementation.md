@@ -1,7 +1,7 @@
 # Feature Implementation Prompt
 
 ```
-Implement the following Recommendation-Engine feature: {FEATURE}.
+Implement the following CRE feature: {FEATURE}.
 
 Before writing code:
 1. Locate the pipeline stage (data / search / cli / core) and read the matching moon/roadmaps/ file

@@ -1,6 +1,6 @@
 <div align="center">
 
-# Recommendation-Engine
+# Content-Recommendation-Engine
 
 **A local-first, hybrid semantic-lexical search and AI-powered recommendation engine for personal media libraries.**
 
@@ -87,7 +87,7 @@ Your query (natural language + optional filters)
 ### 1. Clone and Install
 ```bash
 git clone <repo-url>
-cd Recommendation-Engine
+cd Content-Recommendation-Engine
 pip install -e ".[dev]"
 ```
 

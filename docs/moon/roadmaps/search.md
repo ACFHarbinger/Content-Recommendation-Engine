@@ -1,6 +1,6 @@
 # Roadmap — Search & Retrieval
 
-The online query pipeline. Implementation in [`src/search/`](../../src/search/): `query_parser.py`,
+The online query pipeline. Implementation in [`src/search/`](../../../src/search/): `query_parser.py`,
 `retriever.py`, `scorer.py`, `reranker.py`, `explainer.py`, `pipeline.py`.
 
 ## §1 — Query parser (self-querying retriever)

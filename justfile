@@ -1,4 +1,4 @@
-# Recommendation-Engine — Root Justfile
+# Content-Recommendation-Engine — Root Justfile
 # https://github.com/casey/just
 #
 # Recipes are organised into per-domain sub-modules under tools/. Invoke a

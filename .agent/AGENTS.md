@@ -1,4 +1,4 @@
-# AGENTS.md — Recommendation-Engine: Coding-Assistant Handbook
+# AGENTS.md — Content-Recommendation-Engine: Coding-Assistant Handbook
 
 Instructions for AI assistants (and humans) working on this codebase.
 
