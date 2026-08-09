@@ -33,7 +33,7 @@ A five-stage pipeline — stages 1–2 run **offline** (ingestion), stages 3–5
 ## Key Design Decisions
 
 - **Local-first**: SQLite (stdlib) is the vector store — no external services required
-  (`docker/docker-compose.yml` is a placeholder for a possible future backend).
+  (`infra/global/docker/docker-compose.yml` is a placeholder for a possible future backend).
 - **Hybrid retrieval**: dense (semantic) + sparse (lexical) vectors fused with RRF (default) or DBSF.
 - **LLM-optional**: Anthropic Claude powers the self-querying parser and the explainer; the engine
   degrades to deterministic behaviour without an API key (roadmap).
