@@ -7,7 +7,7 @@ Description: Serverless Backend stack for the Recommendation Engine.
 
 Resources:
   # DynamoDB Database Table
-  Recommendation_engineTable:
+  RecommendationEngineTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
       PrimaryKey:
@@ -18,7 +18,7 @@ Resources:
         WriteCapacityUnits: 5
 
   # Lambda Function
-  Recommendation_engineFunction:
+  RecommendationEngineFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: handler.lambda_handler
@@ -26,10 +26,10 @@ Resources:
       CodeUri: ./src
       Environment:
         Variables:
-          TABLE_NAME: !Ref Recommendation_engineTable
+          TABLE_NAME: !Ref RecommendationEngineTable
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref Recommendation_engineTable
+            TableName: !Ref RecommendationEngineTable
       Events:
         ApiEvent:
           Type: Api
