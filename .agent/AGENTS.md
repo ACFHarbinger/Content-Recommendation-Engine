@@ -34,7 +34,7 @@ src/
 
 Repo layout: `moon/` (roadmaps), `docs/` (ARCHITECTURE + CHANGELOG), `git/` (CONTRIBUTING +
 codecov), `tools/` (justfile sub-modules), `.github/` (CI + templates), `data/` (sample datasets),
-`scripts/` (evaluate/sweep), `tests/`, `docker/` (placeholder compose).
+`scripts/` (evaluate/sweep), `tests/`, `infra/global/docker/` (placeholder compose).
 
 ## 4. Common Commands (just)
 

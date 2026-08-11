@@ -93,7 +93,7 @@ pip install -e ".[dev]"
 
 ### 2. Start Local Qdrant (Docker)
 ```bash
-docker compose -f docker/docker-compose.yml up -d
+docker compose -f infra/global/docker/docker-compose.yml up -d
 ```
 The Qdrant UI dashboard will be available at [http://localhost:6333/dashboard](http://localhost:6333/dashboard).
 
