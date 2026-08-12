@@ -1,0 +1,2276 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation portal for Content-Recommendation-Engine — a local-first hybrid vector recommendation engine for media libraries.">
+      
+      
+        <meta name="author" content="ACFHarbinger">
+      
+      
+      
+        <link rel="prev" href="../moon/roadmaps/ingestion/">
+      
+      
+        <link rel="next" href="../research/Building%20a%20Smart%20Recommendation%20Engine/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Changelog - Content-Recommendation-Engine Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Content-Recommendation-Engine Documentation" class="md-header__button md-logo" aria-label="Content-Recommendation-Engine Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Content-Recommendation-Engine Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ACFHarbinger/Content-Recommendation-Engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ACFHarbinger/Content-Recommendation-Engine
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../ARCHITECTURE/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../moon/ROADMAP/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Roadmap
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../research/Building%20a%20Smart%20Recommendation%20Engine/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://github.com/ACFHarbinger/Image-Toolkit" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Image-Toolkit (parent project)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Content-Recommendation-Engine Documentation" class="md-nav__button md-logo" aria-label="Content-Recommendation-Engine Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Content-Recommendation-Engine Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ACFHarbinger/Content-Recommendation-Engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ACFHarbinger/Content-Recommendation-Engine
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moon/ROADMAP/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Master Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moon/roadmaps/search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moon/roadmaps/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moon/roadmaps/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moon/roadmaps/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [Unreleased]
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[Unreleased]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#040-2026-06-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.4.0] — 2026-06-04
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.4.0] — 2026-06-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed-sqlite-migration-replaces-qdrant-json-file-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed — SQLite migration (replaces Qdrant + JSON-file workflow)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Changed — SQLite migration (replaces Qdrant + JSON-file workflow)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#store-layer-srcstorepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Store layer (src/store.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-layer-srcretrieverpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieval layer (src/retriever.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-parser-srcquery_parserpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query parser (src/query_parser.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-srcconfigpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config (src/config.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-srcpipelinepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline (src/pipeline.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-and-ingestexport-srcclipy-srcingestpy-srcexportpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI and ingest/export (src/cli.py, src/ingest.py, src/export.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#030-2026-05-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.3.0] — 2026-05-31
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.3.0] — 2026-05-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-9-quality-tooling-watch-history-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 9: Quality, Tooling &amp; Watch-History Feedback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Added — Phase 9: Quality, Tooling &amp; Watch-History Feedback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompt-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt caching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-history-implicit-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch-history implicit feedback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-additions-srcclipy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI additions (src/cli.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation tooling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#020-2026-05-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.2.0] — 2026-05-31
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.2.0] — 2026-05-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-2-query-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 2: Query Parser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-3-hybrid-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 3: Hybrid Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-4-score-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 4: Score Enhancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-5-explainability-xai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 5: Explainability (XAI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-6-cli-output-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 6: CLI &amp; Output Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-7-multi-modal-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 7: Multi-Modal Expansion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-8-reranking-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 8: Reranking &amp; Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#010-2026-05-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.1.0] — 2026-05-30
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.1.0] — 2026-05-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-0-project-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 0: Project Foundation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-1-ingestion-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 1: Ingestion Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/Building%20a%20Smart%20Recommendation%20Engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a Smart Recommendation Engine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/ACFHarbinger/Image-Toolkit" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Image-Toolkit (parent project)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [Unreleased]
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[Unreleased]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#040-2026-06-04" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.4.0] — 2026-06-04
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.4.0] — 2026-06-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed-sqlite-migration-replaces-qdrant-json-file-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed — SQLite migration (replaces Qdrant + JSON-file workflow)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Changed — SQLite migration (replaces Qdrant + JSON-file workflow)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#store-layer-srcstorepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Store layer (src/store.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-layer-srcretrieverpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieval layer (src/retriever.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#query-parser-srcquery_parserpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Query parser (src/query_parser.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-srcconfigpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config (src/config.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-srcpipelinepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline (src/pipeline.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-and-ingestexport-srcclipy-srcingestpy-srcexportpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI and ingest/export (src/cli.py, src/ingest.py, src/export.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#030-2026-05-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.3.0] — 2026-05-31
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.3.0] — 2026-05-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-9-quality-tooling-watch-history-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 9: Quality, Tooling &amp; Watch-History Feedback
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Added — Phase 9: Quality, Tooling &amp; Watch-History Feedback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompt-caching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt caching
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#watch-history-implicit-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Watch-history implicit feedback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cli-additions-srcclipy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI additions (src/cli.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation tooling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#020-2026-05-31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.2.0] — 2026-05-31
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.2.0] — 2026-05-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-2-query-parser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 2: Query Parser
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-3-hybrid-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 3: Hybrid Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-4-score-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 4: Score Enhancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-5-explainability-xai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 5: Explainability (XAI)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-6-cli-output-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 6: CLI &amp; Output Layer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-7-multi-modal-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 7: Multi-Modal Expansion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-8-reranking-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 8: Reranking &amp; Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#010-2026-05-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.1.0] — 2026-05-30
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.1.0] — 2026-05-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-0-project-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 0: Project Foundation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added-phase-1-ingestion-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added — Phase 1: Ingestion Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tests_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="changelog">Changelog</h1>
+<p>All notable changes to the Recommendation Engine are documented in this file.
+Format follows <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>.</p>
+<hr />
+<h2 id="unreleased">[Unreleased]</h2>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Stopped tracking <code>docs/website/src/nav.generated.ts</code> in git -- it is
+  regenerated by <code>scripts/generate-nav.mjs</code> on every <code>npm run build</code>/
+  <code>npm run dev</code> via the <code>prebuild</code>/<code>predev</code> hooks, so committing it just
+  invited drift from <code>docs/mkdocs.yml</code>'s <code>nav:</code> tree, the source of truth
+  it mirrors. Added to <code>docs/website/.gitignore</code>. <code>docs/mkdocs.yml</code>'s
+  <code>site_dir</code> now points at <code>build/gen/site</code> (was <code>../site</code>); added a
+  <code>/**/build</code> rule to <code>.gitignore</code> (this repo had none, unlike CSG/ASP)
+  so generated build output is never committed again. CI workflows
+  (<code>.github</code>/<code>.forgejo</code>/<code>.gitea</code>/<code>.gitlab</code>) updated to match. GitLab's
+  job still ends with <code>mv build/gen/site public</code>, since GitLab Pages
+  requires that literal directory name.</li>
+</ul>
+<h3 id="added">Added</h3>
+<ul>
+<li>Moved <code>moon/</code> and <code>research/</code> into <code>docs/</code> (<code>docs/moon/</code>, <code>docs/research/</code>); added <code>docs/mkdocs.yml</code> (this repo never had one) with a Roadmap/Changelog/Research nav plus a link back to the parent Image-Toolkit project.</li>
+<li>Added <code>docs/website/</code> — a Vue 3 + Vite documentation site (same design as Image-Toolkit's and its other submodules') rendering every <code>docs/**/*.md</code> directly, nav/search generated from this repo's own <code>docs/mkdocs.yml</code>. Includes a "Related Projects" sidebar section embedding Image-Toolkit's, ASP's, and CSG's own docs sites via iframe. Deployed alongside the MkDocs portal in a new CI pipeline (<code>.github/workflows/docs.yml</code> + new <code>.forgejo</code>/<code>.gitea</code>/<code>.gitlab</code> mirrors) at <code>/app/</code>.</li>
+<li>Added the repo-infrastructure scaffolding this submodule was missing relative to ASP/CSG: <code>.gitlab/</code>, <code>.gitea/</code>, <code>.forgejo/</code> (issue/MR templates, CI mirrors), <code>.devcontainer/</code>, <code>.dockerignore</code>, <code>.gitattributes</code>, <code>.pre-commit-config.yaml</code>, <code>.python-version</code>, <code>CLAUDE.md</code>, <code>GEMINI.md</code>.</li>
+</ul>
+<hr />
+<h2 id="040-2026-06-04">[0.4.0] — 2026-06-04</h2>
+<h3 id="changed-sqlite-migration-replaces-qdrant-json-file-workflow">Changed — SQLite migration (replaces Qdrant + JSON-file workflow)</h3>
+<h4 id="store-layer-srcstorepy">Store layer (<code>src/store.py</code>)</h4>
+<ul>
+<li><strong><code>QdrantStore</code> replaced by <code>SQLiteStore</code></strong> — zero external services required.
+  All item metadata and vectors live in a single <code>.db</code> file (default
+  <code>data/rec_engine.db</code>, configurable via <code>SQLITE_PATH</code> env var).</li>
+<li>Schema: one <code>items</code> table with native SQLite column types for scalars and
+  JSON TEXT blobs for list fields (<code>genres</code>, <code>tags</code>, <code>associated_entities</code>) and
+  vector fields (<code>dense_vector</code>, <code>sparse_indices</code>, <code>sparse_values</code>).</li>
+<li><code>create_collection()</code> — idempotent <code>CREATE TABLE IF NOT EXISTS</code>; returns
+  <code>True</code> on first creation.</li>
+<li><code>upsert()</code> — <code>INSERT OR REPLACE</code> with WAL-mode commit per batch.</li>
+<li><code>delete()</code> — <code>DELETE WHERE id = ?</code>.</li>
+<li><code>collection_info()</code> — <code>SELECT COUNT(*)</code> + db path.</li>
+<li><code>fetch_all(where_clause, params)</code> — full rows including vectors (used by
+  retriever for hybrid search).</li>
+<li><code>fetch_filtered(where_clause, params, limit)</code> — metadata-only rows without
+  vectors (used for scroll / watch-history profile).</li>
+<li>In-memory mode: pass <code>sqlite_path=":memory:"</code> for isolated test databases.</li>
+</ul>
+<h4 id="retrieval-layer-srcretrieverpy">Retrieval layer (<code>src/retriever.py</code>)</h4>
+<ul>
+<li><strong>Qdrant client removed entirely.</strong> All vector arithmetic now runs in Python:</li>
+<li><code>_cosine(a, b)</code> — cosine similarity for the dense leg.</li>
+<li><code>_sparse_dot(idx_q, val_q, idx_d, val_d)</code> — dot-product for the sparse leg.</li>
+<li><code>_rrf(ranks)</code> — Reciprocal Rank Fusion (k=60).</li>
+<li><code>HybridRetriever.retrieve()</code> parameter renamed <code>qdrant_filter</code> → <code>sql_filter</code>
+  (accepts <code>(where_clause, params)</code> tuple or <code>None</code>).</li>
+<li><code>_hybrid_query()</code> — fetches all matching rows, scores both legs, fuses with
+  RRF (default) or DBSF; returns top-K <code>ScoredCandidate</code> list.</li>
+<li><code>_dense_only()</code> — cosine-only fallback when sparse vectors are absent.</li>
+<li><code>_filter_only()</code> — delegates to <code>store.fetch_filtered()</code> when the semantic
+  query is empty (plan-to-watch-style queries).</li>
+<li><code>_payload_to_item()</code> name kept for backward compatibility; semantics unchanged
+  since SQLite column names match the old Qdrant payload keys.</li>
+</ul>
+<h4 id="query-parser-srcquery_parserpy">Query parser (<code>src/query_parser.py</code>)</h4>
+<ul>
+<li><strong><code>_build_qdrant_filter()</code> replaced by <code>_build_sql_filter()</code></strong> — returns
+  <code>(where_clause: str, params: list)</code> instead of a Qdrant <code>Filter</code> object.</li>
+<li>Scalar fields (<code>type</code>, <code>watch_status</code>, <code>rating</code>, <code>year_released</code>,
+    <code>num_episodes_or_pages</code>): standard SQL operators (<code>=</code>, <code>!=</code>, <code>&gt;</code>, <code>&gt;=</code>,
+    <code>&lt;</code>, <code>&lt;=</code>, <code>IN</code>, <code>NOT IN</code>).</li>
+<li>Array fields (<code>genres</code>, <code>tags</code>, <code>associated_entities</code>): <code>json_each()</code>
+    containment checks (<code>EXISTS / NOT EXISTS</code>).</li>
+<li><strong><code>parse_to_qdrant()</code> renamed to <code>parse_to_sql()</code></strong> — returns
+  <code>(ParsedQuery, (where_clause, params))</code>.</li>
+<li>System prompt and few-shot examples unchanged; Claude still produces the same
+  <code>{semantic_query, filters, length_preference_episodes}</code> JSON.</li>
+</ul>
+<h4 id="config-srcconfigpy">Config (<code>src/config.py</code>)</h4>
+<ul>
+<li><strong>Removed</strong>: <code>qdrant_url</code>, <code>qdrant_api_key</code>, <code>qdrant_local_path</code>,
+  <code>qdrant_collection</code> settings; <code>use_local_qdrant</code>, <code>qdrant_storage_path</code>
+  properties.</li>
+<li><strong>Added</strong>: <code>sqlite_path: str</code> (env <code>SQLITE_PATH</code>, default
+  <code>"data/rec_engine.db"</code>).</li>
+</ul>
+<h4 id="pipeline-srcpipelinepy">Pipeline (<code>src/pipeline.py</code>)</h4>
+<ul>
+<li><code>_build_history_profile()</code> rewritten: queries <code>store.fetch_filtered()</code> with
+  a plain SQL WHERE clause instead of constructing Qdrant <code>Filter</code> objects and
+  calling <code>client.scroll()</code>.</li>
+<li><code>self._parser.parse_to_qdrant()</code> → <code>self._parser.parse_to_sql()</code>.</li>
+<li><code>qdrant_filter</code> variable renamed to <code>sql_filter</code> throughout.</li>
+</ul>
+<h4 id="cli-and-ingestexport-srcclipy-srcingestpy-srcexportpy">CLI and ingest/export (<code>src/cli.py</code>, <code>src/ingest.py</code>, <code>src/export.py</code>)</h4>
+<ul>
+<li><code>QdrantStore</code> references replaced with <code>SQLiteStore</code>.</li>
+<li><code>ingest --reset</code> now drops and recreates the <code>items</code> table instead of
+  deleting a Qdrant collection.</li>
+<li><code>export</code> fetches rows via <code>store.fetch_filtered()</code> instead of Qdrant scroll.</li>
+<li><code>info</code> command shows <code>SQLITE_PATH</code> instead of Qdrant URL / collection.</li>
+<li>CLI description updated: <code>"local-first, BGE-M3 + SQLite"</code>.</li>
+</ul>
+<h4 id="infrastructure">Infrastructure</h4>
+<ul>
+<li><strong><code>docker-compose.yml</code></strong> — Qdrant service removed; file retained as a
+  placeholder comment.</li>
+<li><strong><code>pyproject.toml</code></strong> — <code>qdrant-client</code> dependency removed; version bumped to
+  <code>0.2.0</code>; <code>sqlite3</code> is stdlib (no new runtime deps).</li>
+<li><strong><code>.env.example</code></strong> — Qdrant vars replaced with <code>SQLITE_PATH</code>.</li>
+</ul>
+<h4 id="tests">Tests</h4>
+<ul>
+<li><strong><code>tests/conftest.py</code></strong> — <code>FakeQdrantClient</code>, <code>_build_qdrant_module</code>, and
+  <code>qdrant_mock</code> fixture removed. <code>cfg</code> fixture now uses <code>tmp_path</code> to give each
+  test its own temp SQLite file. New <code>sqlite_store</code> fixture provides a
+  ready-to-use <code>SQLiteStore</code>.</li>
+<li><strong><code>tests/test_store.py</code></strong> — Rewritten for <code>SQLiteStore</code> API; direct DB
+  inspection replaces <code>qdrant_mock.calls</code> and <code>qdrant_mock._colls</code> introspection.
+  Added <code>test_upsert_is_idempotent</code> and <code>test_delete_nonexistent_is_silent</code>.</li>
+<li><strong><code>tests/test_retriever.py</code></strong> — Updated to use real SQLite via <code>cfg</code>; <code>qdrant_mock</code>
+  parameter removed from all test signatures.</li>
+<li><strong><code>tests/test_pipeline.py</code></strong> — <code>QdrantStore</code> → <code>SQLiteStore</code>; <code>qdrant_mock</code>
+  parameter removed.</li>
+<li><strong><code>tests/test_query_parser.py</code></strong> — <code>mock_qdrant</code> autouse fixture removed
+  (no more <code>qdrant_client</code> import in query_parser); <code>TestBuildQdrantFilter</code>
+  renamed to <code>TestBuildSQLFilter</code> with updated assertions for the SQL output
+  format; <code>qdrant_local_path</code> constructor args replaced with <code>sqlite_path</code>.
+  <strong>5 additional filter tests</strong> added (nin scalar, multiple filters AND).</li>
+<li><strong>Total: 110 tests, 0 failures.</strong></li>
+</ul>
+<hr />
+<h2 id="030-2026-05-31">[0.3.0] — 2026-05-31</h2>
+<h3 id="added-phase-9-quality-tooling-watch-history-feedback">Added — Phase 9: Quality, Tooling &amp; Watch-History Feedback</h3>
+<h4 id="test-infrastructure">Test infrastructure</h4>
+<ul>
+<li><strong><code>tests/conftest.py</code></strong> — Shared pytest fixtures powering the new test suite.
+  Key pieces:</li>
+<li><code>FakeQdrantClient</code>: stateful in-memory Qdrant substitute with <code>create_collection</code>,
+    <code>upsert</code>, <code>scroll</code>, <code>search</code>, <code>query_points</code>, <code>delete</code>, and call-log inspection via
+    <code>client.calls</code>.</li>
+<li><code>FakeQdrantModule</code> / <code>FakeModelsModule</code>: full stub tree for <code>qdrant_client</code> and
+    <code>qdrant_client.models</code> injected into <code>sys.modules</code> so all lazy imports resolve.</li>
+<li><code>FakeAnthropicModule</code>: minimal sync + async-capable fake with configurable response
+    JSON; supports <code>await async_client.messages.create(...)</code>.</li>
+<li><code>MockEmbedder</code>: hash-based deterministic vectors (no BGE-M3 load); covers <code>embed_dense</code>,
+    <code>embed_sparse</code>, and <code>embed_batch</code>.</li>
+<li>
+<p>Fixtures: <code>qdrant_mock</code>, <code>anthropic_mock</code>, <code>mock_embedder</code>, <code>sample_items</code> (3 validated
+    MediaItems), <code>scored_candidates</code>, <code>cfg</code> (no-key Settings).</p>
+</li>
+<li>
+<p><strong><code>tests/test_store.py</code></strong> — 13 tests. Verifies <code>create_collection</code> idempotency, payload
+  index creation for all 7 filterable fields, <code>upsert</code> call delegation, batch-size splitting,
+  <code>collection_info</code> count, <code>delete</code> removal.</p>
+</li>
+<li>
+<p><strong><code>tests/test_retriever.py</code></strong> — 10 tests. Covers <code>_payload_to_item</code> edge cases (zero-valued
+  optional fields, entity list, missing fields), hybrid query path, filter-only scroll for
+  empty semantic query, top-K limiting, empty collection.</p>
+</li>
+<li>
+<p><strong><code>tests/test_explainer.py</code></strong> — 8 tests. No-API-key fallback (all template reasons),
+  <code>_fallback_reason</code> structure, consume-verb correctness, <code>matched_tags</code> Pydantic guard,
+  mocked async path result count, rank preservation after explain_batch.</p>
+</li>
+<li>
+<p><strong><code>tests/test_pipeline.py</code></strong> — 8 tests. Wires a complete pipeline from mocked parts;
+  verifies sorted output, rank-1 assignment, top-K cap, <code>explain=False</code> produces empty
+  reasons/tags, empty collection → empty list, component scores present.</p>
+</li>
+<li>
+<p><strong><code>tests/test_output.py</code></strong> — 11 tests. <code>to_json</code> valid JSON, required keys, nested
+  <code>component_scores</code>, empty input, indent parameter; <code>print_table</code> no-crash, missing
+  links, score bar bounds, type badge for known + unknown types.</p>
+</li>
+<li>
+<p><strong>Total: 105 tests, 0 failures, 0 warnings.</strong></p>
+</li>
+</ul>
+<h4 id="prompt-caching">Prompt caching</h4>
+<ul>
+<li>
+<p><strong><code>src/query_parser.py</code></strong> — <code>_call_claude</code> now passes a structured <code>system</code> list with
+  <code>"cache_control": {"type": "ephemeral"}</code> on the <code>_SYSTEM_PROMPT</code> block. The 3 KB system
+  prompt is transmitted once and cached for 5 minutes, cutting latency and token cost on
+  repeated query-parse calls.</p>
+</li>
+<li>
+<p><strong><code>src/explainer.py</code></strong> — Added module-level <code>_CACHED_SYSTEM</code> list (same <code>cache_control</code>
+  pattern). Reused for every <code>_explain_one</code> call within a batch so the prompt is cached
+  server-side across all parallel async requests.</p>
+</li>
+</ul>
+<h4 id="watch-history-implicit-feedback">Watch-history implicit feedback</h4>
+<ul>
+<li><strong><code>src/schema.py</code></strong> — <code>HistoryProfile</code> Pydantic model:</li>
+<li><code>preferred_tags: frozenset[str]</code>, <code>preferred_genres: frozenset[str]</code>, <code>item_count: int</code></li>
+<li><code>from_payloads(payloads)</code> — builds profile from a list of Qdrant point payloads</li>
+<li>
+<p><code>overlap_fraction(item)</code> — fraction of item's tags + genres that appear in the profile</p>
+</li>
+<li>
+<p><strong><code>src/config.py</code></strong> — Two new settings:</p>
+</li>
+<li><code>history_min_rating: float</code> (default 7.0) — minimum rating to include in profile</li>
+<li>
+<p><code>history_boost_weight: float</code> (default 0.15) — boost strength (0 = off, 1 = max)</p>
+</li>
+<li>
+<p><strong><code>src/scorer.py</code></strong> — <code>_history_boost(item, profile)</code>:</p>
+</li>
+<li><code>boost = 1 + weight × overlap_fraction(item, profile)</code></li>
+<li>Neutral (1.0) when no profile or zero-item count</li>
+<li>Wired into <code>_rank_one</code> as a fourth multiplicative factor</li>
+<li><code>score()</code> now accepts <code>history_profile: Optional[HistoryProfile]</code></li>
+<li>
+<p>5 new tests in <code>test_scorer.py</code> (empty profile, full overlap, partial overlap,
+    integration with <code>score()</code>)</p>
+</li>
+<li>
+<p><strong><code>src/pipeline.py</code></strong> — <code>_build_history_profile()</code> method:</p>
+</li>
+<li>Scrolls Qdrant for items with <code>watch_status in ["watched", "reading"]</code> AND
+    <code>rating &gt;= history_min_rating</code> (max 500 items)</li>
+<li>Returns <code>None</code> on any error so the pipeline continues without the boost</li>
+<li><code>use_history: bool = True</code> constructor flag (disable with <code>--no-history</code>)</li>
+<li><code>_store</code> renamed from local <code>store</code> so <code>_build_history_profile</code> can access the client</li>
+</ul>
+<h4 id="cli-additions-srcclipy">CLI additions (<code>src/cli.py</code>)</h4>
+<ul>
+<li>
+<p><strong><code>recommend sync --input FILE [--batch-size N]</code></strong> — Incremental upsert: validates input,
+  embeds changed/new items, upserts to Qdrant (UUID-idempotent). Existing items are updated;
+  items not in the file are untouched. Identical flow to <code>ingest</code> without <code>--reset</code>.</p>
+</li>
+<li>
+<p><strong><code>recommend delete UUID [--yes]</code></strong> — Remove a single item from the collection. Prompts
+  for confirmation unless <code>--yes</code> is passed.</p>
+</li>
+<li>
+<p><strong><code>recommend query --no-history</code></strong> — Disable the watch-history boost for a single query
+  (useful for comparing results with and without personal feedback signal).</p>
+</li>
+</ul>
+<h4 id="evaluation-tooling">Evaluation tooling</h4>
+<ul>
+<li>
+<p><strong><code>tests/golden_queries.json</code></strong> — All 10 entries now carry pre-parsed <code>semantic_query</code>
+  and <code>parsed_filters</code> fields (matching the QueryParser output schema), enabling
+  deterministic evaluation without a Claude API key.</p>
+</li>
+<li>
+<p><strong><code>scripts/evaluate.py</code></strong> (rewrite) — Uses pre-parsed filters directly via
+  <code>_build_qdrant_filter()</code>; no Claude dependency. Added <code>--csv PATH</code> flag to export
+  per-query metrics (NDCG@K, Precision@5, penalty count, result IDs) for post-processing.</p>
+</li>
+<li>
+<p><strong><code>scripts/sweep.py</code></strong> (new) — Grid search over <code>lambda_recency ∈ [0.02, 0.05, 0.10]</code> ×
+  <code>fusion_method ∈ [rrf, dbsf]</code> (6 combinations). For each combination, runs all golden
+  queries through <code>HybridRetriever + Scorer</code> and computes mean NDCG@K. Prints a Rich
+  comparison table with the best combination highlighted; optionally exports to CSV.</p>
+</li>
+</ul>
+<h4 id="documentation">Documentation</h4>
+<ul>
+<li>
+<p><strong><code>README.md</code></strong> (new) — Satisfies the Phase 0 requirement. Covers: how it works (pipeline
+  diagram), 5-step quickstart (docker, install, .env, ingest, query), full command reference
+  with flags table, data format with field descriptions, config table for all 14 env vars,
+  development commands, test coverage table, and architecture decision notes.</p>
+</li>
+<li>
+<p><strong><code>pyproject.toml</code></strong> — Removed <code>asyncio_mode = "auto"</code> (was causing a spurious pytest
+  config warning because <code>pytest-asyncio</code> is an optional dev dependency).</p>
+</li>
+<li>
+<p><strong><code>ROADMAP.md</code></strong> — Added Phase 9 with full task list and acceptance criteria; updated file
+  structure section to reflect current state; moved "Watch history" from Open Questions to
+  implemented (✅); added two new open questions (streaming explanations, collaborative
+  filtering).</p>
+</li>
+</ul>
+<h3 id="changed_1">Changed</h3>
+<ul>
+<li><code>src/scorer.py</code> docstring updated to include the fourth factor (<code>history_boost</code>).</li>
+<li><code>src/pipeline.py</code> — <code>store</code> local renamed to <code>self._store</code>; <code>use_history</code> constructor
+  parameter added; <code>_build_history_profile</code> defined as an instance method.</li>
+<li><code>.env.example</code> — Added <code>HISTORY_MIN_RATING</code> and <code>HISTORY_BOOST_WEIGHT</code> entries.</li>
+</ul>
+<hr />
+<h2 id="020-2026-05-31">[0.2.0] — 2026-05-31</h2>
+<h3 id="added-phase-2-query-parser">Added — Phase 2: Query Parser</h3>
+<ul>
+<li><strong><code>src/cache.py</code></strong> — Thread-safe in-memory LRU cache keyed on normalised
+  (lowercase, collapsed-whitespace) query strings. Prevents redundant Claude
+  API calls for repeated or near-identical queries.</li>
+<li><strong><code>src/query_parser.py</code></strong> — <code>QueryParser</code> class wrapping the Claude API
+  (<code>claude-sonnet-4-6</code> by default). Ships a 10-example few-shot system prompt
+  covering: pure-semantic, pure-filter, mixed NL+structural, manga volumes,
+  CS paper, classic movie, plan-to-watch list, rating threshold, reading status,
+  and short-series-with-genre queries. Outputs <code>ParsedQuery</code> with
+  <code>semantic_query</code>, <code>filters</code>, and <code>length_preference_episodes</code>.
+  <code>_build_qdrant_filter()</code> converts <code>FilterClause</code> objects into Qdrant <code>Filter</code>
+  using <code>must</code>/<code>must_not</code> lists with <code>MatchValue</code>, <code>MatchAny</code>, and <code>Range</code>
+  conditions.</li>
+<li><strong>Three-layer fallback</strong> in <code>QueryParser</code>: missing API key → semantic-only;
+  malformed JSON from Claude → semantic-only; any API/network error →
+  semantic-only. The pipeline never crashes due to a parsing failure.</li>
+</ul>
+<h3 id="added-phase-3-hybrid-retrieval">Added — Phase 3: Hybrid Retrieval</h3>
+<ul>
+<li><strong><code>src/retriever.py</code></strong> — <code>HybridRetriever</code> class. Issues a single Qdrant
+  <code>query_points</code> call with two <code>Prefetch</code> legs (dense cosine + sparse dot-product)
+  fused server-side with RRF or DBSF (configurable via <code>FUSION_METHOD</code>).
+  Fetches <code>top_k × 4</code> candidates per leg to ensure the fusion has enough
+  material. Falls back to <code>client.search()</code> with a <code>NamedVector</code> on any
+  <code>Prefetch</code>/fusion error. Supports filter-only scroll when <code>semantic_query</code>
+  is empty (handles plan-to-watch-list style queries with no semantic content).</li>
+</ul>
+<h3 id="added-phase-4-score-enhancement">Added — Phase 4: Score Enhancement</h3>
+<ul>
+<li><strong><code>src/scorer.py</code></strong> — <code>Scorer</code> class computing a multiplicative
+  <strong>Recommendation Value</strong>: <code>rrf_score × rating_boost × recency_decay × length_decay</code>.</li>
+<li><code>rating_boost = 1 + log(1 + rating/10)</code> — logarithmic; 10/10 ≈ 1.69×, no rating = 1.0×.</li>
+<li><code>recency_decay = exp(-λ × age_years)</code> — configurable <code>LAMBDA_RECENCY</code> (default 0.05).</li>
+<li><code>length_decay = exp(-0.5 × ((eps − pref) / scale)²)</code> — Gaussian; only applied when
+    <code>ParsedQuery.length_preference_episodes</code> is set; 1.0 otherwise.</li>
+<li>Results sorted descending by <code>recommendation_value</code>; 1-based <code>rank</code> assigned after sort.</li>
+<li><code>ComponentScores</code> embedded in each <code>RankedResult</code> for transparency.</li>
+</ul>
+<h3 id="added-phase-5-explainability-xai">Added — Phase 5: Explainability (XAI)</h3>
+<ul>
+<li><strong><code>src/explainer.py</code></strong> — <code>Explainer</code> class with <code>explain_batch()</code>. Fires
+  all explanations in parallel via <code>asyncio.gather</code> and <code>anthropic.AsyncAnthropic</code>,
+  keeping total latency ≈ single API call. System prompt enforces: cite only
+  provided metadata, no plot spoilers, modality-aware consume verb ("read" vs
+  "watch"), 2–4 reasons, <code>matched_tags</code> must be a strict subset of actual tags.
+  Falls back to a template-based <code>ExplainedResult</code> on any per-item error.</li>
+<li><strong>Anti-hallucination guard</strong> in <code>ExplainedResult.validate_matched_tags()</code>
+  (Pydantic v2 <code>@model_validator</code>): strips any tag in <code>matched_tags</code> not
+  present in the item's actual <code>tags + genres</code> at model construction time.</li>
+</ul>
+<h3 id="added-phase-6-cli-output-layer">Added — Phase 6: CLI &amp; Output Layer</h3>
+<ul>
+<li><strong><code>src/pipeline.py</code></strong> — <code>RecommendationPipeline</code> wiring all stages. A shared
+  <code>Embedder</code> instance avoids loading BGE-M3 twice. Constructor flags: <code>top_k</code>,
+  <code>use_reranker</code>, <code>explain</code>. Each stage logs timing and candidate counts.</li>
+<li><strong><code>src/output.py</code></strong> — Two renderers: <code>print_table()</code> (Rich table with score
+  bar, type badges, truncated links, reasons, matched tags) and <code>to_json()</code>
+  (JSON-serialisable list of dicts including component scores).</li>
+<li><strong>Updated <code>src/cli.py</code></strong> — Added <code>-v/--verbose</code> flag for DEBUG logging.
+  <code>query</code> command is now fully functional: <code>--top-k</code>, <code>--format table|json</code>,
+  <code>--rerank</code>, <code>--no-explain</code>. <code>info</code> command prints full config including
+  Claude model, fusion method, and λ recency.</li>
+</ul>
+<h3 id="added-phase-7-multi-modal-expansion">Added — Phase 7: Multi-Modal Expansion</h3>
+<ul>
+<li><strong><code>src/schema.py</code></strong> — <code>MediaItem</code> gains <code>abstract: Optional[str]</code> (primary
+  dense source for papers) and <code>volumes: Optional[int]</code> (manga). <code>dense_text</code>
+  property dispatches: <code>review_notes → abstract → synthesised fallback</code>.
+  Added <code>consume_verb</code> property ("read"/"watch") and <code>is_video</code> property.</li>
+<li><strong><code>data/sample_books.json</code></strong> — 5 book entries: Dune, The Left Hand of
+  Darkness, Flowers for Algernon, Blindsight, The Three-Body Problem.</li>
+<li>Query parser few-shot examples cover manga volume filter and CS paper queries.</li>
+<li>Explainer system prompt now references <code>consume_verb</code> instruction.</li>
+</ul>
+<h3 id="added-phase-8-reranking-evaluation">Added — Phase 8: Reranking &amp; Evaluation</h3>
+<ul>
+<li><strong><code>src/reranker.py</code></strong> — <code>Reranker</code> class wrapping <code>FlagEmbedding.FlagReranker</code>
+  (<code>bge-reranker-v2-m3</code>). Thread-safe singleton loader. <code>normalize=True</code> for
+  sigmoid-mapped scores. Replaces <code>rrf_score</code> in each <code>ScoredCandidate</code> with
+  the cross-encoder score. Falls back to original ordering on any model error.</li>
+<li><strong><code>tests/golden_queries.json</code></strong> — 10 labelled query/result pairs with
+  <code>expected_top_ids</code> and <code>expected_absent_ids</code> for NDCG/Precision evaluation.</li>
+<li><strong><code>scripts/evaluate.py</code></strong> — Click CLI computing NDCG@K and Precision@5
+  against the golden set. Penalty counter tracks <code>expected_absent_ids</code> that
+  appeared in results. Rich table output with per-query and mean metrics.
+  <code>--rerank</code> flag enables comparison with/without cross-encoder.</li>
+</ul>
+<h3 id="changed_2">Changed</h3>
+<ul>
+<li><strong><code>src/config.py</code></strong> — Replaced deprecated <code>Field(env=...)</code> with
+  <code>Field(validation_alias=...)</code> (pydantic-settings ≥ 2.0 API). Added new
+  settings: <code>length_origin</code>, <code>length_scale</code>, <code>fusion_method</code>, <code>rerank_model</code>,
+  <code>rerank_top_n</code>, <code>claude_model</code>.</li>
+<li><strong><code>.env.example</code></strong> — Documents all new config variables.</li>
+<li><strong><code>ROADMAP.md</code></strong> — All Phase 0–8 task lists updated with ✅ completion
+  markers; file structure section updated to reflect current state.</li>
+</ul>
+<h3 id="tests_1">Tests</h3>
+<ul>
+<li><strong><code>tests/test_query_parser.py</code></strong> — 29 tests (10 query types, 3 fallback
+  scenarios, 4 cache tests, 5 filter-building tests). All dependencies
+  (<code>anthropic</code>, <code>qdrant_client</code>) are mocked via <code>sys.modules</code> injection so
+  tests run without the packages installed.</li>
+<li><strong><code>tests/test_scorer.py</code></strong> — 12 tests covering all three decay/boost
+  functions individually plus integration scenarios.</li>
+<li><strong>Total: 53 tests, all passing.</strong></li>
+</ul>
+<hr />
+<h2 id="010-2026-05-30">[0.1.0] — 2026-05-30</h2>
+<h3 id="added-phase-0-project-foundation">Added — Phase 0: Project Foundation</h3>
+<ul>
+<li><strong><code>pyproject.toml</code></strong> — Project metadata and dependencies: <code>qdrant-client</code>,
+  <code>FlagEmbedding</code>, <code>anthropic</code>, <code>langchain-core</code>, <code>click</code>, <code>pydantic</code>,
+  <code>pydantic-settings</code>, <code>rich</code>, <code>python-dotenv</code>.</li>
+<li><strong><code>.env.example</code></strong> — Template with all required and optional environment
+  variables documented.</li>
+<li><strong><code>docker-compose.yml</code></strong> — Local Qdrant service on port 6333 with persistent
+  volume.</li>
+<li><strong><code>src/schema.py</code></strong> — Pydantic v2 <code>MediaItem</code> with strict validators (rating
+  0–10, year 1800–2200, non-negative episodes), CSV→list coercion for
+  <code>genres</code>/<code>tags</code>/<code>associated_entities</code>, <code>dense_text</code> and <code>sparse_text</code>
+  computed properties. Also defines <code>EmbeddedItem</code>, <code>FilterClause</code>,
+  <code>ParsedQuery</code>, <code>ScoredCandidate</code>, <code>ComponentScores</code>, <code>RankedResult</code>,
+  <code>ExplainedResult</code> with <code>matched_tags</code> anti-hallucination validator.</li>
+<li><strong><code>src/config.py</code></strong> — <code>Settings</code> via pydantic-settings; local vs remote
+  Qdrant toggle; all model and decay parameters.</li>
+<li><strong><code>data/sample.json</code></strong> — 10 hand-crafted items (Evangelion, Perfect Blue,
+  Steins;Gate, Violet Evergarden, Cowboy Bebop, Vinland Saga, Serial
+  Experiments Lain, FMA:Brotherhood, Paranoia Agent, Attack on Titan).</li>
+</ul>
+<h3 id="added-phase-1-ingestion-pipeline">Added — Phase 1: Ingestion Pipeline</h3>
+<ul>
+<li><strong><code>src/embedder.py</code></strong> — <code>Embedder</code> wrapping <code>BGEM3FlagModel</code>. Thread-safe
+  process-level singleton. <code>embed_dense()</code>, <code>embed_sparse()</code>, <code>embed_batch()</code>
+  with optional progress callback.</li>
+<li><strong><code>src/store.py</code></strong> — <code>QdrantStore</code> with idempotent <code>create_collection()</code>
+  (creates multi-vector collection + 7 payload indexes), <code>upsert()</code> (batch),
+  <code>delete()</code>, <code>collection_info()</code>.</li>
+<li><strong><code>src/ingest.py</code></strong> — <code>recommend ingest</code> CLI with Pydantic validation, Rich
+  progress bar, <code>--reset</code> flag to drop and recreate the collection.</li>
+<li><strong><code>src/export.py</code></strong> — <code>recommend export</code> CLI using Qdrant scroll API.</li>
+<li><strong><code>src/cli.py</code></strong> — Click group entry point; <code>ingest</code> and <code>export</code> wired in;
+  <code>info</code> command showing collection stats.</li>
+</ul>
+<h3 id="tests_2">Tests</h3>
+<ul>
+<li><strong><code>tests/test_schema.py</code></strong> — 12 tests validating all 10 sample items, CSV
+  coercion, rating bounds, <code>dense_text</code> dispatch, <code>sparse_text</code> content,
+  <code>matched_tags</code> stripping, <code>ParsedQuery</code> defaults.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.indexes", "search.highlight", "search.suggest", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2824 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation portal for Content-Recommendation-Engine — a local-first hybrid vector recommendation engine for media libraries.">
+      
+      
+        <meta name="author" content="ACFHarbinger">
+      
+      
+      
+        <link rel="prev" href="../../ARCHITECTURE/">
+      
+      
+        <link rel="next" href="../roadmaps/search/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Master Roadmap - Content-Recommendation-Engine Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#recommendation-engine-implementation-roadmap" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Content-Recommendation-Engine Documentation" class="md-header__button md-logo" aria-label="Content-Recommendation-Engine Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Content-Recommendation-Engine Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Master Roadmap
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ACFHarbinger/Content-Recommendation-Engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ACFHarbinger/Content-Recommendation-Engine
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../ARCHITECTURE/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Roadmap
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../CHANGELOG/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Changelog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../research/Building%20a%20Smart%20Recommendation%20Engine/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://github.com/ACFHarbinger/Image-Toolkit" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Image-Toolkit (parent project)
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Content-Recommendation-Engine Documentation" class="md-nav__button md-logo" aria-label="Content-Recommendation-Engine Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Content-Recommendation-Engine Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ACFHarbinger/Content-Recommendation-Engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ACFHarbinger/Content-Recommendation-Engine
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Roadmap
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Master Roadmap
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Master Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-roadmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module Roadmaps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tech-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tech Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-0-project-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 0 — Project Foundation ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 0 — Project Foundation ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-ingestion-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1 — Ingestion Pipeline ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1 — Ingestion Pipeline ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sqlite-schema-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQLite Schema Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-query-parser-self-querying-retriever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2 — Query Parser (Self-Querying Retriever) ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2 — Query Parser (Self-Querying Retriever) ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allowed-comparators-mapped-to-qdrant-filter-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allowed comparators mapped to Qdrant filter syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-hybrid-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3 — Hybrid Retrieval ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3 — Hybrid Retrieval ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#search-recipe-python-vector-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search recipe (Python vector math)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-score-enhancement-recommendation-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4 — Score Enhancement &amp; Recommendation Value ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4 — Score Enhancement &amp; Recommendation Value ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formula
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-explainability-xai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5 — Explainability (XAI) ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5 — Explainability (XAI) ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-cli-output-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6 — CLI &amp; Output Layer ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6 — CLI &amp; Output Layer ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-table-format-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output (table format, default)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-multi-modal-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7 — Multi-Modal Expansion ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7 — Multi-Modal Expansion ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schema-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-9-quality-tooling-watch-history-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 9 — Quality, Tooling &amp; Watch-History Feedback ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 9 — Quality, Tooling &amp; Watch-History Feedback ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tasks_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-8-reranking-evaluation-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8 — Reranking &amp; Evaluation (Advanced) ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 8 — Reranking &amp; Evaluation (Advanced) ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reranking-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reranking pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-structure-current-state-sqlite-migration-complete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Structure (current state — SQLite migration complete)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions-future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Questions / Future Work
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmaps/search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmaps/core/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmaps/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmaps/ingestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingestion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/Building%20a%20Smart%20Recommendation%20Engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Building a Smart Recommendation Engine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/ACFHarbinger/Image-Toolkit" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Image-Toolkit (parent project)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#module-roadmaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Module Roadmaps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#goal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tech-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tech Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-0-project-foundation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 0 — Project Foundation ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 0 — Project Foundation ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tasks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-1-ingestion-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1 — Ingestion Pipeline ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 1 — Ingestion Pipeline ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sqlite-schema-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SQLite Schema Design
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-2-query-parser-self-querying-retriever" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2 — Query Parser (Self-Querying Retriever) ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 2 — Query Parser (Self-Querying Retriever) ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allowed-comparators-mapped-to-qdrant-filter-syntax" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Allowed comparators mapped to Qdrant filter syntax
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-3-hybrid-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3 — Hybrid Retrieval ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 3 — Hybrid Retrieval ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#search-recipe-python-vector-math" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Search recipe (Python vector math)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-4-score-enhancement-recommendation-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 4 — Score Enhancement &amp; Recommendation Value ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 4 — Score Enhancement &amp; Recommendation Value ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#formula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formula
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-5-explainability-xai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 5 — Explainability (XAI) ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 5 — Explainability (XAI) ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#output-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-6-cli-output-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 6 — CLI &amp; Output Layer ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 6 — CLI &amp; Output Layer ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-table-format-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output (table format, default)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-7-multi-modal-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 7 — Multi-Modal Expansion ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 7 — Multi-Modal Expansion ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#schema-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schema changes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-9-quality-tooling-watch-history-feedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 9 — Quality, Tooling &amp; Watch-History Feedback ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 9 — Quality, Tooling &amp; Watch-History Feedback ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tasks_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria ✅
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#phase-8-reranking-evaluation-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 8 — Reranking &amp; Evaluation (Advanced) ✅
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Phase 8 — Reranking &amp; Evaluation (Advanced) ✅">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reranking-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reranking pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tasks_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tasks
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#acceptance-criteria_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acceptance criteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dependency-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dependency Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-design-decisions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Design Decisions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#file-structure-current-state-sqlite-migration-complete" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Structure (current state — SQLite migration complete)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions-future-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open Questions / Future Work
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="recommendation-engine-implementation-roadmap">Recommendation Engine — Implementation Roadmap</h1>
+<p>This is the <strong>master roadmap</strong>. It tracks the phased build-out below; per-module engineering
+roadmaps live under <a href="roadmaps/"><code>docs/moon/roadmaps/</code></a>. Completed items are recorded in
+<a href="../../CHANGELOG/"><code>docs/CHANGELOG.md</code></a>. System design is summarised in
+<a href="../../ARCHITECTURE/"><code>docs/ARCHITECTURE.md</code></a>.</p>
+<h2 id="module-roadmaps">Module Roadmaps</h2>
+<p>The engine is a five-stage pipeline (<code>src/</code>). Each subsystem has a dedicated roadmap:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Roadmap</th>
+<th style="text-align: left;">Modules</th>
+<th style="text-align: left;">Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="../roadmaps/ingestion/">Ingestion &amp; Data</a></td>
+<td style="text-align: left;"><code>src/data</code></td>
+<td style="text-align: left;">Loading, embedding (BGE-M3), export, SQLite store</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="../roadmaps/search/">Search &amp; Retrieval</a></td>
+<td style="text-align: left;"><code>src/search</code></td>
+<td style="text-align: left;">Query parser, hybrid retrieval, fusion/scoring, reranking, explainer</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="../roadmaps/cli/">CLI &amp; Output</a></td>
+<td style="text-align: left;"><code>src/cli</code></td>
+<td style="text-align: left;">Click CLI, rich output/JSON</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="../roadmaps/core/">Core &amp; Infrastructure</a></td>
+<td style="text-align: left;"><code>src/core</code></td>
+<td style="text-align: left;">Config, cache, schema; tooling &amp; quality</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="goal">Goal</h2>
+<p>Build a personal, local-first recommendation engine that accepts a dataset of media files with rich metadata and a free-form search prompt (natural language, tags/genres, or both), and returns a ranked list of recommendations with a computed <strong>Recommendation Value</strong> and a human-readable <strong>list of reasons</strong> for each result.</p>
+<p><strong>Phase scope</strong>: Start with videos (anime, shows, movies). Branch into multi-modal (books, manga, papers) once the core pipeline is stable.</p>
+<hr />
+<h2 id="architecture-overview">Architecture Overview</h2>
+<p>The system is a five-stage pipeline. Stages 1–2 run offline (ingestion); stages 3–5 run online (query time).</p>
+<pre><code>[Offline]
+  Raw metadata (JSON/CSV)
+       │
+       ▼
+  BGE-M3 embeddings
+  ├── Dense vector  → review/notes semantic space
+  └── Sparse vector → title + tags + genres + entities lexical space
+       │
+       ▼
+  SQLite database
+  (items table: scalar columns + JSON array columns + vector blobs)
+
+[Online]
+  User prompt
+       │
+       ▼
+  1. Self-Querying Retriever (LLM)
+     └── {semantic_query, SQL WHERE clause}
+       │
+       ▼
+  2. Hybrid Retrieval (Python vector math)
+     ├── Cosine similarity on dense vectors  ┐
+     └── Dot-product on sparse vectors       ┘ → both filtered by SQL WHERE
+       │
+       ▼
+  3. Score Fusion (RRF default, DBSF optional)
+     + Business logic decay
+     → Recommendation Value per candidate
+       │
+       ▼
+  4. LLM Explainer
+     └── {reasons[], matched_tags[]} per top-K result
+       │
+       ▼
+  5. Output (CLI / JSON)
+</code></pre>
+<hr />
+<h2 id="data-schema">Data Schema</h2>
+<p>Every item in the dataset conforms to this schema. Fields in <strong>bold</strong> are indexed in Qdrant as filterable scalar payload. Fields marked <code>[vector]</code> are embedded.</p>
+<pre><code class="language-jsonc">{
+  &quot;id&quot;: &quot;uuid-v4&quot;,                       // stable identifier
+  &quot;title&quot;: &quot;string&quot;,                     // [vector: sparse]
+  &quot;type&quot;: &quot;anime|show|movie|book|manga|paper|...&quot;,  // [bold payload]
+  &quot;watch_status&quot;: &quot;watched|reading|plan_to_watch|dropped|on_hold&quot;,  // [bold payload]
+  &quot;rating&quot;: 8.5,                         // float 0–10 [bold payload]
+  &quot;year_released&quot;: 2019,                 // int [bold payload]
+  &quot;num_episodes_or_pages&quot;: 24,           // int [bold payload]
+  &quot;genres&quot;: [&quot;Action&quot;, &quot;Sci-Fi&quot;],        // string[] [vector: sparse]
+  &quot;tags&quot;: [&quot;cyberpunk&quot;, &quot;time-travel&quot;],  // string[] [vector: sparse]
+  &quot;associated_entities&quot;: [&quot;Shinichiro Watanabe&quot;],  // string[] [vector: sparse]
+  &quot;local_file_location&quot;: &quot;/path/to/file&quot;,   // unindexed payload
+  &quot;web_link&quot;: &quot;https://...&quot;,                // unindexed payload
+  &quot;review_notes&quot;: &quot;string&quot;,             // [vector: dense]
+  // Phase 7 additions:
+  &quot;abstract&quot;: &quot;string&quot;,                 // [vector: dense, papers only]
+  &quot;volumes&quot;: 12                         // int, manga only
+}
+</code></pre>
+<p><code>review_notes</code> is the primary semantic field. Priority order for dense text: <code>review_notes → abstract → synthesised fallback (title + genres + tags)</code>.</p>
+<hr />
+<h2 id="tech-stack">Tech Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Language</td>
+<td>Python 3.11+</td>
+<td>Ecosystem fit; FlagEmbedding, SQLite, LangChain all native</td>
+</tr>
+<tr>
+<td>Embedding model</td>
+<td><code>BAAI/bge-m3</code> (via <code>FlagEmbedding</code>)</td>
+<td>Single model produces dense + sparse + ColBERT multi-vector simultaneously; 8192-token context</td>
+</tr>
+<tr>
+<td>Vector storage</td>
+<td>SQLite (stdlib <code>sqlite3</code>)</td>
+<td>Zero-dependency, zero-config, single file; vectors stored as JSON blobs; brute-force cosine/dot-product is fast enough for personal library sizes (~10 000 items)</td>
+</tr>
+<tr>
+<td>Score fusion</td>
+<td>RRF (default) → DBSF (when score magnitude matters)</td>
+<td>RRF is robust and distribution-agnostic; DBSF preserves score gaps; both implemented in pure Python</td>
+</tr>
+<tr>
+<td>Filtering</td>
+<td>SQL WHERE clauses via <code>json_each()</code></td>
+<td>Scalar fields use native SQL operators; array fields (genres, tags) use SQLite's <code>json_each()</code> for containment checks</td>
+</tr>
+<tr>
+<td>Query parser</td>
+<td>Claude API (claude-sonnet-4-6) with few-shot prompt</td>
+<td>Parses mixed NL + tag queries into <code>{semantic_query, filters}</code> JSON</td>
+</tr>
+<tr>
+<td>Explanation generator</td>
+<td>Claude API (claude-sonnet-4-6)</td>
+<td>Metadata-grounded structured JSON output; anti-hallucination via explicit payload injection</td>
+</tr>
+<tr>
+<td>Reranker (Phase 8)</td>
+<td><code>BAAI/bge-reranker-v2-m3</code></td>
+<td>Cross-encoder precision on shortlisted candidates</td>
+</tr>
+<tr>
+<td>CLI</td>
+<td>Click</td>
+<td>Lightweight, composable</td>
+</tr>
+<tr>
+<td>Config</td>
+<td><code>pyproject.toml</code> + <code>.env</code></td>
+<td>API keys via env; model and storage settings in config</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Pydantic v2</td>
+<td>Schema enforcement at ingestion + output</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="phase-0-project-foundation">Phase 0 — Project Foundation ✅</h2>
+<p><strong>Goal</strong>: Runnable skeleton with validated tooling. No ML yet.</p>
+<h3 id="tasks">Tasks</h3>
+<ul>
+<li>[x] <code>pyproject.toml</code> with dependencies: <code>qdrant-client</code>, <code>FlagEmbedding</code>, <code>anthropic</code>, <code>langchain-core</code>, <code>click</code>, <code>pydantic</code>, <code>rich</code>, <code>python-dotenv</code></li>
+<li>[x] <code>.env.example</code> with <code>ANTHROPIC_API_KEY</code>, <code>QDRANT_URL</code>, <code>QDRANT_API_KEY</code>, all Phase 4/7/8 vars</li>
+<li>[x] <code>docker-compose.yml</code> for local Qdrant (port 6333)</li>
+<li>[x] <code>src/schema.py</code> — Pydantic <code>MediaItem</code> model matching the schema above; strict validators (rating 0–10, watch_status enum, year 4-digit int); Phase 7 fields (<code>abstract</code>, <code>volumes</code>); <code>dense_text</code>, <code>sparse_text</code>, <code>consume_verb</code>, <code>is_video</code> properties</li>
+<li>[x] <code>src/config.py</code> — load env vars via pydantic-settings; configurable Qdrant collection name, embedding model path, top-K default, all decay params, Claude model, reranker model</li>
+<li>[x] <code>data/sample.json</code> — 10 hand-crafted video items for smoke testing</li>
+<li>[x] <code>README.md</code> — quickstart (docker compose up, pip install, ingest, query)</li>
+</ul>
+<h3 id="acceptance-criteria">Acceptance criteria ✅</h3>
+<ul>
+<li><code>python -m src.schema</code> validates <code>data/sample.json</code> without errors</li>
+<li>All 12 schema tests pass</li>
+</ul>
+<hr />
+<h2 id="phase-1-ingestion-pipeline">Phase 1 — Ingestion Pipeline ✅</h2>
+<p><strong>Goal</strong>: Embed all items and store them in Qdrant with correct multi-vector structure and payload indexes.</p>
+<h3 id="sqlite-schema-design">SQLite Schema Design</h3>
+<p>A single <code>items</code> table stores both metadata and vectors per document:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>TEXT PRIMARY KEY</td>
+<td>UUID v4</td>
+</tr>
+<tr>
+<td><code>title</code></td>
+<td>TEXT</td>
+<td></td>
+</tr>
+<tr>
+<td><code>type</code>, <code>watch_status</code></td>
+<td>TEXT</td>
+<td>Filterable via <code>= ?</code> / <code>IN (…)</code></td>
+</tr>
+<tr>
+<td><code>rating</code></td>
+<td>REAL</td>
+<td>Filterable via range operators</td>
+</tr>
+<tr>
+<td><code>year_released</code>, <code>num_episodes_or_pages</code></td>
+<td>INTEGER</td>
+<td>Filterable via range operators</td>
+</tr>
+<tr>
+<td><code>genres</code>, <code>tags</code>, <code>associated_entities</code></td>
+<td>TEXT (JSON)</td>
+<td>Filterable via <code>json_each()</code> containment</td>
+</tr>
+<tr>
+<td><code>local_file_location</code>, <code>web_link</code></td>
+<td>TEXT</td>
+<td>Unindexed metadata</td>
+</tr>
+<tr>
+<td><code>dense_vector</code></td>
+<td>TEXT (JSON)</td>
+<td>1024-dim float array; cosine similarity in Python</td>
+</tr>
+<tr>
+<td><code>sparse_indices</code>, <code>sparse_values</code></td>
+<td>TEXT (JSON)</td>
+<td>SPLADE-style sparse vector; dot-product in Python</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tasks_1">Tasks</h3>
+<ul>
+<li>[x] <code>src/embedder.py</code> — <code>Embedder</code> class wrapping <code>FlagEmbedding.BGEM3FlagModel</code></li>
+<li><code>embed_dense(text: str) -&gt; list[float]</code></li>
+<li><code>embed_sparse(text: str) -&gt; tuple[list[int], list[float]]</code></li>
+<li><code>embed_batch(items: list[MediaItem]) -&gt; list[EmbeddedItem]</code></li>
+<li>Fallback: if <code>review_notes</code> is empty, synthesises from other fields; Phase 7 checks <code>abstract</code> before fallback</li>
+<li>[x] <code>src/store.py</code> — <code>SQLiteStore</code> class</li>
+<li><code>create_collection()</code> — idempotent <code>CREATE TABLE IF NOT EXISTS</code></li>
+<li><code>upsert(items: list[EmbeddedItem])</code> — <code>INSERT OR REPLACE</code> batch with JSON vector blobs</li>
+<li><code>collection_info()</code> — returns row count and db path</li>
+<li><code>fetch_all(where_clause, params)</code> — full rows including vectors for retrieval</li>
+<li><code>fetch_filtered(where_clause, params, limit)</code> — metadata rows only for scroll / history</li>
+<li>[x] <code>src/ingest.py</code> — CLI entry point: <code>recommend ingest --input data/items.json [--batch-size N] [--reset]</code></li>
+<li>Loads + validates JSON with Pydantic</li>
+<li>Embeds in batches with Rich progress bar</li>
+<li>Upserts to SQLite</li>
+<li>[x] <code>src/export.py</code> — <code>recommend export --output FILE</code> — export store back to JSON</li>
+</ul>
+<h3 id="acceptance-criteria_1">Acceptance criteria ✅</h3>
+<ul>
+<li><code>recommend ingest --input data/sample.json</code> completes without errors (requires model)</li>
+<li>Each row has both <code>dense_vector</code> and <code>sparse_indices</code>/<code>sparse_values</code> blobs, plus all metadata columns</li>
+</ul>
+<hr />
+<h2 id="phase-2-query-parser-self-querying-retriever">Phase 2 — Query Parser (Self-Querying Retriever) ✅</h2>
+<p><strong>Goal</strong>: Convert a free-form user prompt into <code>{semantic_query: str, filters: dict}</code> that Qdrant can execute.</p>
+<h3 id="allowed-comparators-mapped-to-qdrant-filter-syntax">Allowed comparators mapped to Qdrant filter syntax</h3>
+<table>
+<thead>
+<tr>
+<th>Comparator</th>
+<th>Qdrant filter key</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$eq</code></td>
+<td><code>match.value</code></td>
+<td><code>type == "anime"</code></td>
+</tr>
+<tr>
+<td><code>$ne</code></td>
+<td><code>must_not.match.value</code></td>
+<td><code>watch_status != "watched"</code></td>
+</tr>
+<tr>
+<td><code>$gt / $gte / $lt / $lte</code></td>
+<td><code>range</code></td>
+<td><code>rating &gt;= 8</code>, <code>year &lt; 2015</code></td>
+</tr>
+<tr>
+<td><code>$in</code></td>
+<td><code>match.any</code></td>
+<td><code>genres in ["Action","Sci-Fi"]</code></td>
+</tr>
+<tr>
+<td><code>$nin</code></td>
+<td><code>must_not.match.any</code></td>
+<td><code>watch_status not in ["watched","dropped"]</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tasks_2">Tasks</h3>
+<ul>
+<li>[x] <code>src/query_parser.py</code> — <code>QueryParser</code> class</li>
+<li>System prompt with: field descriptions table, allowed comparators, 10 few-shot examples covering NL-only, tag-only, mixed, manga, paper, book, plan-to-watch, rating, year queries</li>
+<li>Calls Claude API with JSON response enforcement</li>
+<li><code>_build_qdrant_filter()</code> — converts <code>ParsedQuery.filters</code> to Qdrant <code>Filter</code> object</li>
+<li>Graceful fallbacks: no API key → semantic only; malformed JSON → semantic only; API error → semantic only</li>
+<li>[x] <code>src/cache.py</code> — in-memory LRU cache (key = normalised query string); skips LLM call on cache hit</li>
+<li>[x] Unit tests in <code>tests/test_query_parser.py</code> — 10 representative queries + fallback tests + cache tests + filter-building tests (all with mocked dependencies)</li>
+</ul>
+<h3 id="acceptance-criteria_2">Acceptance criteria ✅</h3>
+<ul>
+<li>All 29 query parser tests pass (no real API calls)</li>
+<li>Cache hit skips second parse call</li>
+<li>Malformed Claude output triggers fallback without crash</li>
+</ul>
+<hr />
+<h2 id="phase-3-hybrid-retrieval">Phase 3 — Hybrid Retrieval ✅</h2>
+<p><strong>Goal</strong>: Execute parallel dense + sparse search against Qdrant, fused with RRF, returning top-K candidates with scores.</p>
+<h3 id="search-recipe-python-vector-math">Search recipe (Python vector math)</h3>
+<pre><code class="language-python">rows = store.fetch_all(where_clause, params)   # SQL-filtered rows
+
+dense_scores = [(i, cosine(query_dense, row[&quot;dense_vector&quot;])) for i, row in enumerate(rows)]
+sparse_scores = [(i, dot(query_sparse, row[&quot;sparse_indices&quot;], row[&quot;sparse_values&quot;])) for i, row in enumerate(rows)]
+
+# RRF fusion
+dense_rank = {idx: r+1 for r, (idx, _) in enumerate(sorted(dense_scores, reverse=True))}
+sparse_rank = {idx: r+1 for r, (idx, _) in enumerate(sorted(sparse_scores, reverse=True))}
+fused = sorted([(i, 1/(60+dense_rank[i]) + 1/(60+sparse_rank[i])) for i in range(len(rows))],
+               key=lambda x: x[1], reverse=True)[:top_k]
+</code></pre>
+<h3 id="tasks_3">Tasks</h3>
+<ul>
+<li>[x] <code>src/retriever.py</code> — <code>HybridRetriever</code> class</li>
+<li><code>retrieve(parsed_query, top_k, sql_filter) -&gt; list[ScoredCandidate]</code></li>
+<li>Embeds <code>semantic_query</code> into dense + sparse via <code>Embedder</code></li>
+<li>Executes Python cosine + dot-product scoring against SQLite rows</li>
+<li>Fuses with RRF or DBSF (configurable via <code>FUSION_METHOD</code>)</li>
+<li>Falls back to dense-only if sparse scoring fails</li>
+<li>Filter-only <code>fetch_filtered()</code> when <code>semantic_query</code> is empty</li>
+<li><code>_payload_to_item()</code> — reconstructs <code>MediaItem</code> from SQLite row dict</li>
+</ul>
+<h3 id="acceptance-criteria_3">Acceptance criteria ✅</h3>
+<ul>
+<li>Retriever structure reviewed and tested through pipeline integration tests</li>
+<li>Filter-only path handles empty semantic queries</li>
+<li>Retrieval completes in under 500ms for typical collection sizes</li>
+</ul>
+<hr />
+<h2 id="phase-4-score-enhancement-recommendation-value">Phase 4 — Score Enhancement &amp; Recommendation Value ✅</h2>
+<p><strong>Goal</strong>: Transform the raw RRF score into a final <strong>Recommendation Value</strong> using business logic decay functions.</p>
+<h3 id="formula">Formula</h3>
+<pre><code>RecommendationValue = rrf_score × rating_boost × recency_decay × length_decay
+</code></pre>
+<p><strong>rating_boost</strong> = <code>1 + log(1 + rating/10)</code>  — A 10/10 item gets ≈1.69×, a 5/10 gets ≈1.41×, no rating gets 1.0×.</p>
+<p><strong>recency_decay</strong> = <code>exp(-λ × (current_year - year_released))</code> — configurable <code>λ</code> (default 0.05).</p>
+<p><strong>length_decay</strong> = Gaussian <code>exp(-0.5 × ((episodes - preference) / scale)²)</code> — only applied when the query parser extracts a length preference; 1.0 otherwise.</p>
+<h3 id="tasks_4">Tasks</h3>
+<ul>
+<li>[x] <code>src/scorer.py</code> — <code>Scorer</code> class</li>
+<li><code>score(candidates, parsed_query) -&gt; list[RankedResult]</code></li>
+<li>Applies all three functions multiplicatively</li>
+<li>Assigns 1-based <code>rank</code> after sorting</li>
+<li><code>ComponentScores</code> in each result for transparency</li>
+<li>[x] Extended <code>config.py</code> with <code>lambda_recency</code>, <code>length_origin</code>, <code>length_scale</code></li>
+<li>[x] Unit tests in <code>tests/test_scorer.py</code> — 12 tests covering all three functions, monotonicity, integration, zero-rrf invariant</li>
+</ul>
+<h3 id="acceptance-criteria_4">Acceptance criteria ✅</h3>
+<ul>
+<li>A 10/10 anime from current year consistently outranks a 6/10 anime from 2001</li>
+<li>A length query penalises long series without excluding them</li>
+<li><code>recommendation_value</code> is always non-negative and monotonically reflects relevance × quality × recency</li>
+<li>All 12 scorer tests pass</li>
+</ul>
+<hr />
+<h2 id="phase-5-explainability-xai">Phase 5 — Explainability (XAI) ✅</h2>
+<p><strong>Goal</strong>: Generate a structured, metadata-grounded explanation for each top-K recommendation.</p>
+<h3 id="output-schema">Output schema</h3>
+<pre><code class="language-json">{
+  &quot;reasons&quot;: [&quot;Matches your query via 'psychological horror' tag.&quot;, &quot;Rated 9.0/10...&quot;],
+  &quot;matched_tags&quot;: [&quot;psychological horror&quot;, &quot;unreliable narrator&quot;]
+}
+</code></pre>
+<h3 id="tasks_5">Tasks</h3>
+<ul>
+<li>[x] <code>src/explainer.py</code> — <code>Explainer</code> class</li>
+<li><code>explain_batch(results, user_query) -&gt; list[ExplainedResult]</code></li>
+<li>System prompt: no plot hallucination, cite only provided metadata, 2–4 reasons, modality-aware consume verb, <code>matched_tags</code> must be subset of actual tags</li>
+<li>Uses <code>asyncio.gather</code> for parallel async Claude calls — latency ≈ single API call</li>
+<li>Falls back to template-based reason on any failure (API error, missing key, import error)</li>
+<li>[x] Anti-hallucination guard in <code>ExplainedResult.validate_matched_tags()</code> — strips any tag not in item's actual tags+genres at model validation time</li>
+<li>[x] No-API-key path uses template fallback for all results (no crash)</li>
+</ul>
+<h3 id="acceptance-criteria_5">Acceptance criteria ✅</h3>
+<ul>
+<li>All <code>matched_tags</code> in output are validated against source metadata (Pydantic guard)</li>
+<li>Fallback template always produces a valid <code>ExplainedResult</code></li>
+<li>Parallel async calls would complete in ~1 Claude call latency</li>
+</ul>
+<hr />
+<h2 id="phase-6-cli-output-layer">Phase 6 — CLI &amp; Output Layer ✅</h2>
+<p><strong>Goal</strong>: A usable command-line interface that ties all stages together.</p>
+<h3 id="commands">Commands</h3>
+<pre><code>recommend ingest  --input FILE [--batch-size N] [--reset]
+recommend export  --output FILE [--limit N]
+recommend query   TEXT [--top-k N] [--format table|json] [--rerank] [--no-explain]
+recommend info
+</code></pre>
+<h3 id="output-table-format-default">Output (table format, default)</h3>
+<pre><code> #  Title                    Type   Year  ⭐      Score          Reasons
+──────────────────────────────────────────────────────────────────────────────
+ 1  Perfect Blue             MOVIE  1997  9.2   0.847 ██████████  • Matches...
+ 2  Paranoia Agent           ANIME  2004  8.5   0.791 ████████░░  • Directed by...
+</code></pre>
+<h3 id="tasks_6">Tasks</h3>
+<ul>
+<li>[x] <code>src/pipeline.py</code> — <code>RecommendationPipeline</code> wiring all stages</li>
+<li>Constructor flags: <code>top_k</code>, <code>use_reranker</code>, <code>explain</code></li>
+<li>Shared <code>Embedder</code> instance (avoids double model loading)</li>
+<li>Logging at each stage with timing</li>
+<li>[x] <code>src/output.py</code> — <code>print_table()</code> (Rich table) + <code>to_json()</code> (JSON string)</li>
+<li>Score bar visualisation</li>
+<li>Type badges with ANSI colours</li>
+<li>Truncated links for web/local</li>
+<li>[x] Updated <code>src/cli.py</code> — <code>-v/--verbose</code> flag, working <code>query</code> command with <code>--rerank</code> / <code>--no-explain</code> / <code>--format json</code> options; <code>info</code> shows full config</li>
+</ul>
+<h3 id="acceptance-criteria_6">Acceptance criteria ✅</h3>
+<ul>
+<li><code>recommend query "cyberpunk anime"</code> returns results in under 5 seconds on first run</li>
+<li><code>--format json</code> output is valid JSON parseable by <code>json.loads</code></li>
+<li>Both <code>local_file_location</code> and <code>web_link</code> appear in output when present</li>
+</ul>
+<hr />
+<h2 id="phase-7-multi-modal-expansion">Phase 7 — Multi-Modal Expansion ✅</h2>
+<p><strong>Goal</strong>: Extend the engine to handle books, manga, and papers without breaking the video pipeline.</p>
+<h3 id="schema-changes">Schema changes</h3>
+<table>
+<thead>
+<tr>
+<th>New type</th>
+<th>New/renamed fields</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>book</code></td>
+<td><code>num_episodes_or_pages</code> → pages</td>
+<td>Already in schema; just semantics</td>
+</tr>
+<tr>
+<td><code>manga</code></td>
+<td>same as book + <code>volumes: int</code> (optional)</td>
+<td>Added optional <code>volumes</code> payload</td>
+</tr>
+<tr>
+<td><code>paper</code></td>
+<td><code>abstract: str</code> replaces <code>review_notes</code> as primary dense field</td>
+<td><code>dense_text</code> dispatches: <code>review_notes → abstract → fallback</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tasks_7">Tasks</h3>
+<ul>
+<li>[x] <code>src/schema.py</code> — added <code>volumes: int | None</code>, <code>abstract: str | None</code>; <code>dense_text</code> priority chain: <code>review_notes → abstract → _fallback_text()</code>; <code>consume_verb</code> property returns "read"/"watch" based on type; <code>is_video</code> property</li>
+<li>[x] <code>src/embedder.py</code> — inherits Phase 7 dense dispatch via <code>item.dense_text</code> property (no embedder changes needed)</li>
+<li>[x] <code>src/query_parser.py</code> — Phase 7 few-shot examples in system prompt: manga volumes, CS papers, book queries</li>
+<li>[x] <code>src/explainer.py</code> — system prompt uses <code>consume_verb</code> aware instruction ("read" vs "watch")</li>
+<li>[x] <code>data/sample_books.json</code> — 5 book entries (Dune, Left Hand of Darkness, Flowers for Algernon, Blindsight, Three-Body Problem)</li>
+<li>[x] Existing video queries unaffected (all 53 tests still pass after schema extension)</li>
+</ul>
+<h3 id="acceptance-criteria_7">Acceptance criteria ✅</h3>
+<ul>
+<li>A mixed library (videos + books) can be ingested in one pass</li>
+<li><code>abstract</code> is used as dense source for papers when <code>review_notes</code> is absent</li>
+<li><code>consume_verb</code> returns "read" for books/manga/papers, "watch" for video</li>
+</ul>
+<hr />
+<h2 id="phase-9-quality-tooling-watch-history-feedback">Phase 9 — Quality, Tooling &amp; Watch-History Feedback ✅</h2>
+<p><strong>Goal</strong>: Close all remaining gaps: test coverage for every module, prompt caching,
+watch-history implicit feedback, improved evaluation tooling, <code>sync</code>/<code>delete</code> commands,
+and README.</p>
+<h3 id="tasks_8">Tasks</h3>
+<ul>
+<li>[x] <code>tests/conftest.py</code> — stateful <code>FakeQdrantClient</code>, <code>MockEmbedder</code>, <code>FakeQdrantModule</code>,
+  async-capable <code>FakeAnthropicModule</code>; shared fixtures <code>qdrant_mock</code>, <code>anthropic_mock</code>,
+  <code>mock_embedder</code>, <code>sample_items</code>, <code>scored_candidates</code>, <code>cfg</code></li>
+<li>[x] <code>tests/test_store.py</code> — 13 tests: <code>create_collection</code> idempotency, payload index creation,
+  <code>upsert</code> call verification, batch size, <code>collection_info</code>, <code>delete</code></li>
+<li>[x] <code>tests/test_retriever.py</code> — 10 tests: <code>_payload_to_item</code> mapping, hybrid query path,
+  filter-only scroll, dense-only fallback, empty-collection, top-K limiting</li>
+<li>[x] <code>tests/test_explainer.py</code> — 8 tests: no-API-key fallback, template structure,
+  <code>matched_tags</code> anti-hallucination, mocked async path, rank preservation</li>
+<li>[x] <code>tests/test_pipeline.py</code> — 8 tests: full <code>run()</code> path with mocked dependencies,
+  <code>explain=False</code> path, top-K limit, component scores present</li>
+<li>[x] <code>tests/test_output.py</code> — 11 tests: <code>to_json</code> schema, <code>print_table</code> no crash,
+  score bar bounds, type badge correctness, indent parameter</li>
+<li>[x] Prompt caching in <code>src/query_parser.py</code> — <code>cache_control: ephemeral</code> on static system prompt</li>
+<li>[x] Prompt caching in <code>src/explainer.py</code> — <code>_CACHED_SYSTEM</code> block shared across all parallel calls</li>
+<li>[x] <code>src/schema.py</code> — <code>HistoryProfile</code> model with <code>from_payloads()</code> and <code>overlap_fraction()</code></li>
+<li>[x] <code>src/config.py</code> — <code>history_min_rating</code>, <code>history_boost_weight</code> settings</li>
+<li>[x] <code>src/scorer.py</code> — <code>_history_boost()</code> factor; <code>score()</code> now accepts <code>history_profile</code></li>
+<li>[x] <code>src/pipeline.py</code> — <code>_build_history_profile()</code> queries SQLite for highly-rated watched items
+  via <code>store.fetch_filtered()</code>; <code>use_history</code> constructor flag; <code>_store</code> exposed for profile builder</li>
+<li>[x] <code>src/cli.py</code> — <code>recommend sync --input FILE</code> (incremental upsert); <code>recommend delete UUID</code>;
+  <code>recommend query --no-history</code> flag</li>
+<li>[x] <code>tests/golden_queries.json</code> — added <code>semantic_query</code> and <code>parsed_filters</code> to all 10 entries
+  so evaluation is deterministic without Claude</li>
+<li>[x] <code>scripts/evaluate.py</code> — rewritten to use pre-parsed filters; added <code>--csv</code> export</li>
+<li>[x] <code>scripts/sweep.py</code> — grid search over <code>lambda_recency ∈ [0.02, 0.05, 0.10]</code> ×
+  <code>fusion_method ∈ [rrf, dbsf]</code>; Rich table + optional CSV</li>
+<li>[x] <code>pyproject.toml</code> — removed <code>asyncio_mode</code> to eliminate spurious warning</li>
+<li>[x] <code>README.md</code> — full quickstart, command reference, data format, config table,
+  test coverage table, architecture decision notes</li>
+</ul>
+<h3 id="acceptance-criteria_8">Acceptance criteria ✅</h3>
+<ul>
+<li>110 tests pass with zero warnings (all dependencies mocked; Qdrant replaced by SQLite)</li>
+<li>Prompt caching reduces repeated API costs for query parsing and explanation</li>
+<li>Watch-history boost demonstrably increases scores for items overlapping user preferences</li>
+<li><code>recommend sync</code> enables incremental library updates without full re-ingestion</li>
+<li><code>evaluate.py</code> runs deterministically without Claude API</li>
+<li><code>sweep.py</code> prints a comparison table and marks the best hyperparameter combination</li>
+<li><code>README.md</code> satisfies the Phase 0 quickstart requirement</li>
+</ul>
+<hr />
+<h2 id="phase-8-reranking-evaluation-advanced">Phase 8 — Reranking &amp; Evaluation (Advanced) ✅</h2>
+<p><strong>Goal</strong>: Add a cross-encoder reranker for precision and a formal offline evaluation framework.</p>
+<h3 id="reranking-pipeline">Reranking pipeline</h3>
+<pre><code>Hybrid retrieval → top-200 candidates
+       │
+       ▼
+  bge-reranker-v2-m3 (cross-encoder)
+  scores each (query, item_text) pair
+       │
+       ▼
+  top-20 reranked results
+       │
+       ▼
+  Scorer (decay) → top-10 → Explainer
+</code></pre>
+<h3 id="evaluation-metrics">Evaluation metrics</h3>
+<ul>
+<li><strong>NDCG@K</strong> — primary ranking quality metric (K configurable, default 10)</li>
+<li><strong>Precision@5</strong> — fraction of top-5 results that are genuinely relevant</li>
+<li><strong>Penalty count</strong> — results marked as <code>expected_absent_ids</code> that appeared</li>
+</ul>
+<h3 id="tasks_9">Tasks</h3>
+<ul>
+<li>[x] <code>src/reranker.py</code> — <code>Reranker</code> class using <code>FlagEmbedding.FlagReranker</code></li>
+<li><code>rerank(query, candidates, top_n) -&gt; list[ScoredCandidate]</code></li>
+<li>Thread-safe model singleton (same pattern as embedder)</li>
+<li><code>normalize=True</code> for cross-encoder scores</li>
+<li>Graceful fallback to original ordering on model error</li>
+<li>[x] <code>tests/golden_queries.json</code> — 10 labelled query/result pairs with <code>expected_top_ids</code> and <code>expected_absent_ids</code></li>
+<li>[x] <code>scripts/evaluate.py</code> — NDCG@K and Precision@5 against golden set; penalty counter; Rich table output; <code>--rerank</code> flag to compare with/without reranker</li>
+</ul>
+<h3 id="acceptance-criteria_9">Acceptance criteria</h3>
+<ul>
+<li>Evaluation script runs without errors on ingested collection</li>
+<li>NDCG and Precision metrics printed per-query and as mean</li>
+<li>Reranker degrades gracefully when FlagEmbedding model unavailable (skips, logs warning)</li>
+</ul>
+<hr />
+<h2 id="dependency-map">Dependency Map</h2>
+<pre><code>Phase 0 (Foundation) ✅
+  └── Phase 1 (Ingestion) ✅
+        ├── Phase 2 (Query Parser) ✅
+        │     └── Phase 3 (Hybrid Retrieval) ✅
+        │           └── Phase 4 (Scoring) ✅
+        │                 └── Phase 5 (Explainability) ✅
+        │                       └── Phase 6 (CLI) ✅
+        │                             └── Phase 7 (Multi-modal) ✅
+        │                                   └── Phase 8 (Reranking) ✅
+        └── Phase 8 also depends on Phase 6 being stable ✅
+</code></pre>
+<hr />
+<h2 id="key-design-decisions">Key Design Decisions</h2>
+<p><strong>Why BGE-M3 over separate models?</strong>
+A single model call produces dense + sparse + ColBERT multi-vectors simultaneously. Running separate models (e.g., sentence-transformers for dense, SPLADE for sparse) doubles inference cost and introduces embedding space mismatch.</p>
+<p><strong>Why SQLite over Qdrant?</strong>
+For a personal media library (typically hundreds to a few thousand items), in-Python brute-force cosine similarity and dot-product scoring is fast enough — ~10 ms for 1 000 1024-dim vectors. SQLite is stdlib, zero-config, portable, and requires no Docker or external service. The previous Qdrant integration (ACORN/HNSW graph, prefetch API) offered better asymptotic performance at scale, but that scale is irrelevant for personal use. Switching to SQLite eliminates the only runtime dependency that required an external process.</p>
+<p><strong>Why RRF as default over DBSF?</strong>
+RRF requires no knowledge of score distributions, is invariant to score scale, and is robust against a weak retriever skewing results. DBSF is available as an override when the score magnitudes carry meaningful signal (e.g., very high-confidence exact title matches should dominate).</p>
+<p><strong>Why multiplicative (not additive) final score?</strong>
+An additive formula lets a high rating rescue an irrelevant item. Multiplication ensures that a zero-relevance item (rrf_score ≈ 0) always scores near zero regardless of its rating or recency.</p>
+<p><strong>Why async LLM calls for explainability?</strong>
+Explanation generation is the highest-latency stage. Running 10 Claude API calls sequentially would add ~10–30 seconds. <code>asyncio.gather</code> reduces this to the latency of a single call (~1–3 seconds).</p>
+<hr />
+<h2 id="file-structure-current-state-sqlite-migration-complete">File Structure (current state — SQLite migration complete)</h2>
+<pre><code>CRE/
+├── src/
+│   ├── schema.py        # Pydantic models: MediaItem, HistoryProfile, ParsedQuery,
+│   │                    #   RankedResult, ExplainedResult (Phases 0–9)
+│   ├── config.py        # pydantic-settings; sqlite_path + all tunable params (Phases 0–9)
+│   ├── embedder.py      # BGE-M3 wrapper: dense + sparse, batch (Phase 1)
+│   ├── store.py         # SQLiteStore: items table, upsert, fetch_all, fetch_filtered (Phase 1)
+│   ├── ingest.py        # CLI: validate → embed → upsert with Rich progress (Phase 1)
+│   ├── export.py        # CLI: fetch_filtered → JSON (Phase 1)
+│   ├── cache.py         # Thread-safe LRU query cache (Phase 2)
+│   ├── query_parser.py  # Claude parser + SQL filter builder + prompt caching (Phase 2/9)
+│   ├── retriever.py     # Python cosine+dot RRF/DBSF fusion; filter-only fallback (Phase 3)
+│   ├── scorer.py        # rating_boost × recency_decay × length_decay × history_boost (Phase 4/9)
+│   ├── explainer.py     # Async LLM explainer + prompt caching + fallback (Phase 5/9)
+│   ├── pipeline.py      # Orchestration + _build_history_profile() (Phase 6/9)
+│   ├── output.py        # Rich table + JSON renderers (Phase 6)
+│   ├── reranker.py      # Cross-encoder bge-reranker-v2-m3 (Phase 8)
+│   └── cli.py           # ingest, sync, export, delete, info, query (Phase 1/6/9)
+├── data/
+│   ├── sample.json          # 10 anime/movie items
+│   └── sample_books.json    # 5 book items (Phase 7)
+├── tests/
+│   ├── conftest.py           # Shared fixtures: MockEmbedder, sqlite_store, cfg (tmp_path)
+│   ├── test_schema.py        # 12 tests (Phase 0)
+│   ├── test_scorer.py        # 24 tests (Phase 4/9)
+│   ├── test_query_parser.py  # 31 tests (Phase 2; SQL filter tests)
+│   ├── test_store.py         # 14 tests (SQLiteStore)
+│   ├── test_retriever.py     # 10 tests (HybridRetriever + SQLite)
+│   ├── test_explainer.py     # 8 tests  (Phase 9)
+│   ├── test_pipeline.py      # 8 tests  (Phase 9)
+│   ├── test_output.py        # 11 tests (Phase 9)
+│   └── golden_queries.json   # 10 labelled queries with pre-parsed filters (Phase 8/9)
+├── scripts/
+│   ├── evaluate.py     # NDCG@K, P@5, penalty; CSV export; no Claude needed (Phase 8/9)
+│   └── sweep.py        # λ × fusion grid search; marks best config (Phase 8/9)
+├── research/
+│   └── Building a Smart Recommendation Engine.md
+├── docs/                # ARCHITECTURE.md, CHANGELOG.md, README (index)
+├── moon/                # ROADMAP.md + roadmaps/ (ingestion, search, cli, core)
+├── git/                 # CONTRIBUTING.md + codecov.yaml
+├── tools/               # per-domain justfile sub-modules
+├── .agent/              # coding-assistant handbook (AGENTS.md + prompts/rules/skills/workflows)
+├── docker/              # docker-compose.yml (placeholder — no external services required)
+├── README.md
+├── pyproject.toml
+└── .env.example
+</code></pre>
+<hr />
+<h2 id="open-questions-future-work">Open Questions / Future Work</h2>
+<ul>
+<li><strong>Visual embeddings for images/art</strong>: Phase 7 leaves images as a stub. The correct path is CLIP or VLM2Vec-V2 (which supports text + image + video in a unified embedding space) for items where the primary content is visual rather than textual.</li>
+<li><strong>Cross-item collaborative signals</strong>: The current engine is content-based only. If the library grows large and rating patterns emerge across many items, a lightweight matrix factorisation layer could augment the content-based scores — but this is only worthwhile with 500+ rated items.</li>
+<li><strong>Watch history as implicit feedback</strong>: ✅ Implemented in Phase 9 — <code>HistoryProfile</code> aggregates tags/genres from highly-rated watched items; <code>_history_boost()</code> in <code>Scorer</code> applies a configurable multiplicative boost.</li>
+<li><strong>Web UI</strong>: A minimal FastAPI + HTMX frontend would make the engine accessible without a terminal. Out of scope for current phases.</li>
+<li><strong>Streaming explanations</strong>: The <code>Explainer</code> currently waits for all <code>asyncio.gather</code> tasks; streaming the first result as it arrives would reduce perceived latency for large <code>top_k</code> values.</li>
+<li><strong>Collaborative filtering layer</strong>: Track co-ratings across item types (e.g., users who rated Cowboy Bebop highly also tend to rate Samurai Champloo highly). Requires 500+ items and explicit cross-user signals — not applicable to single-user personal libraries yet.</li>
+<li><strong>Hyperparameter sweep</strong>: Tune RRF <code>k</code>, <code>λ_recency</code>, <code>length_scale</code> against the golden query set to maximise NDCG@10 (see <code>scripts/evaluate.py --rerank</code>).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.top", "navigation.indexes", "search.highlight", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
