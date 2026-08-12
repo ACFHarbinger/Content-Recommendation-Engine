@@ -1,5 +1,0 @@
-node_modules/
-dist/
-*.local
-*.tsbuildinfo
-src/nav.generated.ts
