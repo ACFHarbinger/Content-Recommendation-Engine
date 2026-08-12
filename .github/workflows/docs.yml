@@ -6,6 +6,7 @@ on:
     branches: [main, master]
     paths:
       - "docs/**"
+      - "docs/website/**"
       - "mkdocs.yml"
 
 permissions:
