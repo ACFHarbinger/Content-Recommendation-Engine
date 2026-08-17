@@ -430,7 +430,7 @@ FodyWeavers.xsd
 *.msp
 
 #
-/**/Recommendation_Engine.egg-info
+/**/content_recommendation_engine.egg-info
 
 # Generated build output (docs sites, etc.) -- everything lands under
 # build/gen/ now, never committed.
